@@ -48,6 +48,7 @@ def detect_data_types(sample):
     return {
         "has_proteins": pd.notna(row.get("protein_fasta")),
         "has_masked_genome": pd.notna(row.get("genome_masked")),
+        "needs_masking": pd.isna(row.get("genome_masked")),
         "has_reference_gtf": pd.notna(row.get("reference_gtf"))
     }
 
@@ -81,6 +82,21 @@ validate_samples()
 # ==============================================================================
 # Helper Functions
 # ==============================================================================
+
+def get_masked_genome(sample):
+    """Get the masked genome file path for a sample.
+
+    Returns:
+    - Pre-masked genome (cleaned): output/{sample}/genome_masked.fa
+    - RepeatMasker output: output/{sample}/preprocessing/genome.fa.masked
+    - Cleaned unmasked genome: output/{sample}/genome.fa
+    """
+    row = samples_df[samples_df["sample_name"] == sample].iloc[0]
+    if pd.notna(row.get("genome_masked")):
+        return f"output/{sample}/genome_masked.fa"
+    if GLOBAL_DATA_TYPES.get("needs_masking", False):
+        return f"output/{sample}/preprocessing/genome.fa.masked"
+    return f"output/{sample}/genome.fa"
 
 def get_genome(sample):
     """Get the cleaned genome file path (headers simplified to accession only)."""
@@ -145,6 +161,14 @@ def get_species_name(wildcards):
 # Container Configuration
 # ==============================================================================
 
+# Main containers:
+# - GALBA_TOOLS: miniprot, boundary_scorer, miniprothint, compleasm (small, ~50 MB)
+# - AUGUSTUS_CONTAINER: augustus, etraining, diamond, all Perl/Python scripts (249 MB)
+# Until the galba2-tools container is built and pushed, the galba-notebook
+# container can be used as a fallback for all rules.
+GALBA_TOOLS_CONTAINER = config.get("galba_tools_image", "docker://katharinahoff/galba-notebook:latest")
+AUGUSTUS_CONTAINER = config.get("augustus_image", "docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9")
+# Alias for rules that haven't been migrated yet
 GALBA_CONTAINER = config.get("galba_image", "docker://katharinahoff/galba-notebook:latest")
 GFFCOMPARE_CONTAINER = config.get("gffcompare_image", "docker://quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1")
 AGAT_CONTAINER = config.get("agat_image", "docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0")

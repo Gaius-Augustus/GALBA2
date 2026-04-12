@@ -64,8 +64,12 @@ augustus_config_path = os.path.abspath(config_parser['paths'].get('augustus_conf
 # Pass config to Snakemake config dict
 config['samples_file'] = config_parser['paths'].get('samples_file', 'samples.csv')
 config['min_contig'] = config_parser.getint('PARAMS', 'min_contig', fallback=10000)
-config['galba_image'] = config_parser.get('containers', 'galba_image',
-                                          fallback='docker://katharinahoff/galba-notebook:latest')
+config['galba_tools_image'] = config_parser.get('containers', 'galba_tools_image',
+                                                fallback='docker://katharinahoff/galba-notebook:latest')
+config['augustus_image'] = config_parser.get('containers', 'augustus_image',
+                                            fallback='docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9')
+# Backwards compat alias
+config['galba_image'] = config['galba_tools_image']
 
 config['slurm_args'] = {
     'cpus_per_task': config_parser.getint('SLURM_ARGS', 'cpus_per_task', fallback=1),
@@ -191,6 +195,7 @@ include: "rules/common.smk"
 GLOBAL_DATA_TYPES = {
     'has_proteins': False,
     'has_reference_gtf': False,
+    'needs_masking': False,
 }
 
 for sample in SAMPLES:
@@ -199,9 +204,13 @@ for sample in SAMPLES:
         GLOBAL_DATA_TYPES['has_proteins'] = True
     if types.get('has_reference_gtf'):
         GLOBAL_DATA_TYPES['has_reference_gtf'] = True
+    if types.get('needs_masking'):
+        GLOBAL_DATA_TYPES['needs_masking'] = True
 
 print("\nGALBA2 pipeline rules:")
 print("  ✓ Genome preparation (header cleaning)")
+if GLOBAL_DATA_TYPES['needs_masking']:
+    print("  ✓ RepeatModeler2 + RepeatMasker (genome masking)")
 print("  ✓ Miniprot protein-to-genome alignment")
 print("  ✓ Miniprothint training gene and hint generation")
 print("  ✓ AUGUSTUS training on protein-derived genes")
@@ -219,6 +228,8 @@ print()
 # Preprocessing
 include: "rules/preprocessing/prepare_genome.smk"
 include: "rules/preprocessing/merge_proteins.smk"
+if GLOBAL_DATA_TYPES['needs_masking']:
+    include: "rules/preprocessing/run_masking.smk"
 
 # Miniprot alignment and hint generation
 include: "rules/miniprot/run_miniprot.smk"

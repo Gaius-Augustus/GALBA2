@@ -31,7 +31,7 @@ rule gene_support_summary:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail

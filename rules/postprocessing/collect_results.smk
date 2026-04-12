@@ -56,7 +56,7 @@ rule collect_results:
         mem_mb=4000,
         runtime=30
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail

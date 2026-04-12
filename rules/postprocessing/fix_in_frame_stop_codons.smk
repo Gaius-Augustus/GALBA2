@@ -41,7 +41,7 @@ rule get_anno_fasta:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH
@@ -152,7 +152,7 @@ rule fix_in_frame_stop_codons:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH
@@ -205,9 +205,9 @@ rule fix_in_frame_stop_codons:
                 -u off \
                 -U off \
                 -a {params.aug_config} \
-                -C /opt/cdbfasta \
-                -A /opt/Augustus/bin \
-                -S /opt/Augustus/scripts \
+                -C $(dirname $(which cdbfasta)) \
+                -A $(dirname $(which augustus)) \
+                -S $(dirname $(which gff2gbSmallDNA.pl)) \
                 -H {input.hintsfile} \
                 -e {params.extrinsic_cfg} \
                 -w {params.output_dir} \

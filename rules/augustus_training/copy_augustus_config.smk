@@ -23,7 +23,7 @@ rule copy_augustus_config:
     benchmark:
         "benchmarks/copy_augustus_config.txt"
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     threads: 1
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
@@ -92,7 +92,20 @@ rule copy_augustus_config:
         if [ -d "{output.config_dir}" ]; then
             rmdir "{output.config_dir}"
         fi
-        cp -r /opt/Augustus/config "{output.config_dir}"
+        # Try multiple known locations for the AUGUSTUS config directory
+        AUG_CONFIG_SRC=""
+        for d in /usr/local/config /opt/Augustus/config /opt/augustus/config; do
+            if [ -d "$d/species" ]; then
+                AUG_CONFIG_SRC="$d"
+                break
+            fi
+        done
+        if [ -z "$AUG_CONFIG_SRC" ]; then
+            echo "[ERROR] Cannot find AUGUSTUS config directory in container"
+            exit 1
+        fi
+        echo "[INFO] Found AUGUSTUS config at: $AUG_CONFIG_SRC"
+        cp -r "$AUG_CONFIG_SRC" "{output.config_dir}"
 
         # Make it writable so we can modify it later
         chmod -R u+w "{output.config_dir}"

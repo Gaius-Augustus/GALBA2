@@ -33,7 +33,7 @@ rule sanity_check_augustus:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH
@@ -45,7 +45,7 @@ rule sanity_check_augustus:
         # Step 1: Sanity check - remove transcripts with overlapping CDS features
         # or CDS features on different strands within one transcript
         echo "[INFO] Running GTF sanity check..."
-        python3 $(which gtf_sanity_check.py) \
+        python3 {script_dir}/gtf_sanity_check.py \
             -f {input.augustus_gtf} \
             -o {params.output_dir}/bad_transcripts.lst \
             > {params.output_dir}/gtf_sanity_check.log \
@@ -58,7 +58,7 @@ rule sanity_check_augustus:
         echo "[INFO] Found $BAD_COUNT problematic transcripts"
 
         if [ $BAD_COUNT -gt 0 ]; then
-            python3 $(which filter_gtf_by_txid.py) \
+            python3 {script_dir}/filter_gtf_by_txid.py \
                 -g {input.augustus_gtf} \
                 -l {params.output_dir}/bad_transcripts.lst \
                 -o {params.output_dir}/augustus.clean.gtf \
@@ -84,13 +84,13 @@ rule sanity_check_augustus:
                 2> {params.output_dir}/getAnnoFasta_hints.stderr
 
             # Run DIAMOND filtering
-            python3 $(which filter_gtf_by_diamond_against_ref.py) \
+            python3 {script_dir}/filter_gtf_by_diamond_against_ref.py \
                 -r {input.proteins} \
                 -g {params.output_dir}/augustus.clean.gtf \
                 -o {output.galba_gtf} \
                 -a {params.output_dir}/augustus.hints.aa \
                 -t {threads} \
-                -d /opt/diamond \
+                -d $(dirname $(which diamond)) \
                 1> {params.output_dir}/diamond_filter.stdout \
                 2> {params.output_dir}/diamond_filter.stderr
 
@@ -98,8 +98,8 @@ rule sanity_check_augustus:
             rm -f {params.output_dir}/augustus.hints.aa \
                   {params.output_dir}/augustus.hints.codingseq
 
-            BEFORE=$(grep -cP '\tgene\t' {params.output_dir}/augustus.clean.gtf || echo 0)
-            AFTER=$(grep -cP '\tgene\t' {output.galba_gtf} || echo 0)
+            BEFORE=$(grep -c $'\tgene\t' {params.output_dir}/augustus.clean.gtf || echo 0)
+            AFTER=$(grep -c $'\tgene\t' {output.galba_gtf} || echo 0)
             echo "[INFO] DIAMOND filter: $BEFORE genes -> $AFTER genes"
 
             # Report
@@ -113,7 +113,7 @@ rule sanity_check_augustus:
 
         rm -f {params.output_dir}/augustus.clean.gtf
 
-        GENES=$(grep -cP '\tgene\t' {output.galba_gtf} || echo 0)
+        GENES=$(grep -c $'\tgene\t' {output.galba_gtf} || echo 0)
         echo "[INFO] Final gene count: $GENES"
         echo "[INFO] Output: {output.galba_gtf}"
         echo "[INFO] ======================================="
@@ -148,7 +148,7 @@ rule extract_final_sequences:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH
@@ -167,7 +167,7 @@ rule extract_final_sequences:
             1> {params.output_dir}/getAnnoFasta_final.stdout \
             2> {params.output_dir}/getAnnoFasta_final.stderr
 
-        GENES_GTF=$(grep -cP '\tgene\t' {input.galba_gtf} || echo 0)
+        GENES_GTF=$(grep -c $'\tgene\t' {input.galba_gtf} || echo 0)
         CODING_SEQ=$(grep -c "^>" {output.galba_codingseq} || echo 0)
         AA_SEQ=$(grep -c "^>" {output.galba_aa} || echo 0)
 
@@ -222,7 +222,7 @@ rule assess_completeness:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH

@@ -32,7 +32,7 @@ rule create_new_species:
         aug_config = augustus_config_path,
         species_name = lambda w: get_species_name(w)
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     threads: 1
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),

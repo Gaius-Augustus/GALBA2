@@ -1,2 +1,2 @@
 sample_name,genome,genome_masked,protein_fasta,busco_lineage,reference_gtf
-test_species,test_data/genome.fa,,test_data/proteins.fa,eukaryota_odb12,
+test_species,test_data/genome.fa,test_data/genome.fa,test_data/proteins.fa,eukaryota_odb12,

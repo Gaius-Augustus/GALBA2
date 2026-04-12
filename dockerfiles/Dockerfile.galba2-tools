@@ -1,0 +1,74 @@
+# GALBA2 tools container
+# Contains: miniprot 0.13, miniprot_boundary_scorer, miniprothint, compleasm 0.2.7
+#
+# Build:
+#   docker build -f dockerfiles/Dockerfile.galba2-tools -t katharinahoff/galba2-tools:latest .
+#
+# Push:
+#   docker push katharinahoff/galba2-tools:latest
+
+# ---------- build stage ----------
+FROM ubuntu:22.04 AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential git wget ca-certificates zlib1g-dev python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# miniprot 0.13 (source tarball)
+RUN wget -q https://github.com/lh3/miniprot/releases/download/v0.13/miniprot-0.13.tar.bz2 \
+        -O /tmp/miniprot.tar.bz2 \
+    && mkdir -p /build/miniprot && cd /build/miniprot \
+    && tar xjf /tmp/miniprot.tar.bz2 --strip-components=1 \
+    && make -j$(nproc) && rm /tmp/miniprot.tar.bz2
+
+# miniprot_boundary_scorer
+RUN git clone --depth=1 https://github.com/tomasbruna/miniprot-boundary-scorer /build/scorer \
+    && cd /build/scorer && make -j$(nproc)
+
+# miniprothint
+RUN git clone --depth=1 https://github.com/tomasbruna/miniprothint /build/miniprothint
+
+# compleasm 0.2.7 (self-contained: includes its own miniprot + hmmsearch)
+RUN wget -q https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2 \
+        -O /tmp/compleasm.tar.bz2 \
+    && mkdir /build/compleasm && cd /build/compleasm \
+    && tar xjf /tmp/compleasm.tar.bz2 && rm /tmp/compleasm.tar.bz2
+
+# ---------- runtime stage ----------
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3 python3-pip libstdc++6 zlib1g ca-certificates \
+    && pip3 install --no-cache-dir matplotlib biopython pandas \
+    && rm -rf /var/lib/apt/lists/*
+
+# miniprot
+COPY --from=builder /build/miniprot/miniprot /usr/local/bin/
+
+# miniprot_boundary_scorer + blosum62 matrix
+COPY --from=builder /build/scorer/miniprot_boundary_scorer /usr/local/bin/
+COPY --from=builder /build/scorer/blosum62.csv /usr/local/share/galba2/blosum62.csv
+
+# miniprothint (Python scripts — keep them together so bare imports work)
+COPY --from=builder /build/miniprothint/miniprothint.py          /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/AlignmentCluster.py      /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/collapseGff.py           /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/count_cds_overlaps.py    /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/print_high_confidence.py /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/scorer2gtf.py            /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/selectRepresentativeAlignments.py /usr/local/lib/miniprothint/
+COPY --from=builder /build/miniprothint/cds_with_upstream_support.py      /usr/local/lib/miniprothint/
+RUN chmod +x /usr/local/lib/miniprothint/*.py \
+    && for f in /usr/local/lib/miniprothint/*.py; do \
+         ln -s "$f" /usr/local/bin/$(basename "$f"); \
+       done
+ENV PYTHONPATH="/usr/local/lib/miniprothint:${PYTHONPATH}"
+
+# compleasm (self-contained kit with miniprot + hmmsearch)
+COPY --from=builder /build/compleasm/compleasm_kit /opt/compleasm_kit
+ENV PATH="/opt/compleasm_kit:${PATH}"
+
+# Convenience env vars
+ENV BLOSUM62_PATH="/usr/local/share/galba2/blosum62.csv"
+
+CMD ["/bin/bash"]

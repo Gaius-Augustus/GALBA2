@@ -63,7 +63,7 @@ rule redundancy_removal:
     params:
         translation_table = config.get("translation_table", 1)
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH
@@ -108,7 +108,7 @@ rule redundancy_removal:
         # Step 4: Remove redundant sequences using DIAMOND
         # aa2nonred.pl requires --diamond flag and DIAMOND_PATH
         # DIAMOND is located at /opt/ETP/tools/diamond in the BRAKER3 container
-        aa2nonred.pl $PROT_AA $PROT_NR_AA --DIAMOND_PATH=/opt/diamond --diamond --cores={threads}
+        aa2nonred.pl $PROT_AA $PROT_NR_AA --DIAMOND_PATH=$(dirname $(which diamond)) --diamond --cores={threads}
         echo "[INFO] Removed redundant sequences: $PROT_NR_AA"
 
         # Step 5: Extract non-redundant gene list
@@ -155,7 +155,7 @@ rule redundancy_removal:
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
         DIAMOND_VER=$(diamond version 2>&1 | awk '{{print $NF}}' || true)
         if [ -z "$DIAMOND_VER" ]; then
-            DIAMOND_VER=$(/opt/diamond/diamond version 2>&1 | awk '{{print $NF}}' || true)
+            DIAMOND_VER=$(diamond version 2>&1 | awk '{{print $NF}}' || true)
         fi
         ( flock 9; printf "DIAMOND\t%s\n" "$DIAMOND_VER" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
 

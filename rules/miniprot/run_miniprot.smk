@@ -19,7 +19,7 @@ rule miniprot_index:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail
@@ -75,7 +75,7 @@ rule miniprot_align:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail
@@ -121,34 +121,37 @@ rule miniprot_boundary_scorer:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail
 
         echo "[INFO] ===== MINIPROT: BOUNDARY SCORING ====="
 
-        # miniprot_boundary_scorer and blosum62.csv are in /opt/ProtHint/dependencies
-        # in the BRAKER3 container, or in /opt/GALBA/scripts/ in the GALBA container.
-        # Try multiple paths.
-        SCORER=""
-        BLOSUM=""
-        for dir in /opt/miniprot-boundary-scorer /opt/miniprothint /opt/ProtHint/dependencies /opt/GALBA/scripts /usr/local/bin; do
-            if [ -x "$dir/miniprot_boundary_scorer" ]; then
-                SCORER="$dir/miniprot_boundary_scorer"
-                BLOSUM="$dir/blosum62.csv"
-                break
-            fi
-        done
-
+        # Find miniprot_boundary_scorer binary
+        SCORER=$(which miniprot_boundary_scorer 2>/dev/null || true)
         if [ -z "$SCORER" ]; then
-            # Try PATH
-            SCORER=$(which miniprot_boundary_scorer 2>/dev/null || true)
-            if [ -z "$SCORER" ]; then
-                echo "[ERROR] miniprot_boundary_scorer not found"
-                exit 1
-            fi
-            BLOSUM="$(dirname $SCORER)/blosum62.csv"
+            echo "[ERROR] miniprot_boundary_scorer not found in PATH"
+            exit 1
+        fi
+
+        # Find blosum62.csv — check BLOSUM62_PATH env var, then known locations
+        BLOSUM="${{BLOSUM62_PATH:-}}"
+        if [ -z "$BLOSUM" ] || [ ! -f "$BLOSUM" ]; then
+            for candidate in \
+                /usr/local/share/galba2/blosum62.csv \
+                "$(dirname $SCORER)/blosum62.csv" \
+                /opt/miniprot-boundary-scorer/blosum62.csv \
+                /opt/GALBA/scripts/blosum62.csv; do
+                if [ -f "$candidate" ]; then
+                    BLOSUM="$candidate"
+                    break
+                fi
+            done
+        fi
+        if [ ! -f "$BLOSUM" ]; then
+            echo "[ERROR] blosum62.csv not found"
+            exit 1
         fi
 
         echo "[INFO] Scorer: $SCORER"
@@ -193,7 +196,7 @@ rule run_miniprothint:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail
@@ -229,7 +232,7 @@ rule run_miniprothint:
             --minScoreFraction 0.5
 
         # Verify outputs
-        TRAINING_GENES=$(grep -cP '\tCDS\t' {output.training_genes} || echo 0)
+        TRAINING_GENES=$(grep -c $'\tCDS\t' {output.training_genes} || echo 0)
         HC_LINES=$(wc -l < {output.hc_gff})
         LC_LINES=$(wc -l < {output.lc_gff})
 

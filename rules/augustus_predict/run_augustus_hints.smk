@@ -64,7 +64,7 @@ rule run_augustus_hints:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail
@@ -272,7 +272,7 @@ rule run_augustus_hints:
             perl -ne 'if(m/\tAUGUSTUS\t/) {{print $_;}}' | \
             grep -v "^$" > {output.augustus_gtf}
 
-        GENES_GTF=$(grep -cP '\tgene\t' {output.augustus_gtf} || echo 0)
+        GENES_GTF=$(grep -c $'\tgene\t' {output.augustus_gtf} || echo 0)
         echo "[INFO] Genes in GTF: $GENES_GTF"
 
         echo "[INFO] ======================================="
@@ -289,8 +289,8 @@ rule run_augustus_hints:
 
         # Record software versions
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
-        AUG_VER=$(augustus --version 2>&1 | head -1 | grep -oP '\([\d.]+\)' | tr -d '()' || true)
-        AUG_COMMIT=$(grep 'refs/remotes/origin/master' /opt/Augustus/.git/packed-refs 2>/dev/null | awk '{{print substr($1,1,7)}}' || true)
+        AUG_VER=$(augustus --version 2>&1 | head -1 | perl -ne 'print $1 if /\(([\d.]+)\)/' || true)
+        AUG_COMMIT=$(cat /usr/local/share/augustus/.git_commit 2>/dev/null || true)
         ( flock 9; printf "AUGUSTUS\t%s (commit %s)\n" "$AUG_VER" "$AUG_COMMIT" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
 
         # Report

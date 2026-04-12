@@ -28,7 +28,7 @@ rule generate_galba_hints:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail

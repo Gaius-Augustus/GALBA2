@@ -27,7 +27,7 @@ rule compute_flanking_region:
     benchmark:
         "benchmarks/{sample}/compute_flanking_region/compute_flanking_region.txt"
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     threads: 1
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),

@@ -43,7 +43,7 @@ rule filter_internal_stop_codons:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         export PATH=/opt/conda/bin:$PATH
@@ -55,8 +55,8 @@ rule filter_internal_stop_codons:
         echo "[INFO] Output GTF: {output.filtered_gtf}" | tee -a {output.filter_log}
 
         # Count genes before filtering
-        GENES_BEFORE=$(grep -cP '\tgene\t' {input.merged_gtf} || echo 0)
-        TRANSCRIPTS_BEFORE=$(grep -cP '\ttranscript\t' {input.merged_gtf} || echo 0)
+        GENES_BEFORE=$(grep -c $'\tgene\t' {input.merged_gtf} || echo 0)
+        TRANSCRIPTS_BEFORE=$(grep -c $'\ttranscript\t' {input.merged_gtf} || echo 0)
         echo "[INFO] Genes before filtering: $GENES_BEFORE" | tee -a {output.filter_log}
         echo "[INFO] Transcripts before filtering: $TRANSCRIPTS_BEFORE" | tee -a {output.filter_log}
 
@@ -225,8 +225,8 @@ PYEOF
         fi
 
         # Count genes after filtering
-        GENES_AFTER=$(grep -cP '\tgene\t' {output.filtered_gtf} || echo 0)
-        TRANSCRIPTS_AFTER=$(grep -cP '\ttranscript\t' {output.filtered_gtf} || echo 0)
+        GENES_AFTER=$(grep -c $'\tgene\t' {output.filtered_gtf} || echo 0)
+        TRANSCRIPTS_AFTER=$(grep -c $'\ttranscript\t' {output.filtered_gtf} || echo 0)
         GENES_REMOVED=$((GENES_BEFORE - GENES_AFTER))
         TRANSCRIPTS_REMOVED=$((TRANSCRIPTS_BEFORE - TRANSCRIPTS_AFTER))
 

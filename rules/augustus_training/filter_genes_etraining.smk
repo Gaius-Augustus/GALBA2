@@ -50,7 +50,7 @@ rule filter_genes_etraining:
         species_name = lambda w: get_species_name(w),
         aug_config = augustus_config_path
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail

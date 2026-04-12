@@ -39,7 +39,7 @@ rule run_compleasm:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        GALBA_TOOLS_CONTAINER
     shell:
         r"""
         set -euo pipefail

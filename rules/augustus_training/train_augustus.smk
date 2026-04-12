@@ -45,7 +45,7 @@ rule train_augustus:
         species_params = lambda w: f"{augustus_config_path}/species/{get_species_name(w)}/{get_species_name(w)}_parameters.cfg",
         translation_table = config.get("translation_table", 1)
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail

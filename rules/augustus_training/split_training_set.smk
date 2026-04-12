@@ -34,7 +34,7 @@ rule split_training_set:
     benchmark:
         "benchmarks/{sample}/split_training_set/split_training_set.txt"
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     threads: 1
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),

@@ -60,11 +60,9 @@ rule busco_genome:
 rule get_longest_isoform:
     """Extract longest coding isoform per gene locus for BUSCO assessment.
 
-    Uses TSEBRA's get_longest_isoform.py to select one representative
-    transcript per gene (the one with the longest CDS). This avoids
-    inflated BUSCO duplicate counts from alternative splicing isoforms.
-
-    Then re-extracts proteins from the longest-isoform GTF.
+    Selects one representative transcript per gene (the one with the
+    longest CDS). This avoids inflated BUSCO duplicate counts from
+    alternative splicing isoforms.
     """
     input:
         gtf="output/{sample}/galba.gtf",
@@ -83,22 +81,20 @@ rule get_longest_isoform:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail
-        export PATH=/opt/conda/bin:$PATH
-        export PYTHONNOUSERSITE=1
 
         echo "Extracting longest isoform per gene locus..." > {log}
 
-        /opt/TSEBRA/bin/get_longest_isoform.py \
+        python3 {script_dir}/get_longest_isoform.py \
             -g {input.gtf} \
             -o {output.gtf} \
             -q \
             2>> {log}
 
-        n_genes=$(grep -cP '\tgene\t' {output.gtf} || echo 0)
+        n_genes=$(grep -c $'\tgene\t' {output.gtf} || echo 0)
         echo "Longest isoform GTF: $n_genes genes (1 transcript each)" >> {log}
 
         # Extract proteins from longest-isoform GTF

@@ -51,7 +51,7 @@ rule downsample_training_genes:
     params:
         output_dir = lambda w: get_output_dir(w)
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail
@@ -70,11 +70,11 @@ rule downsample_training_genes:
         echo "[INFO] Filtering GTF for non-redundant genes..."
         grep -f {params.output_dir}/clean_genes.lst -F {input.gtf_filtered} > {output.gtf_for_downsample}
 
-        # Check single-exon gene proportion
+        # Check single-exon gene proportion (avoid grep -P, not in all containers)
         TOTAL_GENES=$(awk -F'\t' '$3=="CDS"' {output.gtf_for_downsample} | \
-            grep -oP 'transcript_id "[^"]+"' | sort -u | wc -l)
+            perl -ne 'print "$1\n" if /transcript_id "([^"]+)"/' | sort -u | wc -l)
         SINGLE_EXON=$(awk -F'\t' '$3=="CDS"' {output.gtf_for_downsample} | \
-            grep -oP 'transcript_id "[^"]+"' | sort | uniq -c | \
+            perl -ne 'print "$1\n" if /transcript_id "([^"]+)"/' | sort | uniq -c | \
             awk '$1==1 {{count++}} END {{print count+0}}')
         if [ "$TOTAL_GENES" -gt 0 ]; then
             SINGLE_PCT=$(awk "BEGIN {{printf \"%.0f\", ($SINGLE_EXON/$TOTAL_GENES)*100}}")
@@ -91,7 +91,7 @@ rule downsample_training_genes:
         else
             # Step 3: Downsample using Poisson distribution (lambda=2, BRAKER default)
             echo "[INFO] Downsampling genes with Poisson distribution (lambda=2)..."
-            downsample_traingenes.pl \
+            perl {script_dir}/downsample_traingenes.pl \
                 --in_gtf={output.gtf_for_downsample} \
                 --out_gtf={output.gtf_downsampled} \
                 --lambda=2 \

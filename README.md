@@ -16,7 +16,7 @@ Contact for Repository
 
 Katharina J. Hoff, University of Greifswald, Germany, katharina.hoff@uni-greifswald.de, +49 3834 420 4624
 
-> **Migrating from GALBA (`galba.pl`)?** GALBA2 reimplements the same protein-to-genome annotation pipeline as a Snakemake workflow. The prediction logic is unchanged: miniprot aligns proteins, miniprothint generates training genes and hints, AUGUSTUS is trained and predicts genes. The key differences are automatic resume, HPC support, and containerized execution.
+> **Migrating from GALBA (`galba.pl`)?** The fastest path to your first GALBA2 run is the dedicated step-by-step tutorial: **[MIGRATING_FROM_GALBA.md](MIGRATING_FROM_GALBA.md)**. It maps every `galba.pl` flag you already use to the equivalent `samples.csv` column or `config.ini` parameter, and walks through the translation with concrete examples.
 
 Contents
 ========
@@ -93,30 +93,33 @@ Keys to successful gene prediction
 Protein database preparation
 =============================
 
-For the `protein_fasta` input, we recommend using a relevant clade partition from [OrthoDB](https://www.orthodb.org/). Pre-partitioned OrthoDB v12 files are available for download at:
+GALBA2 requires protein sequences from **closely related species** — this is different from BRAKER, which uses large OrthoDB partitions with distant homologs. GALBA relies on miniprot to produce high-quality spliced alignments, which works best with closely related proteins that share high sequence identity with the target genome.
 
-**https://bioinf.uni-greifswald.de/bioinf/partitioned_odb12/**
+**Recommended protein sources:**
 
-Select the partition that matches your target species (e.g. `Viridiplantae` for plants, `Metazoa` for animals, `Fungi` for fungi). GALBA2 ships a helper script that downloads and decompresses a partition in one step:
+-   Annotated proteomes from **4 or more closely related species** (e.g. from the same family or order). The more species, the better the coverage, but all should be reasonably close relatives.
+-   Each protein must have a **unique identifier** in the FASTA header. If you combine proteomes from multiple species, ensure there are no duplicate IDs.
+-   **Do NOT use large OrthoDB partitions** (e.g. all of Viridiplantae or Metazoa). These contain proteins from very distant species that produce poor miniprot alignments and lead to unreliable training genes. For such cases, use [BRAKER4](https://github.com/Gaius-Augustus/BRAKER4) instead, which uses ProtHint/GeneMark and handles distant homologs.
 
-```bash
-# Example: download Viridiplantae partition to current directory
-bash scripts/download_orthodb.sh Viridiplantae
-
-# Or specify an output directory (useful for sharing across runs)
-bash scripts/download_orthodb.sh Viridiplantae /data/orthodb
-```
-
-Available clades: `Metazoa`, `Vertebrata`, `Viridiplantae`, `Arthropoda`, `Fungi`, `Alveolata`, `Stramenopiles`, `Amoebozoa`, `Euglenozoa`, `Eukaryota`.
-
-You can also download manually:
+**Example:** To annotate a new grass species, combine the proteomes of *Oryza sativa*, *Zea mays*, *Sorghum bicolor*, and *Brachypodium distachyon* into a single FASTA file:
 
 ```bash
-wget https://bioinf.uni-greifswald.de/bioinf/partitioned_odb12/Viridiplantae.fa.gz
-gunzip Viridiplantae.fa.gz
+cat rice_proteins.fa maize_proteins.fa sorghum_proteins.fa brachy_proteins.fa > close_relatives.fa
 ```
 
-Any protein database will work as long as it contains many representatives per protein family. Single-species proteomes (e.g. only SwissProt entries for one organism) are **not suitable** — GALBA needs a broad database with multiple homologs per gene family.
+Then specify it in `samples.csv`:
+
+```csv
+sample_name,genome,genome_masked,protein_fasta,busco_lineage,reference_gtf
+my_grass,genome.fa,,close_relatives.fa,poales_odb12,
+```
+
+You can also provide multiple files colon-separated:
+
+```csv
+protein_fasta
+rice_proteins.fa:maize_proteins.fa:sorghum_proteins.fa
+```
 
 Installation
 ============

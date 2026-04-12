@@ -32,7 +32,7 @@ rule normalize_cds:
         mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
         runtime=int(config['slurm_args']['max_runtime'])
     container:
-        GALBA_CONTAINER
+        AUGUSTUS_CONTAINER
     shell:
         r"""
         set -euo pipefail
@@ -47,5 +47,5 @@ rule normalize_cds:
 
         # Report
         REPORT_DIR=output/{wildcards.sample}
-        N_GENES_OUT=$(grep -cP '\\tgene\\t' {output.gtf} || echo 0)
+        N_GENES_OUT=$(grep -c $'\tgene\t' {output.gtf} || echo 0)
         """

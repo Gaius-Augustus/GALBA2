@@ -1,0 +1,195 @@
+/*
+ * GALBA2 pipeline overview
+ * Publication-ready flowchart (portrait).
+ * High-level view: main phases only, matching BRAKER4 style.
+ *
+ * Render:
+ *   dot -Tsvg pipeline_overview.dot -o pipeline_overview.svg
+ *   dot -Tpdf pipeline_overview.dot -o pipeline_overview.pdf
+ *   dot -Tpng -Gdpi=300 pipeline_overview.dot -o pipeline_overview.png
+ */
+
+digraph GALBA2 {
+    rankdir   = TB;
+    compound  = true;
+    splines   = spline;
+    bgcolor   = "white";
+    nodesep   = 0.25;
+    ranksep   = 0.55;
+    fontname  = "Helvetica";
+    pad       = "0.4";
+    newrank   = true;
+    ordering  = out;
+
+    /* ---------- global styles ---------- */
+    node [
+        fontname = "Helvetica",
+        fontsize = 16,
+        shape    = box,
+        style    = "filled,rounded",
+        color    = "#333333",
+        penwidth = 1.5,
+        margin   = "0.25,0.15"
+    ];
+    edge [
+        fontname  = "Helvetica",
+        fontsize  = 14,
+        color     = "#555555",
+        penwidth  = 1.4,
+        arrowsize = 1.0
+    ];
+
+    /* =====================================================
+     *  INPUTS
+     * ===================================================== */
+    subgraph cluster_inputs {
+        label     = "INPUTS";
+        labelloc  = "t";
+        fontsize  = 18;
+        fontname  = "Helvetica-Bold";
+        color     = "#888888";
+        style     = "rounded";
+        bgcolor   = "#fafafa";
+        margin    = 14;
+
+        node [shape = parallelogram, fillcolor = "#fdd9b4",
+              margin = "0.10,0.06", height = 0.4, fixedsize = false];
+
+        in_genome   [label = "Genome\nFASTA", group = "spine"];
+        in_proteins [label = "Protein DB\nFASTA"];
+
+        { rank = same; in_genome; in_proteins; }
+    }
+
+    /* =====================================================
+     *  PROTEIN ALIGNMENT  (miniprot)
+     * ===================================================== */
+    miniprot [
+        label    = "Protein alignment\n(miniprot)\n\nminiprot · boundary scorer\nminiprothint",
+        fillcolor = "#c9daf8",
+        style     = "filled,rounded",
+        penwidth  = 1.6,
+        group     = "spine"
+    ];
+
+    /* =====================================================
+     *  EVIDENCE HINTS
+     * ===================================================== */
+    hints [
+        label    = "Protein-derived hints\n\nCDSpart (training genes)\nHC chains · LC multiplicity",
+        fillcolor = "#c9daf8",
+        shape     = box,
+        style     = "filled,rounded",
+        group     = "spine"
+    ];
+
+    /* =====================================================
+     *  AUGUSTUS  (training + prediction)
+     * ===================================================== */
+    augustus [
+        label    = "AUGUSTUS\ntraining + prediction\n\n(etraining · optimize ·\nhint-guided prediction)",
+        fillcolor = "#fff2cc",
+        style     = "filled,rounded",
+        penwidth  = 1.6,
+        group     = "spine"
+    ];
+
+    /* =====================================================
+     *  POSTPROCESSING
+     * ===================================================== */
+    postprocess [
+        label    = "Postprocessing\n\nfix in-frame stop codons\nfilter · normalize CDS\nDIAMOND filter · GFF3",
+        fillcolor = "#d0e0e3",
+        style     = "filled,rounded",
+        penwidth  = 1.6,
+        group     = "spine"
+    ];
+
+    /* =====================================================
+     *  QUALITY CONTROL
+     * ===================================================== */
+    qc [
+        label    = "Quality control\n\ncompleasm + BUSCO (optional)\nOMArk (optional)\ngffcompare (optional)",
+        fillcolor = "#cfbae1",
+        style     = "filled,rounded",
+        penwidth  = 1.4
+    ];
+
+    /* =====================================================
+     *  OUTPUTS
+     * ===================================================== */
+    subgraph cluster_outputs {
+        label     = "OUTPUTS";
+        labelloc  = "t";
+        fontsize  = 18;
+        fontname  = "Helvetica-Bold";
+        color     = "#888888";
+        style     = "rounded";
+        bgcolor   = "#fafafa";
+        margin    = 14;
+
+        node [shape = note, fillcolor = "#f4cccc"];
+
+        out_genes  [label = "galba.gtf · galba.gff3\ngalba.aa · galba.codingseq",
+                    group = "spine"];
+        out_report [label = "HTML report\n+ citations.bib\n+ software_versions.tsv"];
+
+        { rank = same; out_genes; out_report; }
+    }
+
+    /* =====================================================
+     *  EDGES
+     * ===================================================== */
+
+    /* Inputs → miniprot */
+    in_genome   -> miniprot [weight = 20];
+    in_proteins -> miniprot;
+
+    /* miniprot → hints + training genes */
+    miniprot -> hints [label = "hints", weight = 20];
+    miniprot -> augustus [label = "training\ngenes"];
+
+    /* hints → AUGUSTUS prediction */
+    hints -> augustus [style = "dashed", label = "hintsfile"];
+
+    /* AUGUSTUS → Postprocessing (spine) */
+    augustus -> postprocess [weight = 20];
+
+    /* Protein input → postprocessing (DIAMOND filter) */
+    in_proteins -> postprocess [style = "dashed", label = "DIAMOND\nfilter"];
+
+    /* Postprocessing → QC */
+    postprocess -> qc;
+
+    /* Outputs */
+    postprocess -> out_genes [weight = 20];
+    qc          -> out_report;
+
+    /* =====================================================
+     *  LEGEND
+     * ===================================================== */
+    subgraph cluster_legend {
+        label    = "LEGEND";
+        labelloc = "t";
+        fontsize = 18;
+        fontname = "Helvetica-Bold";
+        color    = "#888888";
+        style    = "rounded";
+        bgcolor  = "#ffffff";
+        margin   = 14;
+
+        node [shape = box, style = "filled,rounded", fontsize = 15, fillcolor = "#ffffff"];
+
+        leg_req [label = "required step"];
+        leg_opt [label = "optional step\n(user enables)",
+                 style = "filled,rounded,dashed"];
+        leg_in  [label = "input",  shape = parallelogram, fillcolor = "#fdd9b4"];
+        leg_out [label = "output", shape = note,          fillcolor = "#f4cccc"];
+
+        { rank = same; leg_req; leg_opt; leg_in; leg_out; }
+    }
+
+    /* Pin legend below outputs row */
+    out_genes  -> leg_req [style = invis, minlen = 2];
+    out_report -> leg_out [style = invis, minlen = 2];
+}

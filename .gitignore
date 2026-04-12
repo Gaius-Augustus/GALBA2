@@ -1,0 +1,44 @@
+# Pipeline output
+output/
+logs/
+benchmarks/
+
+# Snakemake internals
+.snakemake/
+
+# AUGUSTUS config (copied from container at runtime)
+augustus_config/
+
+# Singularity images and cache
+*.sif
+.singularity_cache/
+
+# Shared data (downloaded at runtime)
+shared_data/
+
+# Test results (local only)
+galba_reference_test/
+test_scenarios/*/output/
+test_scenarios/*/logs/
+test_scenarios/*/benchmarks/
+test_scenarios/*/augustus_config/
+test_scenarios/*/shared_data/
+test_scenarios/*/.snakemake/
+test_scenarios/*/.ncbi/
+
+# AGAT/BUSCO stray logs
+*.agat.log
+busco_*.log
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~

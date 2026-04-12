@@ -35,6 +35,13 @@ def _get_collect_inputs(wildcards):
     if types.get('has_reference_gtf'):
         inputs["gffcompare"] = f"output/{sample}/gffcompare/gffcompare.stats"
 
+    if config.get('run_fantasia', False):
+        inputs["fantasia_results"] = f"output/{sample}/fantasia/results.csv"
+        inputs["fantasia_summary"] = f"output/{sample}/fantasia/fantasia_summary.txt"
+        inputs["fantasia_plot"] = f"output/{sample}/fantasia/fantasia_go_categories.png"
+        inputs["fantasia_go_terms"] = f"output/{sample}/fantasia/fantasia_go_terms.tsv"
+        inputs["fantasia_go_gff3"] = f"output/{sample}/fantasia/galba.go.gff3"
+
     return inputs
 
 
@@ -136,6 +143,29 @@ rule collect_results:
             cp "$OUTDIR/gffcompare/gffcompare.stats" "$RESULTS/quality_control/" 2>/dev/null || true
         fi
 
+        # FANTASIA-Lite functional annotation
+        if [ -d "$OUTDIR/fantasia" ]; then
+            mkdir -p "$RESULTS/quality_control/fantasia"
+            for f in "$OUTDIR"/fantasia/results.csv \
+                     "$OUTDIR"/fantasia/fantasia_summary.txt \
+                     "$OUTDIR"/fantasia/fantasia_go_categories.png \
+                     "$OUTDIR"/fantasia/failed_sequences.csv; do
+                if [ -f "$f" ]; then
+                    cp "$f" "$RESULTS/quality_control/fantasia/"
+                fi
+            done
+            if [ -d "$OUTDIR/fantasia/topgo" ]; then
+                cp -r "$OUTDIR/fantasia/topgo" "$RESULTS/quality_control/fantasia/"
+            fi
+            for f in "$OUTDIR"/fantasia/galba.go.gff3 \
+                     "$OUTDIR"/fantasia/fantasia_go_terms.tsv; do
+                if [ -f "$f" ]; then
+                    cp "$f" "$RESULTS/"
+                fi
+            done
+            echo "[INFO] Collected FANTASIA-Lite functional annotation"
+        fi
+
         # --- Software versions ---
         if [ -f "$OUTDIR/software_versions.tsv" ]; then
             awk -F'\t' '!seen[$1]++' "$OUTDIR/software_versions.tsv" | sort -f > "$RESULTS/software_versions.tsv"
@@ -178,8 +208,10 @@ rule collect_results:
         # --- Gzip large result files ---
         echo "[INFO] Compressing result files..."
         for f in "$RESULTS"/galba.gtf "$RESULTS"/galba.gff3 \
+                 "$RESULTS"/galba.go.gff3 "$RESULTS"/fantasia_go_terms.tsv \
                  "$RESULTS"/galba.aa "$RESULTS"/galba.codingseq \
-                 "$RESULTS"/hintsfile.gff "$RESULTS"/genome.fa; do
+                 "$RESULTS"/hintsfile.gff "$RESULTS"/genome.fa \
+                 "$RESULTS"/quality_control/fantasia/results.csv; do
             if [ -f "$f" ]; then
                 gzip -f "$f"
             fi

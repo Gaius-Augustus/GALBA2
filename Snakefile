@@ -32,7 +32,7 @@ if not os.path.isfile(config_ini_path):
 config_parser.read(config_ini_path)
 
 # Overlay environment-variable overrides
-for section in ('PARAMS', 'SLURM_ARGS'):
+for section in ('PARAMS', 'SLURM_ARGS', 'fantasia'):
     if not config_parser.has_section(section):
         config_parser.add_section(section)
 
@@ -54,6 +54,17 @@ _env_overrides = {
     'GALBA2_DISABLE_DIAMOND_FILTER':         ('PARAMS', 'disable_diamond_filter'),
     'GALBA2_AUGUSTUS_CHUNKSIZE':              ('PARAMS', 'augustus_chunksize'),
     'GALBA2_AUGUSTUS_OVERLAP':                ('PARAMS', 'augustus_overlap'),
+    # FANTASIA-Lite (optional, GPU-only functional annotation)
+    'GALBA2_RUN_FANTASIA':                   ('fantasia', 'enable'),
+    'GALBA2_FANTASIA_SIF':                   ('fantasia', 'sif'),
+    'GALBA2_FANTASIA_HF_CACHE':              ('fantasia', 'hf_cache_dir'),
+    'GALBA2_FANTASIA_PARTITION':             ('fantasia', 'partition'),
+    'GALBA2_FANTASIA_GPUS':                  ('fantasia', 'gpus'),
+    'GALBA2_FANTASIA_MEM_MB':                ('fantasia', 'mem_mb'),
+    'GALBA2_FANTASIA_CPUS':                  ('fantasia', 'cpus_per_task'),
+    'GALBA2_FANTASIA_MAX_RUNTIME':           ('fantasia', 'max_runtime'),
+    'GALBA2_FANTASIA_MIN_SCORE':             ('fantasia', 'min_score'),
+    'GALBA2_FANTASIA_ADDITIONAL_PARAMS':     ('fantasia', 'additional_params'),
 }
 for _env_name, (_section, _key) in _env_overrides.items():
     if _env_name in os.environ:
@@ -119,6 +130,25 @@ config['augustus_chunksize'] = config_parser.getint(
 config['augustus_overlap'] = config_parser.getint(
     'PARAMS', 'augustus_overlap', fallback=500000
 )
+
+# FANTASIA-Lite functional annotation (optional, GPU-only).
+config['run_fantasia'] = config_parser.getboolean(
+    'fantasia', 'enable', fallback=False
+)
+config['fantasia'] = {
+    'sif':              config_parser.get('fantasia', 'sif', fallback=''),
+    'hf_cache_dir':     config_parser.get('fantasia', 'hf_cache_dir', fallback=''),
+    'additional_params': config_parser.get('fantasia', 'additional_params', fallback=''),
+    'min_score':        config_parser.get('fantasia', 'min_score', fallback='0.5'),
+    'partition':        config_parser.get('fantasia', 'partition', fallback=''),
+    'gpus':             config_parser.get('fantasia', 'gpus', fallback='1'),
+    'mem_mb':           config_parser.get('fantasia', 'mem_mb',
+                                          fallback=str(config['slurm_args']['mem_of_node'])),
+    'cpus_per_task':    config_parser.get('fantasia', 'cpus_per_task',
+                                          fallback=str(config['slurm_args']['cpus_per_task'])),
+    'max_runtime':      config_parser.get('fantasia', 'max_runtime',
+                                          fallback=str(config['slurm_args']['max_runtime'])),
+}
 
 config['username'] = os.environ.get("USER", "unknown")
 script_dir = os.path.join(os.path.dirname(workflow.main_snakefile), "scripts")
@@ -217,6 +247,8 @@ print("  ✓ AUGUSTUS training on protein-derived genes")
 print("  ✓ AUGUSTUS prediction with protein hints")
 if not config.get('disable_diamond_filter', False):
     print("  ✓ DIAMOND filtering of predictions against input proteins")
+if config.get('run_fantasia', False):
+    print("  ✓ FANTASIA-Lite functional annotation (GPU)")
 if GLOBAL_DATA_TYPES['has_reference_gtf']:
     print("  ✓ gffcompare evaluation against reference annotation")
 print()
@@ -266,6 +298,10 @@ if config.get('run_omark', False):
     include: "rules/quality_control/run_omark.smk"
 if GLOBAL_DATA_TYPES['has_reference_gtf']:
     include: "rules/quality_control/run_gffcompare.smk"
+
+# FANTASIA-Lite functional annotation (optional, GPU-only)
+if config.get('run_fantasia', False):
+    include: "rules/postprocessing/run_fantasia.smk"
 
 # Results collection
 include: "rules/postprocessing/collect_results.smk"

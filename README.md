@@ -120,7 +120,7 @@ GALBA is particularly useful for:
 -   **Species with high-quality protein databases** (e.g. from OrthoDB) but no transcriptome evidence.
 
 <p align="center">
-  <img src="img/pipeline_overview.svg" alt="GALBA2 pipeline overview" width="85%">
+  <img src="img/pipeline_overview.png" alt="GALBA2 pipeline overview" width="85%">
   <br>
   <em>Figure&nbsp;1. Overview of the GALBA2 pipeline. Solid borders mark required steps; dashed borders mark optional steps. Miniprot aligns proteins to the genome, miniprothint extracts training genes and hints, AUGUSTUS is trained and predicts genes with protein evidence.</em>
 </p>
@@ -414,18 +414,14 @@ Before reporting a bug, please check:
 Citing GALBA2 and software called by GALBA2
 =============================================
 
-If you use GALBA2, please cite:
+Since GALBA2 is a pipeline that calls many bioinformatics tools, publication of results requires citing the tools that were actually used. **The HTML report (`galba_report.html`) automatically generates a complete, run-specific citation list and BibTeX file.** Use these for your publication — they include only the tools that were relevant to your particular run configuration.
 
--   Hoff, K. J. (2026). GALBA2: a Snakemake pipeline for protein homology based genome annotation. *In preparation.*
--   Hoff, K. J., Bruna, T., Lomsadze, A., Borodovsky, M., & Stanke, M. (2023). A pipeline for automated gene prediction for novel species using protein homology. *NAR Genomics and Bioinformatics*, 5(3), lqad064. doi:10.1093/nargab/lqad064
+The report and BibTeX file are located in:
 
-Software called by GALBA2:
-
--   Li, H. (2023). Protein-to-genome alignment with miniprot. *Bioinformatics*, 39(1), btad014. doi:10.1093/bioinformatics/btad014
--   Stanke, M., Diekhans, M., Baertsch, R., & Haussler, D. (2008). Using native and syntenically mapped cDNA alignments to improve de novo gene finding. *Bioinformatics*, 24(5), 637-644. doi:10.1093/bioinformatics/btn013
--   Buchfink, B., Reuter, K., & Drost, H.-G. (2021). Sensitive protein alignments at tree-of-life scale using DIAMOND. *Nature Methods*, 18, 366-368. doi:10.1038/s41592-021-01101-x
--   Huang, N., & Li, H. (2023). compleasm: a faster and more accurate reimplementation of BUSCO. *Bioinformatics*, 39(10), btad595. doi:10.1093/bioinformatics/btad595
--   Mölder, F., et al. (2021). Sustainable data analysis with Snakemake. *F1000Research*, 10, 33. doi:10.12688/f1000research.29032.2
+```
+output/{sample_name}/results/galba_report.html
+output/{sample_name}/results/galba_citations.bib
+```
 
 Usage of AI
 ===========

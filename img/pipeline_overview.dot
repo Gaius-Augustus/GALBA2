@@ -62,6 +62,16 @@ digraph GALBA2 {
     }
 
     /* =====================================================
+     *  PREPROCESSING (optional repeat masking)
+     * ===================================================== */
+    masking [
+        label    = "Repeat masking\n(RepeatModeler2 +\nRepeatMasker)",
+        fillcolor = "#d9ead3",
+        style     = "filled,rounded,dashed",
+        penwidth  = 1.4
+    ];
+
+    /* =====================================================
      *  PROTEIN ALIGNMENT  (miniprot)
      * ===================================================== */
     miniprot [
@@ -106,6 +116,26 @@ digraph GALBA2 {
     ];
 
     /* =====================================================
+     *  NON-CODING RNA  (optional, single box)
+     * ===================================================== */
+    ncrna [
+        label    = "ncRNA annotation  (optional)\n\nbarrnap · tRNAscan-SE\nInfernal + Rfam",
+        fillcolor = "#e6d5f0",
+        style     = "filled,rounded,dashed",
+        penwidth  = 1.4
+    ];
+
+    /* =====================================================
+     *  FUNCTIONAL ANNOTATION  (optional, GPU-only)
+     * ===================================================== */
+    fantasia [
+        label    = "Functional annotation  (optional)\n\nFANTASIA-Lite\nProtT5 embeddings → GO terms\n(GPU only)",
+        fillcolor = "#a2c4c9",
+        style     = "filled,rounded,dashed",
+        penwidth  = 1.4
+    ];
+
+    /* =====================================================
      *  QUALITY CONTROL
      * ===================================================== */
     qc [
@@ -130,19 +160,27 @@ digraph GALBA2 {
 
         node [shape = note, fillcolor = "#f4cccc"];
 
-        out_genes  [label = "galba.gtf · galba.gff3\ngalba.aa · galba.codingseq",
-                    group = "spine"];
-        out_report [label = "HTML report\n+ citations.bib\n+ software_versions.tsv"];
+        out_genes    [label = "galba.gtf · galba.gff3\ngalba.aa · galba.codingseq",
+                      group = "spine"];
+        out_ncrna    [label = "galba_with_ncRNA.gff3",
+                      style = "filled,dashed"];
+        out_fantasia [label = "galba.go.gff3\nfantasia_go_terms.tsv",
+                      style = "filled,dashed"];
+        out_report   [label = "HTML report\n+ citations.bib\n+ software_versions.tsv"];
 
-        { rank = same; out_genes; out_report; }
+        { rank = same; out_genes; out_ncrna; out_fantasia; out_report; }
     }
 
     /* =====================================================
      *  EDGES
      * ===================================================== */
 
-    /* Inputs → miniprot */
+    /* Inputs → masking (optional) */
+    in_genome -> masking [style = "dashed", label = "if unmasked"];
+
+    /* Inputs / masking → miniprot */
     in_genome   -> miniprot [weight = 20];
+    masking     -> miniprot [style = "dashed"];
     in_proteins -> miniprot;
 
     /* miniprot → hints + training genes */
@@ -158,11 +196,19 @@ digraph GALBA2 {
     /* Protein input → postprocessing (DIAMOND filter) */
     in_proteins -> postprocess [style = "dashed", label = "DIAMOND\nfilter"];
 
+    /* Postprocessing → ncRNA (optional) */
+    postprocess -> ncrna [style = "dashed"];
+
+    /* Postprocessing → FANTASIA (optional) */
+    postprocess -> fantasia [style = "dashed"];
+
     /* Postprocessing → QC */
     postprocess -> qc;
 
     /* Outputs */
-    postprocess -> out_genes [weight = 20];
+    postprocess -> out_genes    [weight = 20];
+    ncrna       -> out_ncrna    [style = "dashed"];
+    fantasia    -> out_fantasia [style = "dashed"];
     qc          -> out_report;
 
     /* =====================================================
@@ -190,6 +236,8 @@ digraph GALBA2 {
     }
 
     /* Pin legend below outputs row */
-    out_genes  -> leg_req [style = invis, minlen = 2];
-    out_report -> leg_out [style = invis, minlen = 2];
+    out_genes    -> leg_req [style = invis, minlen = 2];
+    out_ncrna    -> leg_opt [style = invis, minlen = 2];
+    out_fantasia -> leg_in  [style = invis, minlen = 2];
+    out_report   -> leg_out [style = invis, minlen = 2];
 }

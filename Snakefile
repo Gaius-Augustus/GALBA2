@@ -10,7 +10,7 @@ Version: 0.1.0-beta
 """
 
 __author__ = "Katharina J. Hoff"
-__version__ = "0.1.0-beta"
+__version__ = "0.2.0-beta"
 
 import pandas as pd
 import configparser
@@ -55,6 +55,7 @@ _env_overrides = {
     'GALBA2_DISABLE_DIAMOND_FILTER':         ('PARAMS', 'disable_diamond_filter'),
     'GALBA2_AUGUSTUS_CHUNKSIZE':              ('PARAMS', 'augustus_chunksize'),
     'GALBA2_AUGUSTUS_OVERLAP':                ('PARAMS', 'augustus_overlap'),
+    'GALBA2_RUN_NCRNA':                      ('PARAMS', 'run_ncrna'),
     # FANTASIA-Lite (optional, GPU-only functional annotation)
     'GALBA2_RUN_FANTASIA':                   ('fantasia', 'enable'),
     'GALBA2_FANTASIA_SIF':                   ('fantasia', 'sif'),
@@ -132,6 +133,10 @@ config['augustus_overlap'] = config_parser.getint(
     'PARAMS', 'augustus_overlap', fallback=500000
 )
 
+config['run_ncrna'] = config_parser.getboolean(
+    'PARAMS', 'run_ncrna', fallback=False
+)
+
 # FANTASIA-Lite functional annotation (optional, GPU-only).
 config['run_fantasia'] = config_parser.getboolean(
     'fantasia', 'enable', fallback=False
@@ -205,6 +210,10 @@ def _find_omamer_db():
     return os.path.join(_shared_data, 'LUCA.h5')
 
 config['omamer_db'] = _find_omamer_db()
+config['rfam_path'] = os.path.abspath(
+    config_parser.get('paths', 'rfam_path',
+                      fallback=os.path.join(_shared_data, 'rfam'))
+)
 
 # Path to the GALBA extrinsic config file bundled with the pipeline
 config['galba_cfg_path'] = os.path.join(
@@ -248,6 +257,8 @@ print("  ✓ AUGUSTUS training on protein-derived genes")
 print("  ✓ AUGUSTUS prediction with protein hints")
 if not config.get('disable_diamond_filter', False):
     print("  ✓ DIAMOND filtering of predictions against input proteins")
+if config.get('run_ncrna', False):
+    print("  ✓ ncRNA annotation (barrnap, tRNAscan-SE, Infernal/Rfam)")
 if config.get('run_fantasia', False):
     print("  ✓ FANTASIA-Lite functional annotation (GPU)")
 if GLOBAL_DATA_TYPES['has_reference_gtf']:
@@ -299,6 +310,13 @@ if config.get('run_omark', False):
     include: "rules/quality_control/run_omark.smk"
 if GLOBAL_DATA_TYPES['has_reference_gtf']:
     include: "rules/quality_control/run_gffcompare.smk"
+
+# ncRNA annotation (optional)
+RUN_NCRNA = config.get('run_ncrna', False)
+if RUN_NCRNA:
+    include: "rules/ncrna/run_barrnap.smk"
+    include: "rules/ncrna/run_trnascan.smk"
+    include: "rules/ncrna/run_infernal.smk"
 
 # FANTASIA-Lite functional annotation (optional, GPU-only)
 if config.get('run_fantasia', False):

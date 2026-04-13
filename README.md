@@ -62,6 +62,8 @@ Key differences:
 
 -   **Integrated postprocessing and quality control.** GFF3 conversion (AGAT), DIAMOND filtering against input proteins, BUSCO/compleasm completeness assessment, and optional evaluation against a reference annotation (gffcompare) are included.
 
+-   **Optional non-coding RNA prediction.** When `run_ncrna = 1` is set in `config.ini`, GALBA2 predicts rRNAs with barrnap, tRNAs with tRNAscan-SE, and non-coding RNA families (snoRNA, snRNA, miRNA, ribozymes) with Infernal against Rfam. All predictions are merged into `galba_with_ncRNA.gff3`.
+
 Benchmark accuracy vs native galba.pl
 ======================================
 
@@ -209,13 +211,17 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 | AGAT | `quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0` | 370 MB | GTF-to-GFF3 conversion |
 | TE Tools | `dfam/tetools:latest` | 727 MB | RepeatModeler2 + RepeatMasker (only when genome masking is needed) |
 | BUSCO | `ezlabgva/busco:v6.0.0_cv1` | 801 MB | BUSCO completeness assessment (optional) |
+| barrnap | `quay.io/biocontainers/barrnap:0.9--hdfd78af_4` | 68 MB | rRNA prediction (only when `run_ncrna = 1`) |
+| tRNAscan-SE | `quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0` | 32 MB | tRNA prediction (only when `run_ncrna = 1`) |
+| Infernal | `quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2` | 28 MB | Rfam scan for snoRNA/snRNA/miRNA (only when `run_ncrna = 1`) |
 | OMArk | `quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0` | 455 MB | OMArk proteome quality assessment (optional, only when `run_omark = 1`) |
 | gffcompare | `quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1` | 11 MB | Evaluation against a reference annotation (optional) |
 | FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v0.0.2` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional, **GPU-only**) |
 
 A standard GALBA2 run (no masking, no BUSCO) pulls only the GALBA2 tools + AUGUSTUS + AGAT containers: **~730 MB** total.
 
-**Singularity bind paths:** Singularity containers can only see directories that are explicitly bound. GALBA2 passes `--singularity-args "-B /home"` by default. If your data resides outside `/home` (e.g. in `/scratch`, `/data`, or `/gpfs`), you must add those paths:
+**Singularity bind paths:** Singularity containers can only see directories tha
+t are explicitly bound. GALBA2 passes `--singularity-args "-B /home"` by default. If your data resides outside `/home` (e.g. in `/scratch`, `/data`, or `/gpfs`), you must add those paths:
 
 ```
 --singularity-args "-B /home -B /scratch -B /data"
@@ -283,7 +289,8 @@ skip_optimize_augustus = 0          # set to 1 to skip AUGUSTUS optimization (sa
 disable_diamond_filter = 0         # set to 1 to skip DIAMOND filtering of predictions
 skip_busco = 0                     # set to 1 to skip the BUSCO pipeline
 run_omark = 0                      # set to 1 to run OMArk (requires LUCA.h5 database)
-translation_table = 1              # genetic code table (1=standard)
+run_ncrna = 0                      # set to 1 to annotate ncRNAs (rRNA, tRNA, snoRNA, miRNA)
+translation_table = 1              # only table 1 (standard code) is currently supported
 allow_hinted_splicesites = gcag,atac # non-canonical splice sites for AUGUSTUS
 augustus_chunksize = 3000000        # genome chunk size (bp) for parallel AUGUSTUS prediction
 augustus_overlap = 500000           # overlap (bp) between adjacent AUGUSTUS chunks
@@ -338,8 +345,9 @@ Description of selected configuration options
 | `disable_diamond_filter` | 0 | Skip DIAMOND filtering of AUGUSTUS predictions against input proteins. The filter removes gene predictions that have no sequence similarity match in the protein database. Disabling produces more genes but also more false positives. |
 | `skip_busco` | 0 | Skip the BUSCO completeness assessment (slow). compleasm still runs. |
 | `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~8.8 GB). Download with `bash scripts/download_data.sh --omark`. |
+| `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (barrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |
 | `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container and ProtT5 cache). See `[fantasia]` section in `config.ini`. |
-| `translation_table` | 1 | NCBI genetic code table. Table 1 is the standard code. |
+| `translation_table` | 1 | NCBI genetic code table. **Currently only table 1 (standard code) is supported** because miniprot does not support alternative genetic codes. Support for additional tables is planned for a future release. |
 | `no_cleanup` | 0 | Keep all intermediate files. Useful for debugging. |
 | `use_dev_shm` | 0 | Use `/dev/shm` for temporary files during AUGUSTUS prediction (faster I/O on nodes with large RAM). |
 
@@ -371,6 +379,8 @@ GALBA2 collects all important output files in `output/{sample}/results/`:
 | `galba.gff3.gz` | Gene predictions in GFF3 format |
 | `galba.aa.gz` | Predicted protein sequences |
 | `galba.codingseq.gz` | Predicted coding sequences |
+| `galba_with_ncRNA.gff3.gz` | Gene predictions + ncRNA annotations (only when `run_ncrna = 1`) |
+| `galba.go.gff3.gz` | GO-term decorated GFF3 (only when `run_fantasia = 1`) |
 | `hintsfile.gff.gz` | Protein-derived hints used for prediction |
 | `galba_report.html` | Pipeline report with statistics |
 | `galba_citations.bib` | BibTeX citations for tools used |

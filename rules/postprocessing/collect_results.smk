@@ -35,6 +35,11 @@ def _get_collect_inputs(wildcards):
     if types.get('has_reference_gtf'):
         inputs["gffcompare"] = f"output/{sample}/gffcompare/gffcompare.stats"
 
+    if config.get('run_ncrna', False):
+        inputs["gff3_ncrna"] = f"output/{sample}/galba_with_ncRNA.gff3"
+        inputs["trna"] = f"output/{sample}/ncrna/tRNAs.gff3"
+        inputs["infernal"] = f"output/{sample}/ncrna/ncRNAs_infernal.gff3"
+
     if config.get('run_fantasia', False):
         inputs["fantasia_results"] = f"output/{sample}/fantasia/results.csv"
         inputs["fantasia_summary"] = f"output/{sample}/fantasia/fantasia_summary.txt"
@@ -143,6 +148,21 @@ rule collect_results:
             cp "$OUTDIR/gffcompare/gffcompare.stats" "$RESULTS/quality_control/" 2>/dev/null || true
         fi
 
+        # ncRNA annotations (if run_ncrna=1)
+        if [ -d "$OUTDIR/ncrna" ]; then
+            mkdir -p "$RESULTS/ncrna"
+            for f in "$OUTDIR"/ncrna/tRNAs.gff3 "$OUTDIR"/ncrna/ncRNAs_infernal.gff3 \
+                     "$OUTDIR"/ncrna/tRNAs.txt "$OUTDIR"/ncrna/infernal.tblout; do
+                if [ -f "$f" ]; then
+                    cp "$f" "$RESULTS/ncrna/"
+                fi
+            done
+            echo "[INFO] Collected ncRNA annotations"
+        fi
+        if [ -f "$OUTDIR/galba_with_ncRNA.gff3" ]; then
+            cp "$OUTDIR/galba_with_ncRNA.gff3" "$RESULTS/"
+        fi
+
         # FANTASIA-Lite functional annotation
         if [ -d "$OUTDIR/fantasia" ]; then
             mkdir -p "$RESULTS/quality_control/fantasia"
@@ -208,6 +228,7 @@ rule collect_results:
         # --- Gzip large result files ---
         echo "[INFO] Compressing result files..."
         for f in "$RESULTS"/galba.gtf "$RESULTS"/galba.gff3 \
+                 "$RESULTS"/galba_with_ncRNA.gff3 \
                  "$RESULTS"/galba.go.gff3 "$RESULTS"/fantasia_go_terms.tsv \
                  "$RESULTS"/galba.aa "$RESULTS"/galba.codingseq \
                  "$RESULTS"/hintsfile.gff "$RESULTS"/genome.fa \

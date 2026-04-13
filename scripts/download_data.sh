@@ -142,6 +142,47 @@ fi
 echo ""
 
 # ============================================================================
+# Rfam database for Infernal ncRNA annotation (run_ncrna=1)
+# ============================================================================
+RFAM_DIR="$SHARED_DATA_DIR/rfam"
+RFAM_CM="$RFAM_DIR/Rfam.cm"
+RFAM_CLANIN="$RFAM_DIR/Rfam.clanin"
+
+# Check sibling repos first
+if [ ! -f "$RFAM_CM" ]; then
+    PARENT_DIR="$(dirname "$REPO_DIR")"
+    for sibling in BRAKER4 BRAKER-as-snakemake; do
+        SIBLING_RFAM="$PARENT_DIR/$sibling/shared_data/rfam/Rfam.cm"
+        if [ -f "$SIBLING_RFAM" ]; then
+            echo "Found Rfam in sibling $sibling repo: $(dirname $SIBLING_RFAM)"
+            mkdir -p "$RFAM_DIR"
+            ln -sf "$SIBLING_RFAM" "$RFAM_CM"
+            SIBLING_CLANIN="$(dirname $SIBLING_RFAM)/Rfam.clanin"
+            [ -f "$SIBLING_CLANIN" ] && ln -sf "$SIBLING_CLANIN" "$RFAM_CLANIN"
+            echo "  Created symlinks"
+            break
+        fi
+    done
+fi
+
+if [ ! -f "$RFAM_CM" ] && [ ! -L "$RFAM_CM" ]; then
+    mkdir -p "$RFAM_DIR"
+    echo "Downloading Rfam covariance models (~30 MB)..."
+    wget -q "https://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/Rfam.cm.gz" -O "$RFAM_CM.gz"
+    gunzip "$RFAM_CM.gz"
+    echo "  Downloaded: $RFAM_CM ($(du -h "$RFAM_CM" | cut -f1))"
+    if [ ! -f "$RFAM_CLANIN" ]; then
+        echo "Downloading Rfam clan info..."
+        wget -q "https://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/Rfam.clanin" -O "$RFAM_CLANIN"
+        echo "  Downloaded: $RFAM_CLANIN"
+    fi
+    echo "  Note: cmpress will run inside the Infernal container at pipeline time."
+else
+    echo "Rfam database: $RFAM_DIR/ ($(du -sh "$RFAM_DIR" 2>/dev/null | cut -f1))"
+fi
+echo ""
+
+# ============================================================================
 # OMAmer LUCA.h5 database (optional, ~15 GB; only for run_omark=1)
 # ============================================================================
 if [ "$DOWNLOAD_OMARK" = "1" ]; then

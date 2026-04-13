@@ -171,6 +171,7 @@ AUGUSTUS_CONTAINER = config.get("augustus_image", "docker://quay.io/biocontainer
 # Alias for rules that haven't been migrated yet
 GALBA_CONTAINER = config.get("galba_image", "docker://katharinahoff/galba-notebook:latest")
 GFFCOMPARE_CONTAINER = config.get("gffcompare_image", "docker://quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1")
+BARRNAP_CONTAINER = config.get("barrnap_image", "docker://quay.io/biocontainers/barrnap:0.9--hdfd78af_4")
 AGAT_CONTAINER = config.get("agat_image", "docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0")
 BUSCO_CONTAINER = config.get("busco_image", "docker://ezlabgva/busco:v6.0.0_cv1")
 OMARK_CONTAINER = config.get("omark_image", "docker://quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0")

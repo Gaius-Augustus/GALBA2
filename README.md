@@ -410,6 +410,16 @@ Software called by GALBA2:
 -   Huang, N., & Li, H. (2023). compleasm: a faster and more accurate reimplementation of BUSCO. *Bioinformatics*, 39(10), btad595. doi:10.1093/bioinformatics/btad595
 -   Mölder, F., et al. (2021). Sustainable data analysis with Snakemake. *F1000Research*, 10, 33. doi:10.12688/f1000research.29032.2
 
+Usage of AI
+===========
+
+The development of GALBA2 was assisted by AI tools:
+
+-   **Claude** (Anthropic) was used for code generation and pipeline architecture. Most Snakemake rules, helper scripts, and the overall workflow design were developed in collaboration with Claude.
+-   **Gemini** (Google) was used to generate the GALBA2 logo.
+
+All AI-generated code was reviewed and tested by the authors. The pipeline was validated end-to-end on test data and the *A. thaliana* benchmark genome.
+
 License
 =======
 

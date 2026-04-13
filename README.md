@@ -330,11 +330,14 @@ Description of selected configuration options
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `skip_optimize_augustus` | 0 | Skip `optimize_augustus.pl`. Saves ~30 min on small genomes, ~hours on large genomes. Do not enable for production runs. |
-| `disable_diamond_filter` | 0 | Skip DIAMOND filtering of AUGUSTUS predictions against input proteins. The filter removes predictions with no protein database match. |
+| `skip_optimize_augustus` | 0 | Skip `optimize_augustus.pl`. Saves hours on large genomes. **Do not enable for production runs** — optimization improves accuracy. |
+| `disable_diamond_filter` | 0 | Skip DIAMOND filtering of AUGUSTUS predictions against input proteins. The filter removes gene predictions that have no sequence similarity match in the protein database. Disabling produces more genes but also more false positives. |
+| `skip_busco` | 0 | Skip the BUSCO completeness assessment (slow). compleasm still runs. |
+| `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~8.8 GB). Download with `bash scripts/download_data.sh --omark`. |
+| `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container and ProtT5 cache). See `[fantasia]` section in `config.ini`. |
 | `translation_table` | 1 | NCBI genetic code table. Table 1 is the standard code. |
 | `no_cleanup` | 0 | Keep all intermediate files. Useful for debugging. |
-| `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~15 GB). |
+| `use_dev_shm` | 0 | Use `/dev/shm` for temporary files during AUGUSTUS prediction (faster I/O on nodes with large RAM). |
 
 ### Downloading shared databases
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GALBA2 Report &mdash; athaliana_ep</title>
+<style>
+body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #333; }
+h1 { color: #2c5f2d; border-bottom: 2px solid #2c5f2d; padding-bottom: 10px; }
+h2 { color: #3a7d44; margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #f0f7f0; }
+.stat { font-size: 1.2em; font-weight: bold; color: #2c5f2d; }
+pre { background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 0.9em; }
+.section { margin: 20px 0; padding: 15px; background: #fafafa; border-radius: 5px; }
+</style>
+</head>
+<body>
+<h1>GALBA2 Report</h1>
+<p>Sample: <strong>athaliana_ep</strong></p>
+<p>Pipeline: GALBA2 &mdash; protein homology based genome annotation</p>
+
+<h2>Gene Prediction Summary</h2>
+<table>
+<tr><th>Metric</th><th>Count</th></tr>
+<tr><td>Genes</td><td class="stat">30796</td></tr>
+<tr><td>Transcripts</td><td>32295</td></tr>
+<tr><td>CDS features</td><td>159732</td></tr>
+<tr><td>Exon features</td><td>159732</td></tr>
+<tr><td>Protein sequences</td><td>32295</td></tr>
+<tr><td>Coding sequences</td><td>32295</td></tr>
+</table>
+
+<h2>Training Statistics</h2>
+<div class="section">
+<p>Etraining gene filtering: 26192 -> 8000 (removed: 14123, retained: 8000)</p>
+<p>DIAMOND redundancy removal: 8000 -> 7824</p>
+</div>
+
+<h2>Completeness Assessment</h2>
+<h3>Genome (compleasm)</h3>
+<pre>## lineage: brassicales_odb12
+S:99.28%, 4280
+D:0.70%, 30
+F:0.02%, 1
+I:0.00%, 0
+M:0.00%, 0
+N:4311
+</pre>
+<h3>Predicted Proteins (compleasm)</h3>
+<pre>## lineage: brassicales_odb12
+S:83.58%, 3603
+D:15.66%, 675
+F:0.28%, 12
+M:0.49%, 21
+N:4311
+</pre>
+
+<h2>Software Versions</h2>
+<pre>compleasm	0.2.7
+miniprot	0.12-r237
+GALBA2 pipeline	0.1.0-beta
+Snakemake	8.18.2
+miniprot	0.12-r237
+BUSCO	BUSCO 6.0.0
+compleasm	0.2.7
+miniprot	0.12-r237
+DIAMOND	2.1.13
+AUGUSTUS	3.5.0 (commit )
+gffcompare	gffcompare v0.12.6
+AGAT	v1.4.1
+OMArk	
+OMAmer	2.1.2
+</pre>
+
+<h2>Citations</h2>
+<pre>Huang, N., & Li, H. (2023). compleasm: a faster and more accurate reimplementation of BUSCO. Bioinformatics, 39(10), btad595. doi:10.1093/bioinformatics/btad595
+Li, H. (2023). Protein-to-genome alignment with miniprot. Bioinformatics, 39(1), btad014. doi:10.1093/bioinformatics/btad014
+Hoff, K. J. (2026). GALBA2: a Snakemake pipeline for protein homology based genome annotation. In preparation.
+Hoff, K. J., Bruna, T., Lomsadze, A., Borodovsky, M., & Stanke, M. (2023). A pipeline for automated gene prediction for novel species using protein homology. NAR Genomics and Bioinformatics, 5(3), lqad064. doi:10.1093/nargab/lqad064
+Molder, F., et al. (2021). Sustainable data analysis with Snakemake. F1000Research, 10, 33. doi:10.12688/f1000research.29032.2
+Bruna, T., & Li, H. (2021). miniprothint. https://github.com/tomasbruna/miniprothint
+Buchfink, B., Reuter, K., & Drost, H.-G. (2021). Sensitive protein alignments at tree-of-life scale using DIAMOND. Nature Methods, 18, 366-368. doi:10.1038/s41592-021-01101-x
+Stanke, M., Diekhans, M., Baertsch, R., & Haussler, D. (2008). Using native and syntenically mapped cDNA alignments to improve de novo gene finding. Bioinformatics, 24(5), 637-644. doi:10.1093/bioinformatics/btn013
+Pertea, G., & Pertea, M. (2020). GFF Utilities: GffRead and GffCompare. F1000Research, 9, 304. doi:10.12688/f1000research.23297.2
+Manni, M., Berkeley, M. R., Seppey, M., Simao, F. A., & Zdobnov, E. M. (2021). BUSCO Update: Novel and Streamlined Workflows along with Broader and Deeper Phylogenetic Coverage for Scoring of Eukaryotic, Prokaryotic, and Viral Genomes. Molecular Biology and Evolution, 38(10), 4647-4654. doi:10.1093/molbev/msab199
+Dainat, J. (2024). AGAT: Another Gff Analysis Toolkit. doi:10.5281/zenodo.3552717
+Nevers, Y., Warwick Vesztrocy, A., Rossier, V., et al. (2025). Quality assessment of gene repertoire annotations with OMArk. Nature Biotechnology, 43, 124-133. doi:10.1038/s41587-024-02147-w
+Rossier, V., Warwick Vesztrocy, A., Robinson-Rechavi, M., & Dessimoz, C. (2021). OMAmer: tree-driven and alignment-free protein assignment to subfamilies outperforms closest sequence approaches. Bioinformatics, 37(18), 2866-2873. doi:10.1093/bioinformatics/btab219
+Martínez-Redondo, G. I., Perez-Canales, F. M., Carbonetto, B., Fernández, J. M., Barrios-Núñez, I., Vázquez-Valls, M., Cases, I., Rojas, A. M., & Fernández, R. (2025). FANTASIA leverages language models to decode the functional dark proteome across the animal tree of life. Communications Biology, 8, 1227. doi:10.1038/s42003-025-08651-2
+Cases, I., Martínez-Redondo, G. I., Fernández, R., & Rojas, A. M. (2025). Functional Annotation of Proteomes Using Protein Language Models: A High-Throughput Implementation of the ProtTrans Model. Methods in Molecular Biology. doi:10.1007/978-1-0716-4623-6_8
+</pre>
+
+<h2>Output Files</h2>
+<ul>
+<li><code>galba.gtf</code> &mdash; Gene predictions in GTF format</li>
+<li><code>galba.gff3</code> &mdash; Gene predictions in GFF3 format</li>
+<li><code>galba.aa</code> &mdash; Protein sequences</li>
+<li><code>galba.codingseq</code> &mdash; Coding sequences</li>
+<li><code>hintsfile.gff</code> &mdash; Protein-derived hints used for prediction</li>
+</ul>
+
+<p><em>Generated by GALBA2</em></p>
+</body>
+</html>

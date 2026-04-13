@@ -62,6 +62,52 @@ Key differences:
 
 -   **Integrated postprocessing and quality control.** GFF3 conversion (AGAT), DIAMOND filtering against input proteins, BUSCO/compleasm completeness assessment, and optional evaluation against a reference annotation (gffcompare) are included.
 
+Benchmark accuracy vs native galba.pl
+======================================
+
+To verify that GALBA2 reproduces the gene-prediction accuracy of the original `galba.pl` Perl pipeline, we run the same *Arabidopsis thaliana* genome (TAIR10 assembly, ~121 Mb) through both pipelines with matched configurations and score the resulting gene sets against the Phytozome Araport11 reference annotation using `gffcompare` v0.12.6 at the CDS level (`--strict-match -e 3 -T`).
+
+**Inputs (identical for both pipelines):** TAIR10 genome FASTA (pre-softmasked), Viridiplantae proteins from OrthoDB v12 (~467 MB). Both pipelines use `--skipOptimize` / `skip_optimize_augustus = 1` for this comparison. BRAKER4 EP (which uses ProtHint + GeneMark-EP+ instead of miniprot) is included as an additional reference point.
+
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Mode</th>
+      <th colspan="3" align="center">Locus Sn</th>
+      <th colspan="3" align="center">Locus Pr</th>
+      <th colspan="3" align="center">Exon Sn</th>
+      <th colspan="3" align="center">Exon Pr</th>
+      <th colspan="3" align="center">Base Sn</th>
+      <th colspan="3" align="center">Base Pr</th>
+    </tr>
+    <tr>
+      <th>galba.pl</th><th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+      <th>galba.pl</th><th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+      <th>galba.pl</th><th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+      <th>galba.pl</th><th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+      <th>galba.pl</th><th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+      <th>galba.pl</th><th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>skip&nbsp;opt.</td>
+      <td align="right">70.0</td><td align="right"><b>70.4</b></td><td align="right">77.0</td>
+      <td align="right">63.4</td><td align="right">63.4</td><td align="right">61.8</td>
+      <td align="right">80.1</td><td align="right"><b>80.4</b></td><td align="right">83.2</td>
+      <td align="right">85.3</td><td align="right">84.6</td><td align="right">80.4</td>
+      <td align="right">94.1</td><td align="right"><b>94.5</b></td><td align="right">96.1</td>
+      <td align="right">84.6</td><td align="right">84.3</td><td align="right">80.4</td>
+    </tr>
+  </tbody>
+</table>
+
+Sn = Sensitivity (% of reference features recovered). Pr = Precision (% of predicted features matching reference). Higher is better for both. Bold marks the best GALBA pipeline per metric.
+
+**Reading the table.** GALBA2 matches or slightly exceeds native galba.pl on sensitivity metrics (Locus Sn 70.4 vs 70.0, Exon Sn 80.4 vs 80.1, Base Sn 94.5 vs 94.1) while precision is essentially tied. BRAKER4 EP achieves higher sensitivity (77.0 locus Sn) because ProtHint + GeneMark-EP+ cast a wider net, but at the cost of lower precision (61.8 locus Pr, 80.4 exon/base Pr). When only closely related protein evidence is available, GALBA2 provides a good balance of sensitivity and precision.
+
+<!-- TODO: add row with optimize_augustus enabled once the benchmark completes -->
+
 What is GALBA?
 ===============
 

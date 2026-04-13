@@ -204,13 +204,16 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 
 | Container | Image | Size | Used for |
 | --- | --- | --- | --- |
-| GALBA | `katharinahoff/galba-notebook:latest` | 2.0 GB | miniprot, miniprothint, miniprot_boundary_scorer, AUGUSTUS, DIAMOND, compleasm, getAnnoFastaFromJoingenes — all pipeline rules |
-| BUSCO | `ezlabgva/busco:v6.0.0_cv1` | 801 MB | BUSCO completeness assessment (optional) |
+| GALBA2 tools | `katharinahoff/galba2-tools:latest` | 112 MB | miniprot, miniprot_boundary_scorer, miniprothint, compleasm, matplotlib, BioPython — protein alignment, hint generation, completeness assessment, report plots |
+| AUGUSTUS | `quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9` | 249 MB | AUGUSTUS, etraining, DIAMOND, all Perl training/prediction scripts — training, prediction, postprocessing |
 | AGAT | `quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0` | 370 MB | GTF-to-GFF3 conversion |
+| TE Tools | `dfam/tetools:latest` | 727 MB | RepeatModeler2 + RepeatMasker (only when genome masking is needed) |
+| BUSCO | `ezlabgva/busco:v6.0.0_cv1` | 801 MB | BUSCO completeness assessment (optional) |
 | OMArk | `quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0` | 455 MB | OMArk proteome quality assessment (optional, only when `run_omark = 1`) |
 | gffcompare | `quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1` | 11 MB | Evaluation against a reference annotation (optional) |
+| FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v0.0.2` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional, **GPU-only**) |
 
-A full GALBA2 container cache is **roughly 3.6 GB** on disk with BUSCO and AGAT. Without optional QC containers, only the main GALBA container (~2 GB) is needed.
+A standard GALBA2 run (no masking, no BUSCO) pulls only the GALBA2 tools + AUGUSTUS + AGAT containers: **~730 MB** total.
 
 **Singularity bind paths:** Singularity containers can only see directories that are explicitly bound. GALBA2 passes `--singularity-args "-B /home"` by default. If your data resides outside `/home` (e.g. in `/scratch`, `/data`, or `/gpfs`), you must add those paths:
 
@@ -272,7 +275,8 @@ augustus_config_path = augustus_config
 ; compleasm_download_path = shared_data/compleasm_downloads  # optional, auto-discovered
 
 [containers]
-galba_image = docker://katharinahoff/galba-notebook:latest  # optional, this is the default
+galba_tools_image = docker://katharinahoff/galba2-tools:latest    # miniprot, miniprothint, compleasm
+augustus_image = docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9  # AUGUSTUS, DIAMOND
 
 [PARAMS]
 skip_optimize_augustus = 0          # set to 1 to skip AUGUSTUS optimization (saves time)

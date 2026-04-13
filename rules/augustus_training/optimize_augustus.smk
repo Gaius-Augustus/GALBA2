@@ -205,17 +205,24 @@ The parameters from the initial etraining are being used without further optimiz
 See accuracy_after_training.txt for the accuracy after initial training.
 ACCURACY_SKIP
         else
-            # Calculate k-fold based on available CPUs (each bucket needs >= 200 genes)
+            # Calculate k-fold: each bucket needs >= 200 genes for robust optimization.
+            # Start at 8 (BRAKER default), scale up with CPUs if enough genes,
+            # but scale DOWN if too few genes. Minimum 2-fold (below that, skip).
             K_FOLD=8
-            if [ {threads} -gt 1 ]; then
-                for ((i=1; i<={threads}; i++)); do
+            if [ $GENES_TRAIN_TRAIN -lt 400 ]; then
+                # Too few genes for meaningful optimization
+                echo "[WARNING] Only $GENES_TRAIN_TRAIN training genes — too few for robust k-fold optimization" | tee -a {output.optimize_log}
+                K_FOLD=2
+            else
+                # Find largest k where each bucket has >= 200 genes, up to #CPUs
+                K_FOLD=2
+                MAX_K={threads}
+                if [ $MAX_K -lt 8 ]; then MAX_K=8; fi
+                for ((i=2; i<=MAX_K; i++)); do
                     if [ $(($GENES_TRAIN_TRAIN / $i)) -ge 200 ]; then
                         K_FOLD=$i
                     fi
                 done
-            fi
-            if [ $K_FOLD -lt 8 ]; then
-                K_FOLD=8
             fi
 
             echo "[INFO] Using $K_FOLD-fold cross-validation with {threads} CPUs" | tee -a {output.optimize_log}

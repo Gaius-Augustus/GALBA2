@@ -290,8 +290,7 @@ rule run_augustus_hints:
         # Record software versions
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
         AUG_VER=$(augustus --version 2>&1 | head -1 | perl -ne 'print $1 if /\(([\d.]+)\)/' || true)
-        AUG_COMMIT=$(cat /usr/local/share/augustus/.git_commit 2>/dev/null || true)
-        ( flock 9; printf "AUGUSTUS\t%s (commit %s)\n" "$AUG_VER" "$AUG_COMMIT" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
+        ( flock 9; printf "AUGUSTUS\t%s\n" "$AUG_VER" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
 
         # Report
         REPORT_DIR=output/{wildcards.sample}

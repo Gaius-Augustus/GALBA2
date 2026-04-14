@@ -38,7 +38,7 @@ rule run_augustus_hints:
         job_lst: Job list for parallel execution (for debugging)
     """
     input:
-        genome = lambda w: os.path.join(get_output_dir(w), "genome.fa"),
+        genome = lambda w: get_masked_genome(w.sample),
         hintsfile = "output/{sample}/hintsfile.gff",
         galba_cfg = config['galba_cfg_path'],
         optimize_log = "output/{sample}/optimize_augustus.log"

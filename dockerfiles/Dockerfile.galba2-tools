@@ -14,12 +14,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential git wget ca-certificates zlib1g-dev python3 \
     && rm -rf /var/lib/apt/lists/*
 
-# miniprot 0.13 (source tarball)
-RUN wget -q https://github.com/lh3/miniprot/releases/download/v0.13/miniprot-0.13.tar.bz2 \
-        -O /tmp/miniprot.tar.bz2 \
-    && mkdir -p /build/miniprot && cd /build/miniprot \
-    && tar xjf /tmp/miniprot.tar.bz2 --strip-components=1 \
-    && make -j$(nproc) && rm /tmp/miniprot.tar.bz2
+# miniprot 0.14 (supports --spsc for minisplice integration)
+RUN cd /tmp \
+    && wget https://github.com/lh3/miniprot/releases/download/v0.14/miniprot-0.14.tar.bz2 \
+    && ls -la miniprot-0.14.tar.bz2 \
+    && tar xjf miniprot-0.14.tar.bz2 \
+    && cd miniprot-0.14 \
+    && make -j$(nproc) \
+    && cp miniprot /tmp/miniprot_binary \
+    && cd / && rm -rf /tmp/miniprot-0.14*
 
 # miniprot_boundary_scorer
 RUN git clone --depth=1 https://github.com/tomasbruna/miniprot-boundary-scorer /build/scorer \
@@ -27,6 +30,10 @@ RUN git clone --depth=1 https://github.com/tomasbruna/miniprot-boundary-scorer /
 
 # miniprothint
 RUN git clone --depth=1 https://github.com/tomasbruna/miniprothint /build/miniprothint
+
+# minisplice (optional splice site CNN scoring for miniprot --spsc)
+RUN git clone --depth=1 https://github.com/lh3/minisplice /build/minisplice \
+    && cd /build/minisplice && make -j$(nproc)
 
 # compleasm 0.2.7 (self-contained: includes its own miniprot + hmmsearch)
 RUN wget -q https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2 \
@@ -43,7 +50,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # miniprot
-COPY --from=builder /build/miniprot/miniprot /usr/local/bin/
+COPY --from=builder /tmp/miniprot_binary /usr/local/bin/miniprot
+
+# minisplice
+COPY --from=builder /build/minisplice/minisplice /usr/local/bin/
 
 # miniprot_boundary_scorer + blosum62 matrix
 COPY --from=builder /build/scorer/miniprot_boundary_scorer /usr/local/bin/
@@ -66,7 +76,9 @@ ENV PYTHONPATH="/usr/local/lib/miniprothint:${PYTHONPATH}"
 
 # compleasm (self-contained kit with miniprot + hmmsearch)
 COPY --from=builder /build/compleasm/compleasm_kit /opt/compleasm_kit
-ENV PATH="/opt/compleasm_kit:${PATH}"
+# compleasm PATH added AFTER /usr/local/bin so our miniprot 0.14 takes precedence
+# over compleasm's bundled miniprot 0.12
+ENV PATH="/usr/local/bin:/opt/compleasm_kit:${PATH}"
 
 # Convenience env vars
 ENV BLOSUM62_PATH="/usr/local/share/galba2/blosum62.csv"

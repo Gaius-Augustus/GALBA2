@@ -65,8 +65,18 @@ digraph GALBA2 {
      *  PREPROCESSING (optional repeat masking)
      * ===================================================== */
     masking [
-        label    = "Repeat masking\n(RepeatModeler2 +\nRepeatMasker)",
+        label    = "Repeat masking\n(RepeatModeler2 + RepeatMasker\nor Red)",
         fillcolor = "#d9ead3",
+        style     = "filled,rounded,dashed",
+        penwidth  = 1.4
+    ];
+
+    /* =====================================================
+     *  MINISPLICE  (optional splice site scoring)
+     * ===================================================== */
+    minisplice [
+        label    = "Splice site scoring\n(minisplice CNN)",
+        fillcolor = "#c9daf8",
         style     = "filled,rounded,dashed",
         penwidth  = 1.4
     ];
@@ -178,9 +188,13 @@ digraph GALBA2 {
     /* Inputs → masking (optional) */
     in_genome -> masking [style = "dashed", label = "if unmasked"];
 
+    /* Genome → minisplice (optional) */
+    in_genome   -> minisplice [style = "dashed"];
+
     /* Inputs / masking → miniprot */
     in_genome   -> miniprot [weight = 20];
     masking     -> miniprot [style = "dashed"];
+    minisplice  -> miniprot [style = "dashed", label = "splice\nscores"];
     in_proteins -> miniprot;
 
     /* miniprot → hints + training genes */

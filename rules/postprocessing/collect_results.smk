@@ -81,12 +81,22 @@ rule collect_results:
 
         echo "[INFO] Collecting results for sample {params.sample}..."
 
-        # --- Copy genome if headers were cleaned ---
+        # --- Copy genome if pipeline modified it (masking or header cleaning) ---
+        COPY_GENOME=false
+        if [ -f "$OUTDIR/preprocessing/.masking_complete" ]; then
+            COPY_GENOME=true
+        fi
         if [ -f "$OUTDIR/preprocessing/.headers_fixed" ] && grep -q "yes" "$OUTDIR/preprocessing/.headers_fixed" 2>/dev/null; then
-            if [ -f "$OUTDIR/genome.fa" ]; then
-                cp "$OUTDIR/genome.fa" "$RESULTS/"
-                echo "[INFO] Including cleaned genome in results"
-            fi
+            COPY_GENOME=true
+        fi
+        # Copy the masked genome if masking was performed
+        if [ -f "$OUTDIR/preprocessing/genome.fa.masked" ]; then
+            cp "$OUTDIR/preprocessing/genome.fa.masked" "$RESULTS/genome_masked.fa"
+            echo "[INFO] Including masked genome in results"
+        fi
+        if [ "$COPY_GENOME" = "true" ] && [ -f "$OUTDIR/genome.fa" ]; then
+            cp "$OUTDIR/genome.fa" "$RESULTS/"
+            echo "[INFO] Including cleaned genome in results"
         fi
 
         # --- Core gene predictions (copy first, gzip AFTER report generation) ---
@@ -231,7 +241,7 @@ rule collect_results:
                  "$RESULTS"/galba_with_ncRNA.gff3 \
                  "$RESULTS"/galba.go.gff3 "$RESULTS"/fantasia_go_terms.tsv \
                  "$RESULTS"/galba.aa "$RESULTS"/galba.codingseq \
-                 "$RESULTS"/hintsfile.gff "$RESULTS"/genome.fa \
+                 "$RESULTS"/hintsfile.gff "$RESULTS"/genome.fa "$RESULTS"/genome_masked.fa \
                  "$RESULTS"/quality_control/fantasia/results.csv; do
             if [ -f "$f" ]; then
                 gzip -f "$f"

@@ -55,6 +55,9 @@ _env_overrides = {
     'GALBA2_DISABLE_DIAMOND_FILTER':         ('PARAMS', 'disable_diamond_filter'),
     'GALBA2_AUGUSTUS_CHUNKSIZE':              ('PARAMS', 'augustus_chunksize'),
     'GALBA2_AUGUSTUS_OVERLAP':                ('PARAMS', 'augustus_overlap'),
+    'GALBA2_MASKING_TOOL':                   ('PARAMS', 'masking_tool'),
+    'GALBA2_USE_MINISPLICE':                 ('PARAMS', 'use_minisplice'),
+    'GALBA2_MINISPLICE_MODEL':               ('PARAMS', 'minisplice_model'),
     'GALBA2_RUN_NCRNA':                      ('PARAMS', 'run_ncrna'),
     # FANTASIA-Lite (optional, GPU-only functional annotation)
     'GALBA2_RUN_FANTASIA':                   ('fantasia', 'enable'),
@@ -131,6 +134,17 @@ config['augustus_chunksize'] = config_parser.getint(
 )
 config['augustus_overlap'] = config_parser.getint(
     'PARAMS', 'augustus_overlap', fallback=500000
+)
+
+config['masking_tool'] = config_parser.get(
+    'PARAMS', 'masking_tool', fallback='repeatmasker'
+)
+
+config['use_minisplice'] = config_parser.getboolean(
+    'PARAMS', 'use_minisplice', fallback=False
+)
+config['minisplice_model'] = config_parser.get(
+    'PARAMS', 'minisplice_model', fallback=''
 )
 
 config['run_ncrna'] = config_parser.getboolean(
@@ -250,7 +264,12 @@ for sample in SAMPLES:
 print("\nGALBA2 pipeline rules:")
 print("  ✓ Genome preparation (header cleaning)")
 if GLOBAL_DATA_TYPES['needs_masking']:
-    print("  ✓ RepeatModeler2 + RepeatMasker (genome masking)")
+    if config['masking_tool'] == 'red':
+        print("  ✓ Red (fast repeat detection and masking)")
+    else:
+        print("  ✓ RepeatModeler2 + RepeatMasker (genome masking)")
+if config.get('use_minisplice', False):
+    print("  ✓ Minisplice splice site scoring (CNN)")
 print("  ✓ Miniprot protein-to-genome alignment")
 print("  ✓ Miniprothint training gene and hint generation")
 print("  ✓ AUGUSTUS training on protein-derived genes")
@@ -273,7 +292,14 @@ print()
 include: "rules/preprocessing/prepare_genome.smk"
 include: "rules/preprocessing/merge_proteins.smk"
 if GLOBAL_DATA_TYPES['needs_masking']:
-    include: "rules/preprocessing/run_masking.smk"
+    if config['masking_tool'] == 'red':
+        include: "rules/preprocessing/run_red_masking.smk"
+    else:
+        include: "rules/preprocessing/run_masking.smk"
+
+# Minisplice splice site scoring (optional)
+if config.get('use_minisplice', False):
+    include: "rules/miniprot/run_minisplice.smk"
 
 # Miniprot alignment and hint generation
 include: "rules/miniprot/run_miniprot.smk"

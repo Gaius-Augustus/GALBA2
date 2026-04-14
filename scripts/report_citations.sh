@@ -455,6 +455,32 @@ BIBEOF
 }
 BIBEOF
             ;;
+        red)
+            echo "Girgis, H. Z. (2015). Red: an intelligent, rapid, accurate tool for detecting repeats de-novo on the genomic scale. BMC Bioinformatics, 16, 227. doi:10.1186/s12859-015-0654-5" >> "$txt_file"
+            cat >> "$bib_file" << 'BIBEOF'
+@article{red,
+  author  = {Girgis, Hani Z.},
+  title   = {Red: an intelligent, rapid, accurate tool for detecting repeats de-novo on the genomic scale},
+  journal = {BMC Bioinformatics},
+  volume  = {16},
+  pages   = {227},
+  year    = {2015},
+  doi     = {10.1186/s12859-015-0654-5}
+}
+BIBEOF
+            ;;
+        minisplice)
+            echo "Yang, S., Huang, N., & Li, H. (2025). Improving spliced alignment by modeling splice sites with deep learning. arXiv:2506.12986." >> "$txt_file"
+            cat >> "$bib_file" << 'BIBEOF'
+@article{minisplice,
+  author  = {Yang, Shuqi and Huang, Neng and Li, Heng},
+  title   = {Improving spliced alignment by modeling splice sites with deep learning},
+  journal = {arXiv},
+  pages   = {2506.12986},
+  year    = {2025}
+}
+BIBEOF
+            ;;
         omamer)
             echo "Rossier, V., Warwick Vesztrocy, A., Robinson-Rechavi, M., & Dessimoz, C. (2021). OMAmer: tree-driven and alignment-free protein assignment to subfamilies outperforms closest sequence approaches. Bioinformatics, 37(18), 2866-2873. doi:10.1093/bioinformatics/btab219" >> "$txt_file"
             cat >> "$bib_file" << 'BIBEOF'

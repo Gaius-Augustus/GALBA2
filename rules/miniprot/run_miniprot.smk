@@ -9,7 +9,7 @@ rule miniprot_index:
         index: Miniprot genome index (.mpi)
     """
     input:
-        genome = lambda w: os.path.join(get_output_dir(w), "genome.fa")
+        genome = lambda w: get_masked_genome(w.sample)
     output:
         index = "output/{sample}/miniprot/genome.mpi"
     benchmark:
@@ -30,7 +30,7 @@ rule miniprot_index:
 
         mkdir -p $(dirname {output.index})
 
-        miniprot -t{threads} -d {output.index} {input.genome} \
+        /usr/local/bin/miniprot -t{threads} -d {output.index} {input.genome} \
             > output/{wildcards.sample}/miniprot/miniprot_index.log \
             2> output/{wildcards.sample}/miniprot/miniprot_index.err
 
@@ -38,7 +38,7 @@ rule miniprot_index:
 
         # Record software version
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
-        MINIPROT_VER=$(miniprot --version 2>&1 || true)
+        MINIPROT_VER=$(/usr/local/bin/miniprot --version 2>&1 || true)
         mkdir -p $(dirname "$VERSIONS_FILE")
         ( flock 9; printf "miniprot\t%s\n" "$MINIPROT_VER" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
 
@@ -49,6 +49,17 @@ rule miniprot_index:
         """
 
 
+def _miniprot_align_inputs(wildcards):
+    """Get inputs for miniprot alignment, optionally including splice scores."""
+    inputs = {
+        "index": f"output/{wildcards.sample}/miniprot/genome.mpi",
+        "proteins": get_protein_fasta(wildcards.sample),
+    }
+    if config.get('use_minisplice', False):
+        inputs["splice_scores"] = f"output/{wildcards.sample}/minisplice/splice_scores.tsv"
+    return inputs
+
+
 rule miniprot_align:
     """
     Align protein sequences to the genome using miniprot.
@@ -56,20 +67,26 @@ rule miniprot_align:
     Produces alignment output in miniprot's --aln format, which is then
     processed by miniprot_boundary_scorer and miniprothint.py.
 
+    When use_minisplice = 1, splice site scores from minisplice are passed
+    via --spsc to improve alignment accuracy (requires miniprot >= 0.14).
+
     Input:
         index: Miniprot genome index
         proteins: Merged protein FASTA
+        splice_scores: (optional) Splice site scores from minisplice
 
     Output:
         aln: Miniprot alignment file (--aln format)
     """
     input:
-        index = "output/{sample}/miniprot/genome.mpi",
-        proteins = lambda w: get_protein_fasta(w.sample)
+        unpack(_miniprot_align_inputs)
     output:
         aln = "output/{sample}/miniprot/miniprot.aln"
     benchmark:
         "benchmarks/{sample}/miniprot_align/miniprot_align.txt"
+    params:
+        use_minisplice = config.get('use_minisplice', False),
+        splice_scores = lambda w: f"output/{w.sample}/minisplice/splice_scores.tsv" if config.get('use_minisplice', False) else ""
     threads: int(config['slurm_args']['cpus_per_task'])
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']),
@@ -85,7 +102,14 @@ rule miniprot_align:
         echo "[INFO] Proteins: {input.proteins}"
         echo "[INFO] Threads: {threads}"
 
-        miniprot -I -ut{threads} --outn=1 --aln \
+        # Build miniprot command
+        SPSC_ARGS=""
+        if [ "{params.use_minisplice}" = "True" ]; then
+            echo "[INFO] Using minisplice splice scores: {params.splice_scores}"
+            SPSC_ARGS="-j2 --spsc={params.splice_scores}"
+        fi
+
+        /usr/local/bin/miniprot -I -ut{threads} --outn=1 --aln $SPSC_ARGS \
             {input.index} {input.proteins} \
             > {output.aln} \
             2> output/{wildcards.sample}/miniprot/miniprot_align.err

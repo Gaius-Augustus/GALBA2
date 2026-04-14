@@ -74,6 +74,7 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
 <table>
   <thead>
     <tr>
+      <th rowspan="2">Configuration</th>
       <th colspan="2" align="center">Locus Sn</th>
       <th colspan="2" align="center">Locus Pr</th>
       <th colspan="2" align="center">Exon Sn</th>
@@ -92,6 +93,7 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
   </thead>
   <tbody>
     <tr>
+      <td>default</td>
       <td align="right"><b>70.4</b></td><td align="right">77.0</td>
       <td align="right"><b>63.4</b></td><td align="right">61.8</td>
       <td align="right">80.8</td><td align="right"><b>83.2</b></td>
@@ -99,12 +101,21 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
       <td align="right">94.7</td><td align="right"><b>96.1</b></td>
       <td align="right"><b>84.1</b></td><td align="right">80.4</td>
     </tr>
+    <tr>
+      <td>+&nbsp;minisplice</td>
+      <td align="right">70.2</td><td align="right">&mdash;</td>
+      <td align="right">63.5</td><td align="right">&mdash;</td>
+      <td align="right">80.5</td><td align="right">&mdash;</td>
+      <td align="right">84.1</td><td align="right">&mdash;</td>
+      <td align="right">94.5</td><td align="right">&mdash;</td>
+      <td align="right">83.9</td><td align="right">&mdash;</td>
+    </tr>
   </tbody>
 </table>
 
 Sn = Sensitivity (% of reference features recovered). Pr = Precision (% of predicted features matching reference). Higher is better for both. Bold marks the better value per metric.
 
-**Reading the table.** GALBA2 predicts 30,747 genes with higher precision than BRAKER4 EP (34,834 genes) across all levels: locus precision 63.4 vs 61.8, exon precision 84.3 vs 80.4, base precision 84.1 vs 80.4. BRAKER4 EP achieves higher sensitivity because ProtHint + GeneMark-EP+ cast a wider net, but at the cost of more false positives. When closely related protein evidence is available, GALBA2 provides a favourable balance of sensitivity and precision.
+**Reading the table.** GALBA2 predicts 30,747 genes with higher precision than BRAKER4 EP (34,834 genes) across all levels: locus precision 63.4 vs 61.8, exon precision 84.3 vs 80.4, base precision 84.1 vs 80.4. BRAKER4 EP achieves higher sensitivity because ProtHint + GeneMark-EP+ cast a wider net, but at the cost of more false positives. When closely related protein evidence is available, GALBA2 provides a favourable balance of sensitivity and precision. Enabling minisplice CNN splice-site scoring (`use_minisplice = 1`, Yang et al., 2025) on this *A. thaliana* benchmark left locus-level accuracy essentially unchanged (Sn 70.2 / Pr 63.5 vs 70.4 / 63.4). For closely-related protein evidence, minisplice is therefore off by default; it may still help on distant homologs or more repetitive genomes where miniprot's splice-site signal is weaker.
 
 **Where GALBA shines.** The *A. thaliana* genome (~121 Mb) is small. On larger genomes — which are common for many animal, plant, and fungal species — GALBA's miniprot-based approach scales much better than BRAKER2's ProtHint + GeneMark-EP+ pipeline. On genomes of 1 Gb and above, GALBA consistently outperforms BRAKER2 EP mode in both accuracy and runtime, because miniprot handles large, repeat-rich genomes more robustly than the Spaln/DIAMOND-based ProtHint alignment. If you are annotating a large genome with protein evidence only, GALBA2 is the recommended tool.
 
@@ -132,7 +143,7 @@ Keys to successful gene prediction
 
 -   Use simple scaffold names in the genome file (e.g. `>contig1`). Complex headers can cause parsing issues.
 
--   The genome should be soft-masked for repeats. Soft-masking (lowercase letters for repeats) leads to better results than hard-masking (replacing with `N`). If you provide an unmasked genome, GALBA2 will still run but prediction quality may suffer in repetitive regions.
+-   The genome should be soft-masked for repeats. Soft-masking (lowercase letters for repeats) leads to better results than hard-masking (replacing with `N`). If you leave the `genome_masked` column in `samples.csv` empty, GALBA2 will mask the genome itself — by default using RepeatModeler2 + RepeatMasker, or using Red (REpeat Detector; Girgis, 2015) when you set `masking_tool = red` in `config.ini`. Red is ~10x faster and ~50x smaller as a container (~13 MB vs ~727 MB) at the cost of no repeat-family classification; it is a good default when you do not need the classified repeat library.
 
 -   Always check gene prediction results before further usage. You can use a genome browser for visual inspection of gene models in context with protein alignments.
 
@@ -209,7 +220,8 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 | GALBA2 tools | `katharinahoff/galba2-tools:latest` | 112 MB | miniprot, miniprot_boundary_scorer, miniprothint, compleasm, matplotlib, BioPython — protein alignment, hint generation, completeness assessment, report plots |
 | AUGUSTUS | `quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9` | 249 MB | AUGUSTUS, etraining, DIAMOND, all Perl training/prediction scripts — training, prediction, postprocessing |
 | AGAT | `quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0` | 370 MB | GTF-to-GFF3 conversion |
-| TE Tools | `dfam/tetools:latest` | 727 MB | RepeatModeler2 + RepeatMasker (only when genome masking is needed) |
+| TE Tools | `dfam/tetools:latest` | 727 MB | RepeatModeler2 + RepeatMasker (only when `masking_tool = repeatmasker`) |
+| Red | `quay.io/biocontainers/red:2018.09.10` | 13 MB | Fast repeat detection (only when `masking_tool = red`) |
 | BUSCO | `ezlabgva/busco:v6.0.0_cv1` | 801 MB | BUSCO completeness assessment (optional) |
 | barrnap | `quay.io/biocontainers/barrnap:0.9--hdfd78af_4` | 68 MB | rRNA prediction (only when `run_ncrna = 1`) |
 | tRNAscan-SE | `quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0` | 32 MB | tRNA prediction (only when `run_ncrna = 1`) |
@@ -345,6 +357,8 @@ Description of selected configuration options
 | `disable_diamond_filter` | 0 | Skip DIAMOND filtering of AUGUSTUS predictions against input proteins. The filter removes gene predictions that have no sequence similarity match in the protein database. Disabling produces more genes but also more false positives. |
 | `skip_busco` | 0 | Skip the BUSCO completeness assessment (slow). compleasm still runs. |
 | `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~8.8 GB). Download with `bash scripts/download_data.sh --omark`. |
+| `masking_tool` | repeatmasker | Repeat masking tool: `repeatmasker` (RepeatModeler2 + RepeatMasker, thorough but slow) or `red` (Red repeat detector, much faster). Only used when `genome_masked` column is empty. |
+| `use_minisplice` | 0 | Use minisplice CNN splice site scores to improve miniprot alignment. Requires miniprot >= 0.14 and a pre-trained minisplice model (see [minisplice](https://github.com/lh3/minisplice)). Experimental. |
 | `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (barrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |
 | `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container and ProtT5 cache). See `[fantasia]` section in `config.ini`. |
 | `translation_table` | 1 | NCBI genetic code table. **Currently only table 1 (standard code) is supported** because miniprot does not support alternative genetic codes. Support for additional tables is planned for a future release. |

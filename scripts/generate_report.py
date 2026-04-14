@@ -1084,17 +1084,6 @@ def generate_html(sample_name, mode, methods_text, citations, images, qc_data, b
 predicted proteome. S=Single-copy, D=Duplicated, F=Fragmented, M=Missing.</div>
 </div>
 """
-    elif "busco_figure" in images and images["busco_figure"]:
-        html += """
-<h2>BUSCO Assessment</h2>
-<div class="figure">
-"""
-        html += images["busco_figure"]
-        html += """
-<div class="caption">BUSCO completeness assessment of the genome assembly and
-predicted proteome (longest isoform per gene).</div>
-</div>
-"""
 
     # FANTASIA functional annotation (optional, GPU-only)
     fantasia_summary_text = images.get("fantasia_summary_text") or ""
@@ -1224,7 +1213,6 @@ def main():
     images = {}
     for name, filename in [
         ("training_summary", "training_summary.png"),
-        ("busco_figure", "busco_figure.png"),
     ]:
         # Check both QC subdir and results dir
         for search_dir in [os.path.join(out, "quality_control"), out, d]:

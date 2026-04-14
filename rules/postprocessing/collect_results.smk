@@ -23,7 +23,6 @@ def _get_collect_inputs(wildcards):
 
     if not config.get('skip_busco', False):
         inputs["busco_summary"] = f"output/{sample}/busco/busco_summary.txt"
-        inputs["busco_figure"] = f"output/{sample}/busco/busco_figure.png"
 
     inputs["compleasm"] = f"output/{sample}/compleasm_proteins/summary.txt"
     inputs["compleasm_genome"] = f"output/{sample}/compleasm_genome_out/summary.txt"
@@ -115,9 +114,6 @@ rule collect_results:
         # BUSCO
         if [ -f "$OUTDIR/busco/busco_summary.txt" ]; then
             cp "$OUTDIR/busco/busco_summary.txt" "$RESULTS/quality_control/"
-        fi
-        if [ -f "$OUTDIR/busco/busco_figure.png" ]; then
-            cp "$OUTDIR/busco/busco_figure.png"  "$RESULTS/quality_control/"
         fi
         if [ -d "$OUTDIR/busco" ]; then
             for bmode in genome proteins; do

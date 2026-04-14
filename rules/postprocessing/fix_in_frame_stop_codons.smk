@@ -163,7 +163,10 @@ rule fix_in_frame_stop_codons:
 
         echo "[INFO] ===== FIXING IN-FRAME STOP CODONS ====="
 
-        # Create local symlink to genome to allow index file creation
+        # Create local symlink to genome to allow index file creation.
+        # Guard is load-bearing: in some configurations {input.genome} resolves
+        # to the same path as $LOCAL_GENOME; an unguarded `ln -sf` would
+        # replace the real file with a self-referential dangling symlink.
         LOCAL_GENOME={params.output_dir}/genome.fa
         if [ ! -e "$LOCAL_GENOME" ]; then
             ln -s {input.genome} $LOCAL_GENOME

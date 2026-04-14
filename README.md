@@ -289,8 +289,8 @@ This file contains pipeline parameters. Place it in the same directory as your `
 [paths]
 samples_file = samples.csv
 augustus_config_path = augustus_config
-; busco_download_path = shared_data/busco_downloads      # optional, auto-discovered
-; compleasm_download_path = shared_data/compleasm_downloads  # optional, auto-discovered
+; busco_download_path = shared_data/busco_downloads      # optional, see "Pre-downloading BUSCO data" below
+; compleasm_download_path = shared_data/busco_downloads/lineages  # optional, defaults to {busco_download_path}/lineages
 
 [containers]
 galba_tools_image = docker://katharinahoff/galba2-tools:latest    # miniprot, miniprothint, compleasm
@@ -381,6 +381,70 @@ bash scripts/download_data.sh --shared-data /data/shared_databases
 ```
 
 The script auto-discovers existing shared_data directories in sibling BRAKER4 or BRAKER-as-snakemake repositories to avoid redundant downloads.
+
+### Pre-downloading BUSCO and compleasm data (offline / firewalled clusters)
+
+By default, both BUSCO and compleasm download their lineage datasets and a `file_versions.tsv` manifest from `https://busco-data*.ezlab.org/` on the fly. On clusters without outbound internet access — or when the ezlab mirror is temporarily unreachable — this causes the pipeline to fail with messages like:
+
+```
+ERROR: Cannot reach https://busco-data2.ezlab.org/v5/data/file_versions.tsv
+ERROR: BUSCO analysis failed!
+```
+
+GALBA2 uses lineage data from the ezlab mirror in two places — `busco` (at `busco_download_path`) and `compleasm` (at `compleasm_download_path`). Both must see the lineage on disk for a fully offline run. To avoid downloading the same data twice, GALBA2 defaults `compleasm_download_path` to `{busco_download_path}/lineages/` so that a single extracted tarball serves both tools.
+
+GALBA2 detects pre-downloaded data automatically:
+
+- If `{busco_download_path}/lineages/{busco_lineage}/dataset.cfg` exists, the BUSCO rules add `--offline` and skip the `file_versions.tsv` check. The `dataset.cfg` test matters — it tells a full BUSCO lineage apart from a compleasm-only download, which stores fewer files in the same location.
+- If `{compleasm_download_path}/{busco_lineage}/` exists, compleasm reuses it via `-L` without contacting the mirror.
+
+Each rule logs which path it took at the top of its log file.
+
+**How to pre-download the data:**
+
+1. Pick one shared directory for BUSCO and point `config.ini` at it in the `[paths]` section:
+
+    ```ini
+    busco_download_path = /data/shared/busco_downloads
+    # compleasm_download_path  defaults to /data/shared/busco_downloads/lineages
+    ```
+
+    If unset, GALBA2 uses `<repo>/shared_data/busco_downloads/` and `<repo>/shared_data/busco_downloads/lineages/`.
+
+2. On a machine with internet access, populate the cache once per lineage. Either let `busco` do it for you (recommended — it lays out the directory exactly the way both tools expect):
+
+    ```bash
+    busco --download fungi_odb12      --download_path /data/shared/busco_downloads
+    busco --download eukaryota_odb12  --download_path /data/shared/busco_downloads
+    # …repeat for every lineage in your samples.csv
+    ```
+
+    Or fetch the tarball with `wget`/`curl` and unpack it into the `lineages/` subdirectory:
+
+    ```bash
+    mkdir -p /data/shared/busco_downloads/lineages
+    cd /data/shared/busco_downloads/lineages
+    wget https://busco-data.ezlab.org/v5/data/lineages/fungi_odb12.2024-11-14.tar.gz
+    tar -xzf fungi_odb12.2024-11-14.tar.gz
+    # The extracted directory must be named exactly "fungi_odb12" (no date suffix).
+    ```
+
+3. The resulting layout serves both tools from the same files:
+
+    ```text
+    /data/shared/busco_downloads/
+    └── lineages/                    <-- compleasm reads from here (-L)
+        ├── fungi_odb12/             <-- BUSCO reads from here (--offline)
+        │   ├── dataset.cfg
+        │   ├── hmms/
+        │   └── …
+        └── eukaryota_odb12/
+            └── …
+    ```
+
+4. Run GALBA2 as usual. If a lineage is missing, GALBA2 falls back to the normal online download — so this is safe to enable on internet-connected machines too, and new lineages added later will just be fetched on first use.
+
+If you prefer to keep the two caches separate (e.g. an existing compleasm cache you do not want to move), set `compleasm_download_path` explicitly in `[paths]` and populate it independently — compleasm uses a flat layout (`{compleasm_download_path}/{lineage}/`, no `lineages/` subdirectory).
 
 Output of GALBA2
 =================

@@ -54,6 +54,16 @@ rule run_compleasm:
         # Ensure shared download directory exists
         mkdir -p {params.library_path}
 
+        # Log whether a pre-downloaded lineage is already in place.
+        # compleasm uses a flat layout at {{library_path}}/{{lineage}}/.
+        # If present, compleasm will reuse it instead of contacting busco-data.ezlab.org.
+        COMPLEASM_LINEAGE=$(echo "{params.busco_lineage}" | sed 's/_odb[0-9]*$/_odb12/')
+        if [ -d "{params.library_path}/$COMPLEASM_LINEAGE" ]; then
+            echo "[INFO] Found pre-downloaded compleasm lineage at {params.library_path}/$COMPLEASM_LINEAGE" >> {log}
+        else
+            echo "[INFO] No pre-downloaded lineage at {params.library_path}/$COMPLEASM_LINEAGE; compleasm will attempt to download it" >> {log}
+        fi
+
         # Prevent host's ~/.local Python packages from shadowing container packages
         export PATH=/opt/conda/bin:$PATH
         export PYTHONNOUSERSITE=1

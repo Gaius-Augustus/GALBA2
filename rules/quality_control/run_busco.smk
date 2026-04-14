@@ -38,6 +38,16 @@ rule busco_genome:
         rm -rf "$OUTDIR_ABS/genome"
 
         mkdir -p {params.download_path}
+        OFFLINE_FLAG=""
+        # Check for dataset.cfg, not just the directory: compleasm and BUSCO
+        # share the same {params.download_path}/lineages/ default, but
+        # `compleasm.py download` writes a compleasm-only layout (no
+        # dataset.cfg). Only switch to --offline when the directory is a
+        # valid BUSCO lineage.
+        if [ -f "{params.download_path}/lineages/{params.busco_lineage}/dataset.cfg" ]; then
+            OFFLINE_FLAG="--offline"
+            echo "[INFO] Found pre-downloaded lineage at {params.download_path}/lineages/{params.busco_lineage}; running BUSCO with --offline" >> {log}
+        fi
         busco \
             -i {input.genome} \
             -o genome \
@@ -46,7 +56,8 @@ rule busco_genome:
             -m genome \
             -c {threads} \
             --download_path {params.download_path} \
-            > {log} 2>&1
+            $OFFLINE_FLAG \
+            >> {log} 2>&1
 
         # Record software version
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
@@ -138,6 +149,11 @@ rule busco_proteins:
         rm -rf "$OUTDIR_ABS/proteins"
 
         mkdir -p {params.download_path}
+        OFFLINE_FLAG=""
+        if [ -f "{params.download_path}/lineages/{params.busco_lineage}/dataset.cfg" ]; then
+            OFFLINE_FLAG="--offline"
+            echo "[INFO] Found pre-downloaded lineage at {params.download_path}/lineages/{params.busco_lineage}; running BUSCO with --offline" >> {log}
+        fi
         busco \
             -i {input.proteins} \
             -o proteins \
@@ -146,7 +162,8 @@ rule busco_proteins:
             -m proteins \
             -c {threads} \
             --download_path {params.download_path} \
-            > {log} 2>&1
+            $OFFLINE_FLAG \
+            >> {log} 2>&1
 
         touch {output.done}
 

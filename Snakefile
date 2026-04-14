@@ -196,9 +196,15 @@ config['busco_download_path'] = os.path.abspath(
     config_parser.get('paths', 'busco_download_path',
                       fallback=os.path.join(_shared_data, 'busco_downloads'))
 )
+# compleasm uses a flat layout ({path}/{lineage}/) while BUSCO uses
+# {busco_download_path}/lineages/{lineage}/. By defaulting
+# compleasm_download_path to the BUSCO "lineages" subdirectory, a single
+# extracted lineage tarball serves both tools and we avoid downloading the
+# same data twice. Users can still override this in [paths] if they want
+# the caches kept apart.
 config['compleasm_download_path'] = os.path.abspath(
     config_parser.get('paths', 'compleasm_download_path',
-                      fallback=os.path.join(_shared_data, 'compleasm_downloads'))
+                      fallback=os.path.join(config['busco_download_path'], 'lineages'))
 )
 
 # OMAmer database path (for optional OMArk QC)

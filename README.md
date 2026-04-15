@@ -309,6 +309,9 @@ augustus_overlap = 500000           # overlap (bp) between adjacent AUGUSTUS chu
 no_cleanup = 0                     # set to 1 to keep all intermediate files (debugging only)
 use_dev_shm = 0                    # set to 1 to use /dev/shm for temp files (faster I/O)
 
+[OMARK]
+# omamer_db = /path/to/LUCA.h5      # OMAmer database for OMArk (used only when run_omark = 1)
+
 [SLURM_ARGS]
 cpus_per_task = 48
 mem_of_node = 120000                # memory in MB
@@ -356,7 +359,7 @@ Description of selected configuration options
 | `skip_optimize_augustus` | 0 | Skip `optimize_augustus.pl`. Saves hours on large genomes. **Do not enable for production runs** — optimization improves accuracy. |
 | `disable_diamond_filter` | 0 | Skip DIAMOND filtering of AUGUSTUS predictions against input proteins. The filter removes gene predictions that have no sequence similarity match in the protein database. Disabling produces more genes but also more false positives. |
 | `skip_busco` | 0 | Skip the BUSCO completeness assessment (slow). compleasm still runs. |
-| `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~8.8 GB). Download with `bash scripts/download_data.sh --omark`. |
+| `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~8.8 GB). Download with `bash scripts/download_data.sh --omark`. Set the database path via `[OMARK] omamer_db = /path/to/LUCA.h5` in `config.ini` (or the `GALBA2_OMAMER_DB` environment variable). If unset, GALBA2 auto-discovers LUCA.h5 in `shared_data/` or sibling BRAKER4/BRAKER-as-snakemake repos. |
 | `masking_tool` | repeatmasker | Repeat masking tool: `repeatmasker` (RepeatModeler2 + RepeatMasker, thorough but slow) or `red` (Red repeat detector, much faster). Only used when `genome_masked` column is empty. |
 | `use_minisplice` | 0 | Use minisplice CNN splice site scores to improve miniprot alignment. Requires miniprot >= 0.14 and a pre-trained minisplice model (see [minisplice](https://github.com/lh3/minisplice)). Experimental. |
 | `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (barrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |

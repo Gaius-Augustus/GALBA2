@@ -22,7 +22,10 @@ Container: quay.io/biocontainers/omark:0.4.1
 """
 
 
-OMAMER_DB = config.get("omamer_db", "shared_data/LUCA.h5")
+# Fall back to shared_data/LUCA.h5 when the user did not set [OMARK] omamer_db.
+# Explicit `or` handles the case where the Snakefile set the config entry
+# to None/False (fallback sentinel in ConfigParser.get).
+OMAMER_DB = config.get("omamer_db") or "shared_data/LUCA.h5"
 
 
 rule omamer_search:

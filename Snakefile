@@ -33,7 +33,7 @@ if not os.path.isfile(config_ini_path):
 config_parser.read(config_ini_path)
 
 # Overlay environment-variable overrides
-for section in ('PARAMS', 'SLURM_ARGS', 'fantasia'):
+for section in ('PARAMS', 'SLURM_ARGS', 'fantasia', 'OMARK'):
     if not config_parser.has_section(section):
         config_parser.add_section(section)
 
@@ -48,6 +48,7 @@ _env_overrides = {
     'GALBA2_USE_DEV_SHM':                    ('PARAMS', 'use_dev_shm'),
     'GALBA2_SKIP_BUSCO':                     ('PARAMS', 'skip_busco'),
     'GALBA2_RUN_OMARK':                      ('PARAMS', 'run_omark'),
+    'GALBA2_OMAMER_DB':                      ('OMARK', 'omamer_db'),
     'GALBA2_NO_CLEANUP':                     ('PARAMS', 'no_cleanup'),
     'GALBA2_TRANSLATION_TABLE':              ('PARAMS', 'translation_table'),
     'GALBA2_GC_DONOR':                       ('PARAMS', 'gc_donor'),
@@ -209,8 +210,9 @@ config['compleasm_download_path'] = os.path.abspath(
 
 # OMAmer database path (for optional OMArk QC)
 def _find_omamer_db():
-    """Find LUCA.h5: config, shared_data, sibling repos."""
-    explicit = config_parser.get('PARAMS', 'omamer_db', fallback='')
+    """Find LUCA.h5: [OMARK] omamer_db, shared_data, sibling repos."""
+    explicit = config_parser.get('OMARK', 'omamer_db', fallback='') or \
+               config_parser.get('PARAMS', 'omamer_db', fallback='')
     if explicit and os.path.isfile(explicit):
         return explicit
     # Check shared_data

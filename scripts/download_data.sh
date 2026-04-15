@@ -231,7 +231,8 @@ echo "  compleasm_download_path = $COMPLEASM_DIR"
 if [ "$DOWNLOAD_OMARK" = "1" ] && [ -f "$SHARED_DATA_DIR/LUCA.h5" -o -L "$SHARED_DATA_DIR/LUCA.h5" ]; then
     LUCA_RESOLVED="$(readlink -f "$SHARED_DATA_DIR/LUCA.h5")"
     echo ""
-    echo "For OMArk, also set omamer_db in config.ini [PARAMS]:"
+    echo "For OMArk, also set omamer_db in config.ini [OMARK]:"
+    echo "  [OMARK]"
     echo "  omamer_db = $LUCA_RESOLVED"
 fi
 echo ""

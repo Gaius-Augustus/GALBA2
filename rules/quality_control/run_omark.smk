@@ -152,12 +152,21 @@ rule run_omark:
         set -euo pipefail
         OUTDIR=$(readlink -f output/{wildcards.sample}/omark)
 
-        omark \
-            -f {input.omamer} \
-            -d {input.db} \
-            -i {input.splice} \
-            -o "$OUTDIR" \
-            > {log} 2>&1
+        # OMArk uses ete3, which initializes ~/.etetoolkit/taxa.sqlite (or a
+        # CWD-local .etetoolkit/taxa.sqlite) on first run. When multiple OMArk
+        # jobs run in parallel they all try to populate the same SQLite file,
+        # producing "database is locked" errors. Serialize via flock so only
+        # one job writes the taxonomy db at a time; after it is populated the
+        # other jobs just read it.
+        mkdir -p .etetoolkit
+        ( flock -x 9
+          omark \
+              -f {input.omamer} \
+              -d {input.db} \
+              -i {input.splice} \
+              -o "$OUTDIR" \
+              > {log} 2>&1
+        ) 9>.etetoolkit/taxa.sqlite.lock
 
         # Copy the detailed summary to a predictable location
         DETAILED=$(find "$OUTDIR" -name "*_detailed_summary.txt" | head -1)

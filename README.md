@@ -81,48 +81,57 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
 <table>
   <thead>
     <tr>
-      <th rowspan="2">Configuration</th>
-      <th colspan="2" align="center">Locus Sn</th>
-      <th colspan="2" align="center">Locus Pr</th>
-      <th colspan="2" align="center">Exon Sn</th>
-      <th colspan="2" align="center">Exon Pr</th>
-      <th colspan="2" align="center">Base Sn</th>
-      <th colspan="2" align="center">Base Pr</th>
+      <th rowspan="2">Pipeline</th>
+      <th rowspan="2">Genes / loci</th>
+      <th colspan="2" align="center">Locus</th>
+      <th colspan="2" align="center">Exon</th>
+      <th colspan="2" align="center">Base</th>
     </tr>
     <tr>
-      <th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
-      <th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
-      <th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
-      <th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
-      <th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
-      <th>GALBA2</th><th>BRAKER4&nbsp;EP</th>
+      <th>Sn</th><th>Pr</th>
+      <th>Sn</th><th>Pr</th>
+      <th>Sn</th><th>Pr</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>default</td>
-      <td align="right"><b>70.4</b></td><td align="right">77.0</td>
-      <td align="right"><b>63.4</b></td><td align="right">61.8</td>
-      <td align="right">80.8</td><td align="right"><b>83.2</b></td>
-      <td align="right"><b>84.3</b></td><td align="right">80.4</td>
-      <td align="right">94.7</td><td align="right"><b>96.1</b></td>
-      <td align="right"><b>84.1</b></td><td align="right">80.4</td>
+      <td><code>galba.pl</code> (native Perl)</td>
+      <td align="right">31,979 / 30,626</td>
+      <td align="right">70.0</td><td align="right">63.4</td>
+      <td align="right">80.1</td><td align="right"><b>85.3</b></td>
+      <td align="right">94.1</td><td align="right"><b>84.6</b></td>
     </tr>
     <tr>
-      <td>+&nbsp;minisplice</td>
-      <td align="right">70.2</td><td align="right">&mdash;</td>
-      <td align="right">63.5</td><td align="right">&mdash;</td>
-      <td align="right">80.5</td><td align="right">&mdash;</td>
-      <td align="right">84.1</td><td align="right">&mdash;</td>
-      <td align="right">94.5</td><td align="right">&mdash;</td>
-      <td align="right">83.9</td><td align="right">&mdash;</td>
+      <td><b>GALBA2</b> (default)</td>
+      <td align="right">32,333 / 30,747</td>
+      <td align="right"><b>70.4</b></td><td align="right"><b>63.4</b></td>
+      <td align="right"><b>80.8</b></td><td align="right">84.3</td>
+      <td align="right"><b>94.7</b></td><td align="right">84.1</td>
+    </tr>
+    <tr>
+      <td><b>GALBA2</b> + minisplice</td>
+      <td align="right">32,172 / 30,642</td>
+      <td align="right">70.2</td><td align="right">63.5</td>
+      <td align="right">80.5</td><td align="right">84.1</td>
+      <td align="right">94.5</td><td align="right">83.9</td>
+    </tr>
+    <tr>
+      <td>BRAKER4 EP (reference)</td>
+      <td align="right">34,834 / &mdash;</td>
+      <td align="right"><b>77.0</b></td><td align="right">61.8</td>
+      <td align="right">83.2</td><td align="right">80.4</td>
+      <td align="right">96.1</td><td align="right">80.4</td>
     </tr>
   </tbody>
 </table>
 
 Sn = Sensitivity (% of reference features recovered). Pr = Precision (% of predicted features matching reference). Higher is better for both. Bold marks the better value per metric.
 
-**Reading the table.** GALBA2 predicts 30,747 genes with higher precision than BRAKER4 EP (34,834 genes) across all levels: locus precision 63.4 vs 61.8, exon precision 84.3 vs 80.4, base precision 84.1 vs 80.4. BRAKER4 EP achieves higher sensitivity because ProtHint + GeneMark-EP+ cast a wider net, but at the cost of more false positives. When closely related protein evidence is available, GALBA2 provides a favourable balance of sensitivity and precision. Enabling minisplice CNN splice-site scoring (`use_minisplice = 1`, Yang et al., 2025) on this *A. thaliana* benchmark left locus-level accuracy essentially unchanged (Sn 70.2 / Pr 63.5 vs 70.4 / 63.4). For closely-related protein evidence, minisplice is therefore off by default; it may still help on distant homologs or more repetitive genomes where miniprot's splice-site signal is weaker.
+**Reading the table.**
+
+- **GALBA2 vs `galba.pl`** — GALBA2 matches the original Perl pipeline within measurement noise at every level: locus Sn/Pr 70.4/63.4 vs 70.0/63.4, exon Sn/Pr 80.8/84.3 vs 80.1/85.3, base Sn/Pr 94.7/84.1 vs 94.1/84.6. GALBA2 is marginally more sensitive (+0.4 locus Sn, +0.7 exon Sn, +0.6 base Sn); `galba.pl` is marginally more precise at the exon and base levels (+1.0 exon Pr, +0.5 base Pr). The two pipelines are interchangeable from an accuracy standpoint — GALBA2's reason for existing is the Snakemake-based execution model (multi-sample input, automatic resume, SLURM-native scheduling, containerised tools), not a change in prediction behaviour.
+- **`+ minisplice`** — enabling CNN splice-site scoring (`use_minisplice = 1`, Yang et al., 2025) on this *A. thaliana* benchmark left locus-level accuracy essentially unchanged (Sn 70.2 / Pr 63.5 vs 70.4 / 63.4). For closely related protein evidence, minisplice is therefore off by default; it may still help on distant homologs or more repetitive genomes where miniprot's splice-site signal is weaker.
+- **GALBA2 vs BRAKER4 EP** — GALBA2 has higher precision across all levels (locus 63.4 vs 61.8, exon 84.3 vs 80.4, base 84.1 vs 80.4); BRAKER4 EP has higher sensitivity (locus 77.0 vs 70.4) because ProtHint + GeneMark-EP+ cast a wider net, at the cost of more false positives. When closely related protein evidence is available, GALBA2 provides the more favourable balance.
 
 **Where GALBA shines.** The *A. thaliana* genome (~121 Mb) is small. On larger genomes — which are common for many animal, plant, and fungal species — GALBA's miniprot-based approach scales much better than BRAKER2's ProtHint + GeneMark-EP+ pipeline. On genomes of 1 Gb and above, GALBA consistently outperforms BRAKER2 EP mode in both accuracy and runtime, because miniprot handles large, repeat-rich genomes more robustly than the Spaln/DIAMOND-based ProtHint alignment. If you are annotating a large genome with protein evidence only, GALBA2 is the recommended tool.
 

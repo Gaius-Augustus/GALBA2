@@ -83,49 +83,49 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
     <tr>
       <th rowspan="2">Pipeline</th>
       <th rowspan="2">Genes / loci</th>
-      <th colspan="2" align="center">Locus</th>
-      <th colspan="2" align="center">Exon</th>
-      <th colspan="2" align="center">Base</th>
+      <th colspan="3" align="center">Locus</th>
+      <th colspan="3" align="center">Exon</th>
+      <th colspan="3" align="center">Base</th>
     </tr>
     <tr>
-      <th>Sn</th><th>Pr</th>
-      <th>Sn</th><th>Pr</th>
-      <th>Sn</th><th>Pr</th>
+      <th>Sn</th><th>Pr</th><th>F1</th>
+      <th>Sn</th><th>Pr</th><th>F1</th>
+      <th>Sn</th><th>Pr</th><th>F1</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code>galba.pl</code> (native Perl)</td>
       <td align="right">31,979 / 30,626</td>
-      <td align="right">70.0</td><td align="right">63.4</td>
-      <td align="right">80.1</td><td align="right"><b>85.3</b></td>
-      <td align="right">94.1</td><td align="right"><b>84.6</b></td>
+      <td align="right">70.0</td><td align="right">63.4</td><td align="right">66.5</td>
+      <td align="right">80.1</td><td align="right"><b>85.3</b></td><td align="right"><b>82.6</b></td>
+      <td align="right">94.1</td><td align="right"><b>84.6</b></td><td align="right"><b>89.1</b></td>
     </tr>
     <tr>
       <td><b>GALBA2</b> (default)</td>
       <td align="right">32,333 / 30,747</td>
-      <td align="right"><b>70.4</b></td><td align="right"><b>63.4</b></td>
-      <td align="right"><b>80.8</b></td><td align="right">84.3</td>
-      <td align="right"><b>94.7</b></td><td align="right">84.1</td>
+      <td align="right"><b>70.4</b></td><td align="right"><b>63.4</b></td><td align="right">66.7</td>
+      <td align="right"><b>80.8</b></td><td align="right">84.3</td><td align="right">82.5</td>
+      <td align="right"><b>94.7</b></td><td align="right">84.1</td><td align="right"><b>89.1</b></td>
     </tr>
     <tr>
       <td><b>GALBA2</b> + minisplice</td>
       <td align="right">32,172 / 30,642</td>
-      <td align="right">70.2</td><td align="right">63.5</td>
-      <td align="right">80.5</td><td align="right">84.1</td>
-      <td align="right">94.5</td><td align="right">83.9</td>
+      <td align="right">70.2</td><td align="right">63.5</td><td align="right">66.7</td>
+      <td align="right">80.5</td><td align="right">84.1</td><td align="right">82.3</td>
+      <td align="right">94.5</td><td align="right">83.9</td><td align="right">88.9</td>
     </tr>
     <tr>
       <td>BRAKER4 EP (reference)</td>
       <td align="right">34,834 / &mdash;</td>
-      <td align="right"><b>77.0</b></td><td align="right">61.8</td>
-      <td align="right">83.2</td><td align="right">80.4</td>
-      <td align="right">96.1</td><td align="right">80.4</td>
+      <td align="right"><b>77.0</b></td><td align="right">61.8</td><td align="right"><b>68.6</b></td>
+      <td align="right">83.2</td><td align="right">80.4</td><td align="right">81.8</td>
+      <td align="right">96.1</td><td align="right">80.4</td><td align="right">87.6</td>
     </tr>
   </tbody>
 </table>
 
-Sn = Sensitivity (% of reference features recovered). Pr = Precision (% of predicted features matching reference). Higher is better for both. Bold marks the better value per metric.
+Sn = Sensitivity (% of reference features recovered). Pr = Precision (% of predicted features matching reference). F1 = harmonic mean of Sn and Pr (`2·Sn·Pr / (Sn+Pr)`). Higher is better. Bold marks the best value per metric column across all four pipelines.
 
 **Reading the table.**
 

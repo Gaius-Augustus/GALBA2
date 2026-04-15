@@ -102,16 +102,16 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
       <td align="right">94.1</td><td align="right"><b>84.6</b></td><td align="right"><b>89.1</b></td>
     </tr>
     <tr>
-      <td><b>GALBA2</b> (default)</td>
+      <td>GALBA2 (default)</td>
       <td align="right">32,333 / 30,747</td>
-      <td align="right"><b>70.4</b></td><td align="right"><b>63.4</b></td><td align="right">66.7</td>
-      <td align="right"><b>80.8</b></td><td align="right">84.3</td><td align="right">82.5</td>
-      <td align="right"><b>94.7</b></td><td align="right">84.1</td><td align="right"><b>89.1</b></td>
+      <td align="right">70.4</td><td align="right">63.4</td><td align="right">66.7</td>
+      <td align="right">80.8</td><td align="right">84.3</td><td align="right">82.5</td>
+      <td align="right">94.7</td><td align="right">84.1</td><td align="right"><b>89.1</b></td>
     </tr>
     <tr>
-      <td><b>GALBA2</b> + minisplice</td>
+      <td>GALBA2 + minisplice</td>
       <td align="right">32,172 / 30,642</td>
-      <td align="right">70.2</td><td align="right">63.5</td><td align="right">66.7</td>
+      <td align="right">70.2</td><td align="right"><b>63.5</b></td><td align="right">66.7</td>
       <td align="right">80.5</td><td align="right">84.1</td><td align="right">82.3</td>
       <td align="right">94.5</td><td align="right">83.9</td><td align="right">88.9</td>
     </tr>
@@ -119,8 +119,8 @@ To verify that GALBA2 reproduces the gene-prediction accuracy of the original `g
       <td>BRAKER4 EP (reference)</td>
       <td align="right">34,834 / &mdash;</td>
       <td align="right"><b>77.0</b></td><td align="right">61.8</td><td align="right"><b>68.6</b></td>
-      <td align="right">83.2</td><td align="right">80.4</td><td align="right">81.8</td>
-      <td align="right">96.1</td><td align="right">80.4</td><td align="right">87.6</td>
+      <td align="right"><b>83.2</b></td><td align="right">80.4</td><td align="right">81.8</td>
+      <td align="right"><b>96.1</b></td><td align="right">80.4</td><td align="right">87.6</td>
     </tr>
   </tbody>
 </table>

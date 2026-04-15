@@ -43,3 +43,8 @@ Thumbs.db
 *.swo
 *~
 .cache/
+
+# Per-scenario run logs and stray outputs
+test_scenarios*/**/run.log
+test_scenarios*/**/galba*.log
+test_scenarios*/**/busco_downloads_online/

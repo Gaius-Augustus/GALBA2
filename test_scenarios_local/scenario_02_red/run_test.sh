@@ -1,7 +1,7 @@
 #!/bin/bash
-# Test Scenario 01: EP Mode (toy data)
-# Data: Small genome + proteins (from GALBA example data)
-# Expected runtime: ~5 minutes with skipOptimize
+# Test Scenario 02: Red masking (toy data)
+# Verifies that Red repeat masking runs end-to-end and is reported in the
+# generated HTML report.
 #
 # Run:  bash run_test.sh
 # Dry:  DRY_RUN=true bash run_test.sh
@@ -13,20 +13,18 @@ TIER_DIR="$(cd "$SCENARIO_DIR/.." && pwd)"
 PIPELINE_DIR="$(cd "$TIER_DIR/.." && pwd)"
 
 echo "============================================"
-echo "GALBA2 Test Scenario 01: EP Mode (toy data)"
+echo "GALBA2 Test Scenario 02: Red masking"
 echo "============================================"
 echo ""
 echo "Configuration:"
-echo "  - Genome:   test_data/genome.fa (~1 MB)"
-echo "  - Proteins: test_data/proteins.fa (~119 KB)"
-echo "  - Mode:     Protein evidence (GALBA)"
+echo "  - Genome:   test_data/genome.fa (unmasked)"
+echo "  - Proteins: test_data/proteins.fa"
+echo "  - Masking:  Red (neural-network repeat detector)"
 echo ""
 
-# Load shared compute profile, then per-scenario overrides
 source "$TIER_DIR/compute_profile.sh"
 [ -f "$SCENARIO_DIR/scenario_overrides.sh" ] && source "$SCENARIO_DIR/scenario_overrides.sh"
 
-# Use the shared biology config.ini for this tier
 export GALBA2_CONFIG="$TIER_DIR/config.ini"
 
 DRY_RUN=${DRY_RUN:-false}

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Benchmark scenario: A. thaliana EP mode (proteins only, GALBA2)
+# Benchmark scenario: A. thaliana with GALBA2 (protein homology — GALBA's only mode)
 # Data: /home/nas-hs/projs/braker4/data/Arabidopsis_thaliana/
 #   - genome.fa (~121 MB, already softmasked)
 #   - proteins.fa (~467 MB)

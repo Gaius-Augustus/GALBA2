@@ -21,8 +21,7 @@ Katharina J. Hoff, University of Greifswald, Germany, katharina.hoff@uni-greifsw
 Contents
 ========
 
--   [What is different in GALBA2?](#what-is-different-in-galba2)
--   [What is GALBA?](#what-is-galba)
+-   [What is GALBA2?](#what-is-galba2)
 -   [Keys to successful gene prediction](#keys-to-successful-gene-prediction)
 -   [Protein database preparation](#protein-database-preparation)
 -   [Installation](#installation)
@@ -41,28 +40,36 @@ Contents
 -   [Citing GALBA2 and software called by GALBA2](#citing-galba2-and-software-called-by-galba2)
 -   [License](#license)
 
-What is different in GALBA2?
-=============================
+What is GALBA2?
+================
 
-GALBA2 is a rewrite of the [GALBA pipeline](https://github.com/Gaius-Augustus/GALBA) in Snakemake, based on the [BRAKER4](https://github.com/Gaius-Augustus/BRAKER4) framework. The gene prediction logic is the same: miniprot aligns proteins to the genome, miniprothint extracts training genes and protein hints, AUGUSTUS is trained on the protein-derived genes and predicts with protein hints. What changed is how this logic is orchestrated.
+GALBA2 is a Snakemake pipeline for genome annotation by protein homology, built on the [BRAKER4](https://github.com/Gaius-Augustus/BRAKER4) framework. It is designed for cases where no RNA-Seq data is available, but a database of protein sequences from related species exists. GALBA has only one prediction mode: miniprot aligns proteins to the genome, miniprothint extracts training genes and hints, AUGUSTUS is trained on those genes and then predicts with the protein-derived hints. There is no separate "EP" or "ETP" mode as in BRAKER.
 
-**The old GALBA** was a monolithic Perl script (`galba.pl`, ~275 KB). It managed all tool calls, error handling, and file paths in a single script. It could not resume after failures and did not natively support cluster execution.
+GALBA2 is particularly useful for:
 
-**GALBA2** replaces that script with a Snakemake workflow. All bioinformatics tools run inside a Singularity container. You do not install miniprot, AUGUSTUS, DIAMOND, or any of their dependencies on your system. Snakemake handles job scheduling, parallelization, and automatic resume after failures.
+-   **Novel species** without RNA-Seq data, where a protein database from related species is available.
+-   **Large-scale annotation projects** where dozens of genomes need to be annotated with the same protein database.
+-   **Species with high-quality protein databases** (e.g. from OrthoDB) but no transcriptome evidence.
 
-Key differences:
+GALBA2 is a rewrite of the original [GALBA](https://github.com/Gaius-Augustus/GALBA) Perl pipeline (`galba.pl`, ~275 KB) as a Snakemake workflow. All bioinformatics tools run inside Singularity containers, so you do not install miniprot, AUGUSTUS, DIAMOND, or their dependencies on your system. Compared to `galba.pl`, GALBA2 adds:
 
--   **CSV-based multi-sample input.** You can annotate multiple genomes in a single run. Each row in `samples.csv` defines one genome with its protein evidence.
+-   **CSV-based multi-sample input** — annotate many genomes in a single run via `samples.csv`.
+-   **Automatic resume** — re-run the same command after a failure and Snakemake picks up where it left off.
+-   **Modular rules** in separate `.smk` files for easier debugging and extension.
+-   **HPC-ready SLURM executor** — each rule can submit as a separate cluster job.
+-   **Built-in repeat masking** — RepeatModeler2 + RepeatMasker (default) or Red (REpeat Detector; ~10× faster, no library), selectable via `masking_tool` in `config.ini`. Skipped automatically when you provide a pre-masked genome via `genome_masked` in `samples.csv`.
+-   **Integrated QC and postprocessing** — GFF3 conversion (AGAT), DIAMOND filtering against the input proteins, BUSCO/compleasm completeness assessment, optional evaluation against a reference annotation (gffcompare).
+-   **Optional CNN splice-site scoring** with minisplice (`use_minisplice = 1`).
+-   **Optional non-coding RNA annotation** with barrnap (rRNA), tRNAscan-SE (tRNA), and Infernal against Rfam (snoRNA/snRNA/miRNA/ribozymes), merged into `galba_with_ncRNA.gff3` when `run_ncrna = 1`.
+-   **Optional functional GO annotation** with FANTASIA-Lite (`run_fantasia = 1`, GPU-only).
+-   **Optional OMArk proteome QC** (`run_omark = 1`).
+-   **Auto-generated HTML report** with embedded plots, run-specific methods text, and a BibTeX file containing only the tools that were actually used.
 
--   **Automatic resume.** If a run fails (out of memory, time limit, network error), re-run the same command. Snakemake picks up where it left off.
-
--   **Modular rules.** Each step is a separate Snakemake rule in its own file. This makes it straightforward to understand, debug, and extend the pipeline.
-
--   **HPC-ready with SLURM.** Snakemake's SLURM executor submits each rule as a separate cluster job.
-
--   **Integrated postprocessing and quality control.** GFF3 conversion (AGAT), DIAMOND filtering against input proteins, BUSCO/compleasm completeness assessment, and optional evaluation against a reference annotation (gffcompare) are included.
-
--   **Optional non-coding RNA prediction.** When `run_ncrna = 1` is set in `config.ini`, GALBA2 predicts rRNAs with barrnap, tRNAs with tRNAscan-SE, and non-coding RNA families (snoRNA, snRNA, miRNA, ribozymes) with Infernal against Rfam. All predictions are merged into `galba_with_ncRNA.gff3`.
+<p align="center">
+  <img src="img/pipeline_overview.png" alt="GALBA2 pipeline overview" width="85%">
+  <br>
+  <em>Figure&nbsp;1. Overview of the GALBA2 pipeline. Solid borders mark required steps; dashed borders mark optional steps.</em>
+</p>
 
 Benchmark accuracy vs native galba.pl
 ======================================
@@ -118,23 +125,6 @@ Sn = Sensitivity (% of reference features recovered). Pr = Precision (% of predi
 **Reading the table.** GALBA2 predicts 30,747 genes with higher precision than BRAKER4 EP (34,834 genes) across all levels: locus precision 63.4 vs 61.8, exon precision 84.3 vs 80.4, base precision 84.1 vs 80.4. BRAKER4 EP achieves higher sensitivity because ProtHint + GeneMark-EP+ cast a wider net, but at the cost of more false positives. When closely related protein evidence is available, GALBA2 provides a favourable balance of sensitivity and precision. Enabling minisplice CNN splice-site scoring (`use_minisplice = 1`, Yang et al., 2025) on this *A. thaliana* benchmark left locus-level accuracy essentially unchanged (Sn 70.2 / Pr 63.5 vs 70.4 / 63.4). For closely-related protein evidence, minisplice is therefore off by default; it may still help on distant homologs or more repetitive genomes where miniprot's splice-site signal is weaker.
 
 **Where GALBA shines.** The *A. thaliana* genome (~121 Mb) is small. On larger genomes — which are common for many animal, plant, and fungal species — GALBA's miniprot-based approach scales much better than BRAKER2's ProtHint + GeneMark-EP+ pipeline. On genomes of 1 Gb and above, GALBA consistently outperforms BRAKER2 EP mode in both accuracy and runtime, because miniprot handles large, repeat-rich genomes more robustly than the Spaln/DIAMOND-based ProtHint alignment. If you are annotating a large genome with protein evidence only, GALBA2 is the recommended tool.
-
-What is GALBA?
-===============
-
-GALBA is a pipeline for genome annotation using protein homology. It is designed for cases where no RNA-Seq data is available, but a database of protein sequences from related species exists. GALBA uses miniprot to align proteins to the genome, generates training genes from high-quality alignments, trains AUGUSTUS on these genes, and predicts genes using protein-derived hints.
-
-GALBA is particularly useful for:
-
--   **Novel species** without RNA-Seq data, where a protein database from related species is available.
--   **Large-scale annotation projects** where dozens of genomes need to be annotated with the same protein database.
--   **Species with high-quality protein databases** (e.g. from OrthoDB) but no transcriptome evidence.
-
-<p align="center">
-  <img src="img/pipeline_overview.png" alt="GALBA2 pipeline overview" width="85%">
-  <br>
-  <em>Figure&nbsp;1. Overview of the GALBA2 pipeline. Solid borders mark required steps; dashed borders mark optional steps. Miniprot aligns proteins to the genome, miniprothint extracts training genes and hints, AUGUSTUS is trained and predicts genes with protein evidence.</em>
-</p>
 
 Keys to successful gene prediction
 ====================================
@@ -474,11 +464,17 @@ Example data
 GALBA2 ships with a small toy dataset in `test_data/` (a ~1 MB genome and ~119 KB protein set from the original GALBA test suite). To run the toy test locally:
 
 ```bash
-cd test_scenarios_local/scenario_01_ep
+cd test_scenarios_local/scenario_01_toy
 bash run_test.sh
 ```
 
-For HPC benchmarks, see `test_scenarios/scenario_benchmark_athaliana_ep/` which annotates the full *A. thaliana* genome with Viridiplantae proteins from OrthoDB.
+Additional local scenarios under `test_scenarios_local/`:
+
+-   `scenario_02_red/` — toy dataset with Red repeat masking.
+-   `scenario_03_busco_online/` — BUSCO with online lineage download.
+-   `scenario_04_busco_offline/` — BUSCO with a pre-downloaded lineage (`--offline`).
+
+For HPC benchmarks, see `test_scenarios/scenario_benchmark_athaliana*/`, which annotate the full *A. thaliana* genome with Viridiplantae proteins from OrthoDB.
 
 Bug reporting
 ==============

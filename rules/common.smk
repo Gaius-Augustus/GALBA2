@@ -191,7 +191,7 @@ def print_workflow_summary():
     for sample in SAMPLES:
         types = detect_data_types(sample)
         print(f"\n  {sample}:")
-        print(f"    Mode: Protein evidence (GALBA)")
+        print(f"    Mode: protein homology")
         print(f"    Genome: {'pre-masked' if types['has_masked_genome'] else 'unmasked'}")
         n_prots = len(get_protein_fasta_files(sample))
         print(f"    Proteins: {n_prots} file(s)")

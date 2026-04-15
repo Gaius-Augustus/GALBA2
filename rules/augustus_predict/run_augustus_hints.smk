@@ -107,9 +107,13 @@ rule run_augustus_hints:
 
         splitMfasta.pl {input.genome} --outputpath="$GENOME_SPLIT_TMP" 2> {params.output_dir}/splitMfasta.err
 
-        # Rename split files according to scaffold names (BRAKER convention)
+        # Rename split files according to scaffold names (BRAKER convention).
+        # splitMfasta.pl names its outputs after the input file stem, so with
+        # {input.genome} = genome.fa the stem is "genome" but with
+        # genome_masked.fa the stem is "genome_masked". Glob on *.split.*
+        # so the rename works regardless of which stem is in play.
         cd "$GENOME_SPLIT_TMP"
-        for f in genome.split.*; do
+        for f in *.split.*; do
             if [ -f "$f" ]; then
                 NAME=$(grep ">" $f | head -1)
                 mv $f ${{NAME#>}}.fa

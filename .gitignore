@@ -48,3 +48,8 @@ Thumbs.db
 test_scenarios*/**/run.log
 test_scenarios*/**/galba*.log
 test_scenarios*/**/busco_downloads_online/
+
+# Local developer-only test scenarios not part of the tracked test suite
+test_scenarios_local/scenario_02_red/
+test_scenarios_local/scenario_03_busco_online/
+test_scenarios_local/scenario_04_busco_offline/

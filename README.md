@@ -5,6 +5,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/Gaius-Augustus/GALBA2" alt="License"></a>
   <img src="https://img.shields.io/badge/snakemake-%E2%89%A57.0-brightgreen" alt="Snakemake &ge; 7.0">
   <img src="https://img.shields.io/badge/container-singularity-orange" alt="Singularity">
+  <a href="https://github.com/Gaius-Augustus/GALBA2/commits/main"><img src="https://img.shields.io/github/last-commit/Gaius-Augustus/GALBA2" alt="Last commit"></a>
+  <a href="https://github.com/Gaius-Augustus/GALBA2/issues"><img src="https://img.shields.io/github/issues/Gaius-Augustus/GALBA2" alt="Open issues"></a>
+  <a href="https://github.com/Gaius-Augustus/GALBA2/stargazers"><img src="https://img.shields.io/github/stars/Gaius-Augustus/GALBA2?style=flat" alt="Stars"></a>
 </p>
 
 # GALBA2 — protein homology based genome annotation in Snakemake

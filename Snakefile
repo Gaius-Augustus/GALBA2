@@ -88,8 +88,14 @@ config['augustus_image'] = config_parser.get('containers', 'augustus_image',
 # Backwards compat alias
 config['galba_image'] = config['galba_tools_image']
 
+# When [SLURM_ARGS] cpus_per_task is missing from config.ini (typical for
+# local runs), fall back to workflow.cores so that `snakemake --cores N`
+# controls per-rule parallelism. Without this fallback, multithreaded rules
+# would run single-threaded regardless of --cores.
+# Same fix as BRAKER4 issue #10.
 config['slurm_args'] = {
-    'cpus_per_task': config_parser.getint('SLURM_ARGS', 'cpus_per_task', fallback=1),
+    'cpus_per_task': config_parser.getint('SLURM_ARGS', 'cpus_per_task',
+                                          fallback=workflow.cores or 1),
     'mem_of_node': config_parser.getint('SLURM_ARGS', 'mem_of_node', fallback=16000),
     'max_runtime': config_parser.getint('SLURM_ARGS', 'max_runtime', fallback=60)
 }

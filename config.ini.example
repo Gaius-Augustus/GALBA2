@@ -1,0 +1,97 @@
+; GALBA2 configuration template.
+; Copy this file to config.ini in your working directory and adjust the values.
+;
+; Comments must start at the beginning of a line (# or ;).
+; Inline comments after a value are also accepted by GALBA2, but some
+; third-party INI parsers do not support them, so this template keeps comments
+; on separate lines for maximum compatibility.
+;
+; Every key in [PARAMS] and [SLURM_ARGS] can also be overridden at runtime via
+; an environment variable named GALBA2_<KEY_UPPER>, e.g.:
+;   export GALBA2_MAX_RUNTIME=240
+; Environment variables win over values set in this file.
+; The path to the config file itself can be overridden with:
+;   export GALBA2_CONFIG=/path/to/another.ini
+
+[paths]
+samples_file = samples.csv
+augustus_config_path = augustus_config
+; busco_download_path = /path/to/busco_downloads
+; compleasm_download_path = /path/to/busco_downloads/lineages
+
+[containers]
+; miniprot, miniprothint, compleasm (~50 MB)
+galba_tools_image = docker://katharinahoff/galba2-tools:latest
+; AUGUSTUS, DIAMOND, all Perl helper scripts (249 MB)
+augustus_image = docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9
+
+[PARAMS]
+; Skip contigs shorter than this length (bp).
+min_contig = 10000
+; Set to 1 to skip AUGUSTUS parameter optimization (saves hours on large genomes).
+; Do not enable for production runs — optimization improves accuracy.
+skip_optimize_augustus = 0
+; Set to 1 to skip DIAMOND filtering of AUGUSTUS predictions against input proteins.
+; Disabling produces more genes but also more false positives.
+disable_diamond_filter = 0
+; Set to 1 to skip the full BUSCO pipeline (slower than compleasm).
+; compleasm still runs for completeness assessment.
+skip_busco = 0
+; Set to 1 to run OMArk proteome quality assessment.
+; Requires the LUCA.h5 OMAmer database (~8.8 GB). See [OMARK] below.
+run_omark = 0
+; Set to 1 to annotate ncRNAs (rRNA, tRNA, snoRNA, miRNA, lncRNA).
+; Requires Rfam database (~315 MB), downloaded by scripts/download_data.sh.
+run_ncrna = 0
+; Genetic code table (1 = standard code).
+; Only table 1 is currently supported because miniprot does not support
+; alternative genetic codes.
+translation_table = 1
+; GC donor splice site probability for GeneMark (ES/EP modes).
+gc_donor = 0.001
+; Non-canonical splice sites passed to AUGUSTUS (comma-separated).
+allow_hinted_splicesites = gcag,atac
+; Genome chunk size (bp) for parallel AUGUSTUS prediction.
+augustus_chunksize = 3000000
+; Overlap (bp) between adjacent AUGUSTUS chunks.
+augustus_overlap = 500000
+; Repeat masking engine: "repeatmasker" (RepeatModeler2 + RepeatMasker, thorough)
+; or "red" (Red repeat detector, ~10x faster, no repeat-family classification).
+; Only used when the genome_masked column in samples.csv is empty.
+masking_tool = repeatmasker
+; Set to 1 to score splice sites with minisplice before minimap2 (experimental).
+; Requires miniprot >= 0.14 and a pre-trained minisplice model.
+use_minisplice = 0
+; Path to minisplice model file (required when use_minisplice = 1).
+; minisplice_model = /path/to/minisplice.model
+; Set to 1 to keep all intermediate files (useful for debugging, uses extra disk).
+no_cleanup = 0
+; Set to 1 to use /dev/shm for temp files (faster I/O on nodes with large RAM).
+use_dev_shm = 0
+
+[fantasia]
+; Optional functional GO annotation with FANTASIA-Lite. GPU-only (validated on A100).
+; OFF by default. Set enable = 1 and fill in the paths below to activate.
+enable = 0
+; sif = /path/to/fantasia_lite.sif
+; hf_cache_dir = /path/to/huggingface_cache
+; partition = gpu
+; gpus = 1
+; mem_mb = 25000
+; cpus_per_task = 16
+; max_runtime = 1440
+; min_score = 0.5
+; additional_params =
+
+[OMARK]
+; OMAmer database path (required when run_omark = 1 in [PARAMS]).
+; omamer_db = /path/to/LUCA.h5
+
+[SLURM_ARGS]
+; These settings are used only when running with --executor slurm.
+; Adjust to match your cluster's available resources.
+cpus_per_task = 48
+; Total node memory in MB.
+mem_of_node = 120000
+; Maximum walltime in minutes (default: 72 hours).
+max_runtime = 4320

@@ -320,6 +320,14 @@ mem_of_node = 120000                # memory in MB
 max_runtime = 4320                  # runtime in minutes (72 hours)
 ```
 
+A ready-to-use template with all keys and per-option comments is shipped as [`config.ini.example`](config.ini.example). Copy it to your working directory and rename it:
+
+```bash
+cp /path/to/GALBA2/config.ini.example config.ini
+```
+
+Then edit the values as needed. The template keeps all comments on separate lines for compatibility with strict INI parsers; GALBA2 itself also accepts inline comments (`key = value  # comment`).
+
 Every value in `[PARAMS]` and `[SLURM_ARGS]` can also be overridden via an environment variable named `GALBA2_<KEY_UPPER>`, e.g. `GALBA2_MAX_RUNTIME=240` or `GALBA2_SKIP_OPTIMIZE_AUGUSTUS=1`. Environment variables win over the file. The path of the file itself can be overridden with `GALBA2_CONFIG=/path/to/another.ini`.
 
 Running locally

@@ -81,10 +81,21 @@ augustus_config_path = os.path.abspath(config_parser['paths'].get('augustus_conf
 # Pass config to Snakemake config dict
 config['samples_file'] = config_parser['paths'].get('samples_file', 'samples.csv')
 config['min_contig'] = config_parser.getint('PARAMS', 'min_contig', fallback=10000)
-config['galba_tools_image'] = config_parser.get('containers', 'galba_tools_image',
-                                                fallback='docker://katharinahoff/galba-notebook:latest')
-config['augustus_image'] = config_parser.get('containers', 'augustus_image',
-                                            fallback='docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9')
+_container_defaults = {
+    'galba_tools_image': 'docker://katharinahoff/galba-notebook:latest',
+    'augustus_image':    'docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9',
+    'gffcompare_image':  'docker://quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1',
+    'red_image':         'docker://quay.io/biocontainers/red:2018.09.10--h9948957_3',
+    'barrnap_image':     'docker://quay.io/biocontainers/barrnap:0.9--hdfd78af_4',
+    'agat_image':        'docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0',
+    'busco_image':       'docker://ezlabgva/busco:v6.0.0_cv1',
+    'omark_image':       'docker://quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0',
+    'tetools_image':     'docker://dfam/tetools:latest',
+    'trnascan_image':    'docker://quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0',
+    'infernal_image':    'docker://quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2',
+}
+for _img_key, _img_default in _container_defaults.items():
+    config[_img_key] = config_parser.get('containers', _img_key, fallback=_img_default)
 # Backwards compat alias
 config['galba_image'] = config['galba_tools_image']
 

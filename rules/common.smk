@@ -176,6 +176,7 @@ BARRNAP_CONTAINER = config.get("barrnap_image", "docker://quay.io/biocontainers/
 AGAT_CONTAINER = config.get("agat_image", "docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0")
 BUSCO_CONTAINER = config.get("busco_image", "docker://ezlabgva/busco:v6.0.0_cv1")
 OMARK_CONTAINER = config.get("omark_image", "docker://quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0")
+TETOOLS_CONTAINER = config.get("tetools_image", "docker://dfam/tetools:latest")
 
 # ==============================================================================
 # Workflow Summary

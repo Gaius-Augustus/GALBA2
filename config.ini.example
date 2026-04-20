@@ -20,10 +20,21 @@ augustus_config_path = augustus_config
 ; compleasm_download_path = /path/to/busco_downloads/lineages
 
 [containers]
+; Replace any docker:// URI with an absolute path to a local .sif file to
+; avoid pulling the image at runtime. All keys are optional (defaults shown).
 ; miniprot, miniprothint, compleasm (~50 MB)
 galba_tools_image = docker://katharinahoff/galba2-tools:latest
 ; AUGUSTUS, DIAMOND, all Perl helper scripts (249 MB)
 augustus_image = docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9
+gffcompare_image = docker://quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1
+red_image = docker://quay.io/biocontainers/red:2018.09.10--h9948957_3
+barrnap_image = docker://quay.io/biocontainers/barrnap:0.9--hdfd78af_4
+agat_image = docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0
+busco_image = docker://ezlabgva/busco:v6.0.0_cv1
+omark_image = docker://quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0
+tetools_image = docker://dfam/tetools:latest
+trnascan_image = docker://quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0
+infernal_image = docker://quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2
 
 [PARAMS]
 ; Skip contigs shorter than this length (bp).

@@ -198,6 +198,8 @@ source snakemake_env/bin/activate
 pip install snakemake
 ```
 
+GALBA2 supports SLURM as its HPC executor. Other schedulers (SGE, PBS, LSF) are not supported — if your cluster uses a different scheduler, run without `--executor slurm` and submit the Snakemake process itself as a single job, letting it execute rules locally within that allocation.
+
 If you intend to run GALBA2 on an HPC cluster with SLURM, you also need the Snakemake SLURM executor plugin:
 
 ```
@@ -507,6 +509,7 @@ Before reporting a bug, please check:
 -   Is your protein database a multi-FASTA file with many representative proteins per family?
 -   Do you have sufficient disk space? GALBA2 needs several GB for intermediate files.
 -   Check the Snakemake log in `.snakemake/log/` for error details.
+-   *Snakemake says the directory is locked and won't start!* Run with `--unlock` to clear the lock. If that does not help, delete the `.snakemake/` directory in your working directory and re-run — it holds only Snakemake metadata (locks, job tracking), not your output files.
 
 Citing GALBA2 and software called by GALBA2
 =============================================

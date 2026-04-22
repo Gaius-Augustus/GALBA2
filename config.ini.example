@@ -18,6 +18,7 @@ samples_file = samples.csv
 augustus_config_path = augustus_config
 ; busco_download_path = /path/to/busco_downloads
 ; compleasm_download_path = /path/to/busco_downloads/lineages
+; rfam_path = /path/to/rfam               ; directory with Rfam.cm + Rfam.clanin; required when run_ncrna = 1
 
 [containers]
 ; Replace any docker:// URI with an absolute path to a local .sif file to

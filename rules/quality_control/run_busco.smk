@@ -173,7 +173,7 @@ rule busco_proteins:
         PROT_SUMMARY=$(find "$OUTDIR_ABS/proteins" -name "short_summary*.txt" 2>/dev/null | head -1)
         BUSCO_LINE=""
         if [ -n "$PROT_SUMMARY" ] && [ -f "$PROT_SUMMARY" ]; then
-            BUSCO_LINE=$(grep -oP 'C:[0-9.]+%.*' "$PROT_SUMMARY" | head -1)
+            BUSCO_LINE=$(grep -oE 'C:[0-9.]+%.*' "$PROT_SUMMARY" | head -1)
         fi
         cite busco "$REPORT_DIR"
         """

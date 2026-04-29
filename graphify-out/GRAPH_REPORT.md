@@ -1,7 +1,7 @@
-# Graph Report - /home/katharina/git/GALBA2  (2026-04-24)
+# Graph Report - /home/katharina/git/GALBA2  (2026-04-25)
 
 ## Corpus Check
-- 19 files · ~528,323 words
+- 19 files · ~627,065 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

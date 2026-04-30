@@ -232,7 +232,7 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 | Infernal | `quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2` | 28 MB | Rfam scan for snoRNA/snRNA/miRNA (only when `run_ncrna = 1`) |
 | OMArk | `quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0` | 455 MB | OMArk proteome quality assessment (optional, only when `run_omark = 1`) |
 | gffcompare | `quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1` | 11 MB | Evaluation against a reference annotation (optional) |
-| FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v0.0.2` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional, **GPU-only**) |
+| FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v1.0.0` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional, **GPU-only**) |
 
 A standard GALBA2 run (no masking, no BUSCO) pulls only the GALBA2 tools + AUGUSTUS + AGAT containers: **~730 MB** total.
 
@@ -375,7 +375,7 @@ Description of selected configuration options
 | `masking_tool` | repeatmasker | Repeat masking tool: `repeatmasker` (RepeatModeler2 + RepeatMasker, thorough but slow) or `red` (Red repeat detector, much faster). Only used when `genome_masked` column is empty. |
 | `use_minisplice` | 0 | Use minisplice CNN splice site scores to improve miniprot alignment. Requires miniprot >= 0.14 and a pre-trained minisplice model (see [minisplice](https://github.com/lh3/minisplice)). Experimental. |
 | `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (barrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |
-| `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container and ProtT5 cache). See `[fantasia]` section in `config.ini`. |
+| `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container, ProtT5 cache, and V1 lookup bundle). Set `sif`, `hf_cache_dir`, and `lookup_dir` in the `[fantasia]` section of `config.ini`. Download the lookup bundle from [Zenodo record 17720428](https://zenodo.org/records/17720428). |
 | `translation_table` | 1 | NCBI genetic code table. **Currently only table 1 (standard code) is supported** because miniprot does not support alternative genetic codes. Support for additional tables is planned for a future release. |
 | `no_cleanup` | 0 | Keep all intermediate files. Useful for debugging. |
 | `use_dev_shm` | 0 | Use `/dev/shm` for temporary files during AUGUSTUS prediction (faster I/O on nodes with large RAM). |

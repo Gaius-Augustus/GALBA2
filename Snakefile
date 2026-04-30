@@ -64,6 +64,7 @@ _env_overrides = {
     'GALBA2_RUN_FANTASIA':                   ('fantasia', 'enable'),
     'GALBA2_FANTASIA_SIF':                   ('fantasia', 'sif'),
     'GALBA2_FANTASIA_HF_CACHE':              ('fantasia', 'hf_cache_dir'),
+    'GALBA2_FANTASIA_LOOKUP_DIR':            ('fantasia', 'lookup_dir'),
     'GALBA2_FANTASIA_PARTITION':             ('fantasia', 'partition'),
     'GALBA2_FANTASIA_GPUS':                  ('fantasia', 'gpus'),
     'GALBA2_FANTASIA_MEM_MB':                ('fantasia', 'mem_mb'),
@@ -176,6 +177,7 @@ config['run_fantasia'] = config_parser.getboolean(
 config['fantasia'] = {
     'sif':              config_parser.get('fantasia', 'sif', fallback=''),
     'hf_cache_dir':     config_parser.get('fantasia', 'hf_cache_dir', fallback=''),
+    'lookup_dir':       config_parser.get('fantasia', 'lookup_dir', fallback=''),
     'additional_params': config_parser.get('fantasia', 'additional_params', fallback=''),
     'min_score':        config_parser.get('fantasia', 'min_score', fallback='0.5'),
     'partition':        config_parser.get('fantasia', 'partition', fallback=''),
@@ -187,6 +189,51 @@ config['fantasia'] = {
     'max_runtime':      config_parser.get('fantasia', 'max_runtime',
                                           fallback=str(config['slurm_args']['max_runtime'])),
 }
+if config['run_fantasia']:
+    if not config['fantasia']['sif']:
+        raise ValueError(
+            "fantasia.enable=1 but fantasia.sif is empty. Set the path to the "
+            "FANTASIA-Lite Singularity image (pre-pulled from "
+            "docker://katharinahoff/fantasia_for_brain:lite.v1.0.0) in config.ini "
+            "[fantasia] sif=, or via GALBA2_FANTASIA_SIF."
+        )
+    if not os.path.isfile(config['fantasia']['sif']):
+        raise FileNotFoundError(
+            f"fantasia.enable=1 but the configured SIF does not exist on disk: "
+            f"{config['fantasia']['sif']}\n"
+            "GALBA2 will not start a run that would only fail later inside the "
+            "FANTASIA rule. Pre-pull the image with:\n"
+            "    singularity pull <path> docker://katharinahoff/fantasia_for_brain:lite.v1.0.0"
+        )
+    if not config['fantasia']['hf_cache_dir']:
+        raise ValueError(
+            "fantasia.enable=1 but fantasia.hf_cache_dir is empty. Pre-cache "
+            "the Rostlab/prot_t5_xl_uniref50 HuggingFace model and set "
+            "fantasia.hf_cache_dir to the cache directory in config.ini, or via "
+            "GALBA2_FANTASIA_HF_CACHE."
+        )
+    if not os.path.isdir(config['fantasia']['hf_cache_dir']):
+        raise FileNotFoundError(
+            f"fantasia.enable=1 but the configured HuggingFace cache directory "
+            f"does not exist: {config['fantasia']['hf_cache_dir']}\n"
+            "FANTASIA-Lite runs in HF_HUB_OFFLINE mode, so the ProtT5 weights "
+            "must already be on disk before the rule is invoked."
+        )
+    if not config['fantasia']['lookup_dir']:
+        raise ValueError(
+            "fantasia.enable=1 but fantasia.lookup_dir is empty. Download the "
+            "FANTASIA V1 lookup bundle from Zenodo record 17720428 and set "
+            "fantasia.lookup_dir to the extracted directory in config.ini, or "
+            "via GALBA2_FANTASIA_LOOKUP_DIR."
+        )
+    if not os.path.isdir(config['fantasia']['lookup_dir']):
+        raise FileNotFoundError(
+            f"fantasia.enable=1 but the configured lookup_dir does not exist: "
+            f"{config['fantasia']['lookup_dir']}\n"
+            "Download the FANTASIA V1 lookup bundle from "
+            "https://zenodo.org/records/17720428/files/fantasia_lite_data_folder.zip "
+            "and extract it to that path."
+        )
 
 config['username'] = os.environ.get("USER", "unknown")
 script_dir = os.path.join(os.path.dirname(workflow.main_snakefile), "scripts")

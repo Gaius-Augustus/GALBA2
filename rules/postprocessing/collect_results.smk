@@ -64,7 +64,7 @@ rule collect_results:
         no_cleanup=config.get('no_cleanup', False)
     threads: 1
     resources:
-        mem_mb=4000,
+        mem_mb=0 if config['slurm_args'].get('skip_mem') else 4000,
         runtime=30
     container:
         GALBA_TOOLS_CONTAINER

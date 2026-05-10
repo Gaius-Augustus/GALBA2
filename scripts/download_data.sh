@@ -212,6 +212,21 @@ if [ "$DOWNLOAD_OMARK" = "1" ]; then
         echo "OMAmer LUCA.h5 database: $LUCA_DB ($LUCA_SIZE)"
     fi
     echo ""
+
+    # NCBI taxdump for offline ete3 initialisation on HPC compute nodes
+    ETE_TAXA_DIR="$SHARED_DATA_DIR/ete_taxa"
+    mkdir -p "$ETE_TAXA_DIR"
+    TAXDUMP="$ETE_TAXA_DIR/taxdump.tar.gz"
+    if [ ! -f "$TAXDUMP" ]; then
+        echo "Downloading NCBI taxdump for offline ete3 initialisation (~60 MB)..."
+        wget -q --show-progress \
+            "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz" \
+            -O "$TAXDUMP"
+        echo "  Downloaded: $TAXDUMP ($(du -h "$TAXDUMP" | cut -f1))"
+    else
+        echo "NCBI taxdump: $TAXDUMP ($(du -h "$TAXDUMP" | cut -f1))"
+    fi
+    echo ""
 else
     echo "OMAmer LUCA.h5: skipped (use --omark or --all to download)"
     echo ""
@@ -231,9 +246,13 @@ echo "  compleasm_download_path = $COMPLEASM_DIR"
 if [ "$DOWNLOAD_OMARK" = "1" ] && [ -f "$SHARED_DATA_DIR/LUCA.h5" -o -L "$SHARED_DATA_DIR/LUCA.h5" ]; then
     LUCA_RESOLVED="$(readlink -f "$SHARED_DATA_DIR/LUCA.h5")"
     echo ""
-    echo "For OMArk, also set omamer_db in config.ini [OMARK]:"
+    echo "For OMArk, also set in config.ini [OMARK]:"
     echo "  [OMARK]"
     echo "  omamer_db = $LUCA_RESOLVED"
+    if [ -f "$SHARED_DATA_DIR/ete_taxa/taxdump.tar.gz" ]; then
+        echo "  ete_taxa_path = $SHARED_DATA_DIR/ete_taxa"
+        echo "  (ete_taxa_path is auto-discovered if shared_data/ is in this repo)"
+    fi
 fi
 echo ""
 echo "Or if this is the default location (shared_data/ in this repo"

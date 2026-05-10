@@ -42,6 +42,8 @@ _env_overrides = {
     'GALBA2_CPUS_PER_TASK':                  ('SLURM_ARGS', 'cpus_per_task'),
     'GALBA2_MEM_OF_NODE':                    ('SLURM_ARGS', 'mem_of_node'),
     'GALBA2_MAX_RUNTIME':                    ('SLURM_ARGS', 'max_runtime'),
+    # SLURM_ARGS extras
+    'GALBA2_SKIP_MEM_REQUEST':               ('SLURM_ARGS', 'skip_mem_request'),
     # PARAMS
     'GALBA2_MIN_CONTIG':                     ('PARAMS', 'min_contig'),
     'GALBA2_SKIP_OPTIMIZE_AUGUSTUS':          ('PARAMS', 'skip_optimize_augustus'),
@@ -105,11 +107,13 @@ config['galba_image'] = config['galba_tools_image']
 # controls per-rule parallelism. Without this fallback, multithreaded rules
 # would run single-threaded regardless of --cores.
 # Same fix as BRAKER4 issue #10.
+_skip_mem = config_parser.getboolean('SLURM_ARGS', 'skip_mem_request', fallback=False)
 config['slurm_args'] = {
     'cpus_per_task': config_parser.getint('SLURM_ARGS', 'cpus_per_task',
                                           fallback=workflow.cores or 1),
-    'mem_of_node': config_parser.getint('SLURM_ARGS', 'mem_of_node', fallback=16000),
-    'max_runtime': config_parser.getint('SLURM_ARGS', 'max_runtime', fallback=60)
+    'mem_of_node': 0 if _skip_mem else config_parser.getint('SLURM_ARGS', 'mem_of_node', fallback=16000),
+    'max_runtime': config_parser.getint('SLURM_ARGS', 'max_runtime', fallback=60),
+    'skip_mem': _skip_mem,
 }
 
 config['skip_optimize_augustus'] = config_parser.getboolean(
@@ -300,6 +304,18 @@ config['rfam_path'] = os.path.abspath(
     config_parser.get('paths', 'rfam_path',
                       fallback=os.path.join(_shared_data, 'rfam'))
 )
+
+def _find_ete_taxa_path():
+    """Return directory holding taxdump.tar.gz for offline ete3 init, or ''."""
+    explicit = config_parser.get('OMARK', 'ete_taxa_path', fallback='')
+    if explicit:
+        return os.path.abspath(explicit)
+    candidate = os.path.join(_shared_data, 'ete_taxa')
+    if os.path.isdir(candidate):
+        return candidate
+    return ''
+
+config['ete_taxa_path'] = _find_ete_taxa_path()
 
 # Path to the GALBA extrinsic config file bundled with the pipeline
 config['galba_cfg_path'] = os.path.join(

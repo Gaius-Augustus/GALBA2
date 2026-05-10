@@ -128,12 +128,21 @@ for g in sorted(genes):
         """
 
 
+_ETE_TAXDUMP = (
+    os.path.join(config['ete_taxa_path'], 'taxdump.tar.gz')
+    if config.get('ete_taxa_path') and
+       os.path.isfile(os.path.join(config.get('ete_taxa_path', ''), 'taxdump.tar.gz'))
+    else []
+)
+
+
 rule run_omark:
     """Run OMArk quality assessment with isoform-aware analysis."""
     input:
         omamer="output/{sample}/omark/proteome.omamer",
         splice="output/{sample}/omark/isoforms.splice",
-        db=OMAMER_DB
+        db=OMAMER_DB,
+        taxdump=_ETE_TAXDUMP
     output:
         summary="output/{sample}/omark/omark_summary.txt",
         done="output/{sample}/omark/.done"
@@ -152,13 +161,23 @@ rule run_omark:
         set -euo pipefail
         OUTDIR=$(readlink -f output/{wildcards.sample}/omark)
 
-        # OMArk uses ete3, which initializes ~/.etetoolkit/taxa.sqlite (or a
-        # CWD-local .etetoolkit/taxa.sqlite) on first run. When multiple OMArk
-        # jobs run in parallel they all try to populate the same SQLite file,
-        # producing "database is locked" errors. Serialize via flock so only
-        # one job writes the taxonomy db at a time; after it is populated the
-        # other jobs just read it.
-        mkdir -p .etetoolkit
+        # OMArk uses ete3, which initialises ~/.etetoolkit/taxa.sqlite on first
+        # run by downloading taxdump from NCBI. On HPC nodes without internet
+        # access that download fails. If a pre-downloaded taxdump.tar.gz was
+        # staged via download_data.sh --omark it is available as {input.taxdump}.
+        # Copy it into ~/.etetoolkit/ so ete3 converts it locally instead of
+        # attempting a network fetch.
+        #
+        # Serialise via flock on ~/.etetoolkit/taxa.sqlite.lock so that
+        # concurrent samples (or concurrent pipeline runs) do not collide when
+        # building the db for the first time.
+        mkdir -p "$HOME/.etetoolkit"
+        TAXDUMP_SRC="{input.taxdump}"
+        if [ -n "$TAXDUMP_SRC" ] && [ ! -f "$HOME/.etetoolkit/taxa.sqlite" ] && \
+           [ ! -f "$HOME/.etetoolkit/taxdump.tar.gz" ]; then
+            cp "$TAXDUMP_SRC" "$HOME/.etetoolkit/"
+        fi
+
         ( flock -x 9
           omark \
               -f {input.omamer} \
@@ -166,7 +185,7 @@ rule run_omark:
               -i {input.splice} \
               -o "$OUTDIR" \
               > {log} 2>&1
-        ) 9>.etetoolkit/taxa.sqlite.lock
+        ) 9>"$HOME/.etetoolkit/taxa.sqlite.lock"
 
         # Copy the detailed summary to a predictable location
         DETAILED=$(find "$OUTDIR" -name "*_detailed_summary.txt" | head -1)

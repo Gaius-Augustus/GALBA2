@@ -98,6 +98,11 @@ enable = 0
 [OMARK]
 ; OMAmer database path (required when run_omark = 1 in [PARAMS]).
 ; omamer_db = /path/to/LUCA.h5
+; Directory containing taxdump.tar.gz for offline ete3 initialisation.
+; Required on HPC clusters where compute nodes have no internet access.
+; Download with: bash scripts/download_data.sh --omark
+; Auto-detected from shared_data/ete_taxa/ if not set.
+; ete_taxa_path = /path/to/shared_data/ete_taxa
 
 [SLURM_ARGS]
 ; These settings are used only when running with --executor slurm.
@@ -107,3 +112,6 @@ cpus_per_task = 48
 mem_of_node = 120000
 ; Maximum walltime in minutes (default: 72 hours).
 max_runtime = 4320
+; Set skip_mem_request = 1 on clusters that reject jobs with explicit mem directives.
+; When enabled, all per-rule mem_mb values are set to 0 (no --mem request submitted).
+; skip_mem_request = 0

@@ -94,7 +94,7 @@ rule convert_infernal_to_gff3:
         sample="{sample}"
     threads: 1
     resources:
-        mem_mb=4000,
+        mem_mb=0 if config['slurm_args'].get('skip_mem') else 4000,
         runtime=30
     shell:
         r"""

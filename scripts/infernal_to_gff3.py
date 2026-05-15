@@ -14,11 +14,15 @@ import sys
 
 
 def parse_tblout(tblout_file):
-    """Parse Infernal --fmt 2 tblout output.
+    """Parse Infernal cmscan --fmt 2 tblout output.
+
+    For cmscan, "target" is the Rfam CM model and "query" is the input
+    genome sequence, so the GFF3 seqid must come from the query name.
 
     Fields (fmt 2):
-    0: idx, 1: target name, 2: accession, 3: query name, 4: accession,
-    5: clan name, 6: mdl, 7: mdl from, 8: mdl to, 9: seq from, 10: seq to,
+    0: idx, 1: target name (Rfam family), 2: accession (RFxxxxx),
+    3: query name (genome seq), 4: accession, 5: clan name,
+    6: mdl, 7: mdl from, 8: mdl to, 9: seq from, 10: seq to,
     11: strand, 12: trunc, 13: pass, 14: gc, 15: bias, 16: score,
     17: E-value, 18: inc, 19: olp, 20: anyidx, 21: apts1, 22: apts2,
     23: winidx, 24: wpts1, 25: wpts2, 26: description of target
@@ -40,9 +44,9 @@ def parse_tblout(tblout_file):
             if fields[19] != '*':
                 continue
 
-            target_name = fields[0]  # sequence name
-            rfam_acc = fields[3]     # e.g. RF00001
-            rfam_name = fields[2]    # e.g. 5S_rRNA
+            seqid = fields[3]        # query name = genome sequence (scaffold)
+            rfam_name = fields[1]    # e.g. 5S_rRNA
+            rfam_acc = fields[2]     # e.g. RF00001
             seq_from = int(fields[9])
             seq_to = int(fields[10])
             strand = fields[11]
@@ -58,7 +62,7 @@ def parse_tblout(tblout_file):
             gff_strand = '+' if strand == '+' else '-'
 
             hits.append({
-                'seqid': target_name,
+                'seqid': seqid,
                 'source': 'Infernal',
                 'type': 'ncRNA',
                 'start': start,

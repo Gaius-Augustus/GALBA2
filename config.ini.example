@@ -85,8 +85,13 @@ use_dev_shm = 0
 ; Optional functional GO annotation with FANTASIA-Lite. GPU-only (validated on A100).
 ; OFF by default. Set enable = 1 and fill in the paths below to activate.
 enable = 0
+; Pull the container image with:
+;   singularity pull fantasia_lite.sif docker://katharinahoff/fantasia_for_brain:lite.v1.0.0
 ; sif = /path/to/fantasia_lite.sif
 ; hf_cache_dir = /path/to/huggingface_cache
+; Download the lookup bundle from https://zenodo.org/records/17720428 (fantasia_lite_data_folder.zip)
+; and extract it; set lookup_dir to the extracted directory.
+; lookup_dir = /path/to/fantasia_lite_data_folder
 ; partition = gpu
 ; gpus = 1
 ; mem_mb = 25000

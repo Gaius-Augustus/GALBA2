@@ -1,2 +1,2 @@
 sample_name,genome,genome_masked,protein_fasta,busco_lineage,reference_gtf
-athaliana_ep,/home/nas-hs/projs/braker4/data/Arabidopsis_thaliana/genome.fa,/home/nas-hs/projs/braker4/data/Arabidopsis_thaliana/genome.fa,/home/nas-hs/projs/braker4/data/Arabidopsis_thaliana/proteins.fa,brassicales_odb12,/home/nas-hs/projs/braker4/data/Arabidopsis_thaliana/ref_annot.gff3
+athaliana_ep,/projects/AI-GUSTUS/tiberius_mesangiospermae_training_data/test/genomes/AthalianacolumbiaAraport11.genome.fa,/projects/AI-GUSTUS/tiberius_mesangiospermae_training_data/test/genomes/AthalianacolumbiaAraport11.genome.fa,/home/hoffk83/GALBA2_test_data/proteins.fa,brassicales_odb12,/projects/AI-GUSTUS/tiberius_mesangiospermae_training_data/test/annotations/AthalianacolumbiaAraport11.gff3

@@ -45,7 +45,10 @@ fi
 cd "$SCENARIO_DIR"
 
 export SINGULARITYENV_PREPEND_PATH=/opt/conda/bin
-snakemake \
+# Allow scenario_overrides.sh to inject additional Singularity bind paths
+# (e.g. SINGULARITY_EXTRA_BIND=",/projects" when input data lives under /projects).
+SINGULARITY_EXTRA_BIND="${SINGULARITY_EXTRA_BIND:-""}"
+$SNAKEMAKE_BIN \
     --snakefile "$PIPELINE_DIR/Snakefile" \
     --cores "$CORES" --jobs "$CORES" \
     $DRY_RUN_FLAG \
@@ -53,7 +56,7 @@ snakemake \
     --rerun-incomplete \
     --use-singularity \
     --singularity-prefix "$PIPELINE_DIR/.singularity_cache" \
-    --singularity-args "-B /home,/home/nas-hs --env PREPEND_PATH=/opt/conda/bin" \
+    --singularity-args "-B /home${SINGULARITY_EXTRA_BIND} --env PREPEND_PATH=/opt/conda/bin" \
     $EXECUTOR_ARGS
 
 echo ""

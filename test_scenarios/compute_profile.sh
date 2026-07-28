@@ -8,6 +8,9 @@
 # Override any variable ad-hoc:
 #   PARTITION=highmem CORES=64 bash scenario_benchmark_athaliana_ep/run_test.sh
 
+# Snakemake binary (override if not on $PATH, e.g. SNAKEMAKE_BIN=/path/to/snakemake)
+SNAKEMAKE_BIN=${SNAKEMAKE_BIN:-snakemake}
+
 # Number of snakemake cores/jobs
 CORES=${CORES:-48}
 

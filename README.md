@@ -196,6 +196,7 @@ We recommend installing Snakemake with `pip` into a virtual environment:
 python3 -m venv snakemake_env
 source snakemake_env/bin/activate
 pip install snakemake
+pip install pandas
 ```
 
 GALBA2 supports SLURM as its HPC executor. Other schedulers (SGE, PBS, LSF) are not supported — if your cluster uses a different scheduler, run without `--executor slurm` and submit the Snakemake process itself as a single job, letting it execute rules locally within that allocation.

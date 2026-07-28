@@ -271,4 +271,14 @@ rule assess_completeness:
         fi
 
         echo "[INFO] =======================================" | tee -a {output.compleasm_log}
+
+        # Remove compleasm protein-mode hmmsearch output and large intermediate files;
+        # keep summary.txt (tracked output) and protein_hmmsearch.done.
+        # compleasm.py protein writes *hmmsearch_output/ directly in compleasm_outdir
+        # (no lineage subdirectory), so target it directly.
+        find {params.compleasm_outdir} -maxdepth 1 -type d -name '*hmmsearch_output' \
+            -exec find {{}} -type f -delete \; 2>/dev/null || true
+        find {params.compleasm_outdir} -maxdepth 1 -type d -name '*hmmsearch_output' \
+            -empty -delete 2>/dev/null || true
+        rm -f "{params.compleasm_outdir}/full_table.tsv" 2>/dev/null || true
         """

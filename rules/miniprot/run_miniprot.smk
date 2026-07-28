@@ -273,4 +273,13 @@ rule run_miniprothint:
         REPORT_DIR=output/{wildcards.sample}
         source {script_dir}/report_citations.sh
         cite miniprothint "$REPORT_DIR"
+
+        # Remove miniprothint untracked working files; keep tracked outputs
+        # (miniprot_trainingGenes.gtf, hc.gff, miniprothint.gff) plus upstream
+        # tracked files (genome.mpi, miniprot.aln, miniprot_scored.gff) and logs.
+        rm -f "{params.workdir}/highAlIntrons.gff" \
+              "{params.workdir}/miniprot.gtf" \
+              "{params.workdir}/miniprot_representatives.gff" \
+              "{params.workdir}/miniprot_representatives.gtf" \
+              "{params.workdir}/miniprot_trainingGenes.gff" 2>/dev/null || true
         """

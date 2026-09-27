@@ -35,7 +35,14 @@ rule busco_genome:
         r"""
         set -euo pipefail
         OUTDIR_ABS=$(readlink -f {params.outdir})
-        rm -rf "$OUTDIR_ABS/genome"
+        # NFS can give "Directory not empty" with plain rm -rf; use find -depth
+        # -delete which deletes contents depth-first before removing the parent,
+        # avoiding that race. Fall back to rm -rf and then give up gracefully so
+        # set -e does not abort before BUSCO even starts.
+        if [ -d "$OUTDIR_ABS/genome" ]; then
+            find "$OUTDIR_ABS/genome" -depth -delete 2>/dev/null || \
+                rm -rf "$OUTDIR_ABS/genome" 2>/dev/null || true
+        fi
 
         mkdir -p {params.download_path}
         OFFLINE_FLAG=""
@@ -146,7 +153,10 @@ rule busco_proteins:
         r"""
         set -euo pipefail
         OUTDIR_ABS=$(readlink -f {params.outdir})
-        rm -rf "$OUTDIR_ABS/proteins"
+        if [ -d "$OUTDIR_ABS/proteins" ]; then
+            find "$OUTDIR_ABS/proteins" -depth -delete 2>/dev/null || \
+                rm -rf "$OUTDIR_ABS/proteins" 2>/dev/null || true
+        fi
 
         mkdir -p {params.download_path}
         OFFLINE_FLAG=""

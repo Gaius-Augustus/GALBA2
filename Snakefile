@@ -192,6 +192,7 @@ config['fantasia'] = {
                                           fallback=str(config['slurm_args']['cpus_per_task'])),
     'max_runtime':      config_parser.get('fantasia', 'max_runtime',
                                           fallback=str(config['slurm_args']['max_runtime'])),
+    'exclude_nodes':    config_parser.get('fantasia', 'exclude_nodes', fallback=''),
 }
 if config['run_fantasia']:
     if not config['fantasia']['sif']:

@@ -91,7 +91,7 @@ _container_defaults = {
     'red_image':         'docker://quay.io/biocontainers/red:2018.09.10--h9948957_3',
     'barrnap_image':     'docker://quay.io/biocontainers/barrnap:0.9--hdfd78af_4',
     'agat_image':        'docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0',
-    'busco_image':       'docker://ezlabgva/busco:v6.0.0_cv1',
+    'busco_image':       'docker://ezlabgva/busco:v6.1.0_cv2',
     'omark_image':       'docker://quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0',
     'tetools_image':     'docker://dfam/tetools:latest',
     'trnascan_image':    'docker://quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0',
@@ -192,6 +192,7 @@ config['fantasia'] = {
                                           fallback=str(config['slurm_args']['cpus_per_task'])),
     'max_runtime':      config_parser.get('fantasia', 'max_runtime',
                                           fallback=str(config['slurm_args']['max_runtime'])),
+    'exclude_nodes':    config_parser.get('fantasia', 'exclude_nodes', fallback=''),
 }
 if config['run_fantasia']:
     if not config['fantasia']['sif']:

@@ -276,7 +276,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L1",
       "id": "scripts_generate_report_py",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate_report.py"
     },
     {
@@ -285,7 +285,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L33",
       "id": "generate_report_read_file",
-      "community": 1,
+      "community": 2,
       "norm_label": "read_file()"
     },
     {
@@ -294,7 +294,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L41",
       "id": "generate_report_embed_image",
-      "community": 1,
+      "community": 2,
       "norm_label": "embed_image()"
     },
     {
@@ -303,7 +303,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L71",
       "id": "generate_report_read_software_versions",
-      "community": 1,
+      "community": 2,
       "norm_label": "read_software_versions()"
     },
     {
@@ -312,7 +312,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L91",
       "id": "generate_report_parse_bbc_log",
-      "community": 1,
+      "community": 2,
       "norm_label": "parse_bbc_log()"
     },
     {
@@ -321,7 +321,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L167",
       "id": "generate_report_format_bbc_decisions",
-      "community": 1,
+      "community": 2,
       "norm_label": "format_bbc_decisions()"
     },
     {
@@ -330,7 +330,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L205",
       "id": "generate_report_generate_methods_text",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate_methods_text()"
     },
     {
@@ -339,7 +339,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L537",
       "id": "generate_report_deduplicate_citations",
-      "community": 1,
+      "community": 2,
       "norm_label": "deduplicate_citations()"
     },
     {
@@ -348,7 +348,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L549",
       "id": "generate_report_deduplicate_bibtex",
-      "community": 1,
+      "community": 2,
       "norm_label": "deduplicate_bibtex()"
     },
     {
@@ -357,7 +357,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L571",
       "id": "generate_report_format_compleasm_as_busco",
-      "community": 1,
+      "community": 2,
       "norm_label": "format_compleasm_as_busco()"
     },
     {
@@ -366,7 +366,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L614",
       "id": "generate_report_read_qc_summary",
-      "community": 1,
+      "community": 2,
       "norm_label": "read_qc_summary()"
     },
     {
@@ -375,7 +375,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L624",
       "id": "generate_report_collect_benchmarks",
-      "community": 1,
+      "community": 2,
       "norm_label": "collect_benchmarks()"
     },
     {
@@ -384,7 +384,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L681",
       "id": "generate_report_format_time",
-      "community": 1,
+      "community": 2,
       "norm_label": "format_time()"
     },
     {
@@ -393,7 +393,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L691",
       "id": "generate_report_generate_benchmark_plot",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate_benchmark_plot()"
     },
     {
@@ -402,7 +402,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L763",
       "id": "generate_report_detect_mode",
-      "community": 1,
+      "community": 2,
       "norm_label": "detect_mode()"
     },
     {
@@ -411,7 +411,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L854",
       "id": "generate_report_generate_html",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate_html()"
     },
     {
@@ -420,7 +420,7 @@
       "source_file": "scripts/generate_report.py",
       "source_location": "L1184",
       "id": "generate_report_main",
-      "community": 1,
+      "community": 2,
       "norm_label": "main()"
     },
     {
@@ -428,7 +428,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L34",
-      "community": 1,
+      "community": 2,
       "norm_label": "read file contents, return empty string if not found.",
       "id": "generate_report_rationale_34"
     },
@@ -437,7 +437,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L42",
-      "community": 1,
+      "community": 2,
       "norm_label": "base64-encode an image for inline html embedding.      if download_name is provi",
       "id": "generate_report_rationale_42"
     },
@@ -446,7 +446,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L72",
-      "community": 1,
+      "community": 2,
       "norm_label": "read software_versions.tsv and return list of (tool, version) tuples.",
       "id": "generate_report_rationale_72"
     },
@@ -455,7 +455,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L92",
-      "community": 1,
+      "community": 2,
       "norm_label": "parse a best_by_compleasm aggregated log into per-pass decisions.      returns a",
       "id": "generate_report_rationale_92"
     },
@@ -464,7 +464,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L168",
-      "community": 1,
+      "community": 2,
       "norm_label": "render parsed best_by_compleasm passes as a methods-text sentence.",
       "id": "generate_report_rationale_168"
     },
@@ -473,7 +473,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L206",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate a single cohesive methods paragraph from pipeline outputs.      instead",
       "id": "generate_report_rationale_206"
     },
@@ -482,7 +482,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L538",
-      "community": 1,
+      "community": 2,
       "norm_label": "deduplicate plain-text citations (one per line).",
       "id": "generate_report_rationale_538"
     },
@@ -491,7 +491,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L550",
-      "community": 1,
+      "community": 2,
       "norm_label": "deduplicate bibtex entries by key.",
       "id": "generate_report_rationale_550"
     },
@@ -500,7 +500,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L572",
-      "community": 1,
+      "community": 2,
       "norm_label": "convert compleasm multi-line summary to busco-style one-liner.      input format",
       "id": "generate_report_rationale_572"
     },
@@ -509,7 +509,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L615",
-      "community": 1,
+      "community": 2,
       "norm_label": "read a qc summary file and return as html paragraph.",
       "id": "generate_report_rationale_615"
     },
@@ -518,7 +518,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L625",
-      "community": 1,
+      "community": 2,
       "norm_label": "collect snakemake benchmark files from benchmarks/{sample}/.      returns list o",
       "id": "generate_report_rationale_625"
     },
@@ -527,7 +527,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L682",
-      "community": 1,
+      "community": 2,
       "norm_label": "format seconds into human-readable string.",
       "id": "generate_report_rationale_682"
     },
@@ -536,7 +536,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L692",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate publication-quality resource consumption plots.      creates a two-pane",
       "id": "generate_report_rationale_692"
     },
@@ -545,7 +545,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L764",
-      "community": 1,
+      "community": 2,
       "norm_label": "detect galba2 pipeline mode from directory structure.      galba2 always runs in",
       "id": "generate_report_rationale_764"
     },
@@ -554,7 +554,7 @@
       "file_type": "rationale",
       "source_file": "scripts/generate_report.py",
       "source_location": "L855",
-      "community": 1,
+      "community": 2,
       "norm_label": "generate the full html report.",
       "id": "generate_report_rationale_855"
     },
@@ -631,12 +631,399 @@
       "id": "training_summary_rationale_76"
     },
     {
+      "label": "generate_embeddings.py",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L1",
+      "id": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "community": 1,
+      "norm_label": "generate_embeddings.py"
+    },
+    {
+      "label": "_TqdmShim",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L75",
+      "id": "generate_embeddings_tqdmshim",
+      "community": 1,
+      "norm_label": "_tqdmshim"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L76",
+      "id": "generate_embeddings_tqdmshim_init",
+      "community": 1,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".__iter__()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L79",
+      "id": "generate_embeddings_tqdmshim_iter",
+      "community": 1,
+      "norm_label": ".__iter__()"
+    },
+    {
+      "label": ".close()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L82",
+      "id": "generate_embeddings_tqdmshim_close",
+      "community": 3,
+      "norm_label": ".close()"
+    },
+    {
+      "label": "tqdm()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L85",
+      "id": "generate_embeddings_tqdm",
+      "community": 1,
+      "norm_label": "tqdm()"
+    },
+    {
+      "label": "parse_fasta()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L119",
+      "id": "generate_embeddings_parse_fasta",
+      "community": 1,
+      "norm_label": "parse_fasta()"
+    },
+    {
+      "label": "EmbeddingFailure",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L197",
+      "id": "generate_embeddings_embeddingfailure",
+      "community": 1,
+      "norm_label": "embeddingfailure"
+    },
+    {
+      "label": "EmbeddingResult",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L208",
+      "id": "generate_embeddings_embeddingresult",
+      "community": 1,
+      "norm_label": "embeddingresult"
+    },
+    {
+      "label": "normalize_sequence_for_embedding()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L216",
+      "id": "generate_embeddings_normalize_sequence_for_embedding",
+      "community": 1,
+      "norm_label": "normalize_sequence_for_embedding()"
+    },
+    {
+      "label": "preprocess_sequence()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L228",
+      "id": "generate_embeddings_preprocess_sequence",
+      "community": 1,
+      "norm_label": "preprocess_sequence()"
+    },
+    {
+      "label": "_pool_hidden_states()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L250",
+      "id": "generate_embeddings_pool_hidden_states",
+      "community": 1,
+      "norm_label": "_pool_hidden_states()"
+    },
+    {
+      "label": "_collect_hidden_state_layers()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L270",
+      "id": "generate_embeddings_collect_hidden_state_layers",
+      "community": 1,
+      "norm_label": "_collect_hidden_state_layers()"
+    },
+    {
+      "label": "resolve_layer_indices()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L294",
+      "id": "generate_embeddings_resolve_layer_indices",
+      "community": 1,
+      "norm_label": "resolve_layer_indices()"
+    },
+    {
+      "label": "compute_embeddings_batch()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L313",
+      "id": "generate_embeddings_compute_embeddings_batch",
+      "community": 1,
+      "norm_label": "compute_embeddings_batch()"
+    },
+    {
+      "label": "compute_embedding()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L389",
+      "id": "generate_embeddings_compute_embedding",
+      "community": 1,
+      "norm_label": "compute_embedding()"
+    },
+    {
+      "label": "classify_embedding_error()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L412",
+      "id": "generate_embeddings_classify_embedding_error",
+      "community": 1,
+      "norm_label": "classify_embedding_error()"
+    },
+    {
+      "label": "infer_embedding_dim()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L433",
+      "id": "generate_embeddings_infer_embedding_dim",
+      "community": 1,
+      "norm_label": "infer_embedding_dim()"
+    },
+    {
+      "label": "iter_embedding_batches()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L446",
+      "id": "generate_embeddings_iter_embedding_batches",
+      "community": 1,
+      "norm_label": "iter_embedding_batches()"
+    },
+    {
+      "label": "iter_queue_packages()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L479",
+      "id": "generate_embeddings_iter_queue_packages",
+      "community": 1,
+      "norm_label": "iter_queue_packages()"
+    },
+    {
+      "label": "load_model_components()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L491",
+      "id": "generate_embeddings_load_model_components",
+      "community": 1,
+      "norm_label": "load_model_components()"
+    },
+    {
+      "label": "embed_sequences_for_model()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L519",
+      "id": "generate_embeddings_embed_sequences_for_model",
+      "community": 1,
+      "norm_label": "embed_sequences_for_model()"
+    },
+    {
+      "label": "write_failure_report()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L667",
+      "id": "generate_embeddings_write_failure_report",
+      "community": 1,
+      "norm_label": "write_failure_report()"
+    },
+    {
+      "label": "stack_embeddings_for_model()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L688",
+      "id": "generate_embeddings_stack_embeddings_for_model",
+      "community": 1,
+      "norm_label": "stack_embeddings_for_model()"
+    },
+    {
+      "label": "stack_layer_embeddings_for_model()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L709",
+      "id": "generate_embeddings_stack_layer_embeddings_for_model",
+      "community": 1,
+      "norm_label": "stack_layer_embeddings_for_model()"
+    },
+    {
+      "label": "save_embeddings_archive()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L730",
+      "id": "generate_embeddings_save_embeddings_archive",
+      "community": 1,
+      "norm_label": "save_embeddings_archive()"
+    },
+    {
+      "label": "process_chunk()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L819",
+      "id": "generate_embeddings_process_chunk",
+      "community": 1,
+      "norm_label": "process_chunk()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L921",
+      "id": "generate_embeddings_main",
+      "community": 1,
+      "norm_label": "main()"
+    },
+    {
+      "label": "Parse a FASTA file and return sequence IDs and sequences.      Parameters     --",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L120",
+      "id": "generate_embeddings_rationale_120",
+      "community": 1,
+      "norm_label": "parse a fasta file and return sequence ids and sequences.      parameters     --"
+    },
+    {
+      "label": "Apply upstream-compatible pre-embedding length filtering.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L221",
+      "id": "generate_embeddings_rationale_221",
+      "community": 1,
+      "norm_label": "apply upstream-compatible pre-embedding length filtering."
+    },
+    {
+      "label": "Format the raw FASTA sequence for the requested model.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L229",
+      "id": "generate_embeddings_rationale_229",
+      "community": 1,
+      "norm_label": "format the raw fasta sequence for the requested model."
+    },
+    {
+      "label": "Pool token-level hidden states into one embedding per sequence.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L256",
+      "id": "generate_embeddings_rationale_256",
+      "community": 1,
+      "norm_label": "pool token-level hidden states into one embedding per sequence."
+    },
+    {
+      "label": "Return the last hidden state plus a normalized layer-index mapping.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L274",
+      "id": "generate_embeddings_rationale_274",
+      "community": 1,
+      "norm_label": "return the last hidden state plus a normalized layer-index mapping."
+    },
+    {
+      "label": "Resolve the final set of layer indices to export.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L300",
+      "id": "generate_embeddings_rationale_300",
+      "community": 1,
+      "norm_label": "resolve the final set of layer indices to export."
+    },
+    {
+      "label": "Compute mean pooled embeddings for a batch of sequences.      This function toke",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L323",
+      "id": "generate_embeddings_rationale_323",
+      "community": 1,
+      "norm_label": "compute mean pooled embeddings for a batch of sequences.      this function toke"
+    },
+    {
+      "label": "Backward-compatible single-sequence wrapper around batch inference.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L399",
+      "id": "generate_embeddings_rationale_399",
+      "community": 1,
+      "norm_label": "backward-compatible single-sequence wrapper around batch inference."
+    },
+    {
+      "label": "Return a short category string if the error is recoverable.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L413",
+      "id": "generate_embeddings_rationale_413",
+      "community": 1,
+      "norm_label": "return a short category string if the error is recoverable."
+    },
+    {
+      "label": "Best-effort extraction of the model's embedding dimensionality.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L434",
+      "id": "generate_embeddings_rationale_434",
+      "community": 1,
+      "norm_label": "best-effort extraction of the model's embedding dimensionality."
+    },
+    {
+      "label": "Yield batches of similar-length prepared sequences.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L452",
+      "id": "generate_embeddings_rationale_452",
+      "community": 1,
+      "norm_label": "yield batches of similar-length prepared sequences."
+    },
+    {
+      "label": "Yield upstream-style queue packages before model forward batching.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L484",
+      "id": "generate_embeddings_rationale_484",
+      "community": 1,
+      "norm_label": "yield upstream-style queue packages before model forward batching."
+    },
+    {
+      "label": "Load tokenizer and model for ``model_name`` and move to ``device``.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L494",
+      "id": "generate_embeddings_rationale_494",
+      "community": 1,
+      "norm_label": "load tokenizer and model for ``model_name`` and move to ``device``."
+    },
+    {
+      "label": "Compute embeddings for all sequences using a given model.      Parameters     --",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L532",
+      "id": "generate_embeddings_rationale_532",
+      "community": 1,
+      "norm_label": "compute embeddings for all sequences using a given model.      parameters     --"
+    },
+    {
+      "label": "Write a CSV report describing sequences that were skipped.",
+      "file_type": "rationale",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L668",
+      "id": "generate_embeddings_rationale_668",
+      "community": 1,
+      "norm_label": "write a csv report describing sequences that were skipped."
+    },
+    {
       "label": "fantasia_decorate_gff3.py",
       "file_type": "code",
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L1",
       "id": "scripts_fantasia_decorate_gff3_py",
-      "community": 10,
+      "community": 11,
       "norm_label": "fantasia_decorate_gff3.py"
     },
     {
@@ -645,7 +1032,7 @@
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L51",
       "id": "fantasia_decorate_gff3_lookup_key",
-      "community": 10,
+      "community": 11,
       "norm_label": "_lookup_key()"
     },
     {
@@ -654,7 +1041,7 @@
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L66",
       "id": "fantasia_decorate_gff3_load_go_assignments",
-      "community": 10,
+      "community": 11,
       "norm_label": "load_go_assignments()"
     },
     {
@@ -663,7 +1050,7 @@
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L83",
       "id": "fantasia_decorate_gff3_add_ontology_term",
-      "community": 10,
+      "community": 11,
       "norm_label": "_add_ontology_term()"
     },
     {
@@ -672,7 +1059,7 @@
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L110",
       "id": "fantasia_decorate_gff3_decorate",
-      "community": 10,
+      "community": 11,
       "norm_label": "decorate()"
     },
     {
@@ -681,7 +1068,7 @@
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L164",
       "id": "fantasia_decorate_gff3_main",
-      "community": 10,
+      "community": 11,
       "norm_label": "main()"
     },
     {
@@ -689,7 +1076,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L52",
-      "community": 10,
+      "community": 11,
       "norm_label": "return the fantasia lookup key for a transcript-equivalent row.      prefers `tr",
       "id": "fantasia_decorate_gff3_rationale_52"
     },
@@ -698,7 +1085,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L67",
-      "community": 10,
+      "community": 11,
       "norm_label": "map transcript_id -> set of go ids above the score threshold.",
       "id": "fantasia_decorate_gff3_rationale_67"
     },
@@ -707,7 +1094,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L84",
-      "community": 10,
+      "community": 11,
       "norm_label": "append or merge an ontology_term attribute on a gff3 col9 string.      preserves",
       "id": "fantasia_decorate_gff3_rationale_84"
     },
@@ -716,77 +1103,77 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_decorate_gff3.py",
       "source_location": "L111",
-      "community": 10,
+      "community": 11,
       "norm_label": "two-pass: build transcript->gene map, then rewrite the gff3.      both `mrna` an",
       "id": "fantasia_decorate_gff3_rationale_111"
     },
     {
       "label": "compleasm_to_hints.py",
       "file_type": "code",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L1",
-      "id": "scripts_compleasm_to_hints_py",
-      "community": 12,
+      "id": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
+      "community": 13,
       "norm_label": "compleasm_to_hints.py"
     },
     {
       "label": "run_simple_process()",
       "file_type": "code",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L36",
       "id": "compleasm_to_hints_run_simple_process",
-      "community": 12,
+      "community": 13,
       "norm_label": "run_simple_process()"
     },
     {
       "label": "extract_tx_ids_from_tsv()",
       "file_type": "code",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L63",
       "id": "compleasm_to_hints_extract_tx_ids_from_tsv",
-      "community": 12,
+      "community": 13,
       "norm_label": "extract_tx_ids_from_tsv()"
     },
     {
       "label": "read_and_filter_gff()",
       "file_type": "code",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L72",
       "id": "compleasm_to_hints_read_and_filter_gff",
-      "community": 12,
+      "community": 13,
       "norm_label": "read_and_filter_gff()"
     },
     {
       "label": "miniprot_to_hints()",
       "file_type": "code",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L86",
       "id": "compleasm_to_hints_miniprot_to_hints",
-      "community": 12,
+      "community": 13,
       "norm_label": "miniprot_to_hints()"
     },
     {
       "label": "main()",
       "file_type": "code",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L100",
       "id": "compleasm_to_hints_main",
-      "community": 12,
+      "community": 13,
       "norm_label": "main()"
     },
     {
       "label": "infernal_to_gff3.py",
       "file_type": "code",
-      "source_file": "scripts/infernal_to_gff3.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
       "source_location": "L1",
-      "id": "scripts_infernal_to_gff3_py",
+      "id": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "community": 14,
       "norm_label": "infernal_to_gff3.py"
     },
     {
       "label": "parse_tblout()",
       "file_type": "code",
-      "source_file": "scripts/infernal_to_gff3.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
       "source_location": "L16",
       "id": "infernal_to_gff3_parse_tblout",
       "community": 14,
@@ -795,8 +1182,8 @@
     {
       "label": "write_gff3()",
       "file_type": "code",
-      "source_file": "scripts/infernal_to_gff3.py",
-      "source_location": "L76",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
+      "source_location": "L80",
       "id": "infernal_to_gff3_write_gff3",
       "community": 14,
       "norm_label": "write_gff3()"
@@ -804,8 +1191,8 @@
     {
       "label": "main()",
       "file_type": "code",
-      "source_file": "scripts/infernal_to_gff3.py",
-      "source_location": "L96",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
+      "source_location": "L100",
       "id": "infernal_to_gff3_main",
       "community": 14,
       "norm_label": "main()"
@@ -825,7 +1212,7 @@
       "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L1",
       "id": "scripts_filter_gtf_by_diamond_against_ref_py",
-      "community": 13,
+      "community": 3,
       "norm_label": "filter_gtf_by_diamond_against_ref.py"
     },
     {
@@ -834,7 +1221,7 @@
       "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L42",
       "id": "filter_gtf_by_diamond_against_ref_run_diamond",
-      "community": 13,
+      "community": 3,
       "norm_label": "run_diamond()"
     },
     {
@@ -843,7 +1230,7 @@
       "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L55",
       "id": "filter_gtf_by_diamond_against_ref_filter_gtf",
-      "community": 13,
+      "community": 3,
       "norm_label": "filter_gtf()"
     },
     {
@@ -852,7 +1239,7 @@
       "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L107",
       "id": "filter_gtf_by_diamond_against_ref_main",
-      "community": 13,
+      "community": 3,
       "norm_label": "main()"
     },
     {
@@ -860,7 +1247,7 @@
       "file_type": "rationale",
       "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L43",
-      "community": 13,
+      "community": 3,
       "norm_label": "run diamond to search for homologous proteins in the reference protein set",
       "id": "filter_gtf_by_diamond_against_ref_rationale_43"
     },
@@ -869,7 +1256,7 @@
       "file_type": "rationale",
       "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L56",
-      "community": 13,
+      "community": 3,
       "norm_label": "read diamond output, identify transcript names that have at least one hit,     r",
       "id": "filter_gtf_by_diamond_against_ref_rationale_56"
     },
@@ -879,7 +1266,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L1",
       "id": "scripts_analyze_hint_support_py",
-      "community": 2,
+      "community": 4,
       "norm_label": "analyze_hint_support.py"
     },
     {
@@ -888,7 +1275,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L22",
       "id": "analyze_hint_support_parse_gtf_line",
-      "community": 2,
+      "community": 4,
       "norm_label": "parse_gtf_line()"
     },
     {
@@ -897,7 +1284,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L59",
       "id": "analyze_hint_support_parse_gff_line",
-      "community": 2,
+      "community": 4,
       "norm_label": "parse_gff_line()"
     },
     {
@@ -906,7 +1293,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L94",
       "id": "analyze_hint_support_load_transcripts_and_introns",
-      "community": 2,
+      "community": 4,
       "norm_label": "load_transcripts_and_introns()"
     },
     {
@@ -915,7 +1302,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L166",
       "id": "analyze_hint_support_load_hints",
-      "community": 2,
+      "community": 4,
       "norm_label": "load_hints()"
     },
     {
@@ -924,7 +1311,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L203",
       "id": "analyze_hint_support_check_intron_support",
-      "community": 2,
+      "community": 4,
       "norm_label": "check_intron_support()"
     },
     {
@@ -933,7 +1320,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L208",
       "id": "analyze_hint_support_check_cds_overlap",
-      "community": 2,
+      "community": 4,
       "norm_label": "check_cds_overlap()"
     },
     {
@@ -942,7 +1329,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L221",
       "id": "analyze_hint_support_analyze_hint_support",
-      "community": 2,
+      "community": 4,
       "norm_label": "analyze_hint_support()"
     },
     {
@@ -951,7 +1338,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L301",
       "id": "analyze_hint_support_print_stats",
-      "community": 2,
+      "community": 4,
       "norm_label": "print_stats()"
     },
     {
@@ -960,7 +1347,7 @@
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L340",
       "id": "analyze_hint_support_main",
-      "community": 2,
+      "community": 4,
       "norm_label": "main()"
     },
     {
@@ -968,7 +1355,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L23",
-      "community": 2,
+      "community": 4,
       "norm_label": "parse a gtf line and return relevant information.",
       "id": "analyze_hint_support_rationale_23"
     },
@@ -977,7 +1364,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L60",
-      "community": 2,
+      "community": 4,
       "norm_label": "parse a gff/hints line and return relevant information.",
       "id": "analyze_hint_support_rationale_60"
     },
@@ -986,7 +1373,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L95",
-      "community": 2,
+      "community": 4,
       "norm_label": "load transcripts and their introns from gtf file.      returns:         transcri",
       "id": "analyze_hint_support_rationale_95"
     },
@@ -995,7 +1382,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L167",
-      "community": 2,
+      "community": 4,
       "norm_label": "load hints from gff file.      returns:         intron_hints: set of (seqname, s",
       "id": "analyze_hint_support_rationale_167"
     },
@@ -1004,7 +1391,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L204",
-      "community": 2,
+      "community": 4,
       "norm_label": "check if an intron is supported by a hint.",
       "id": "analyze_hint_support_rationale_204"
     },
@@ -1013,7 +1400,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L209",
-      "community": 2,
+      "community": 4,
       "norm_label": "check if there's any cds hint overlap for a transcript's location.",
       "id": "analyze_hint_support_rationale_209"
     },
@@ -1022,7 +1409,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L222",
-      "community": 2,
+      "community": 4,
       "norm_label": "analyze hint support for all transcripts.      returns:         stats: dict with",
       "id": "analyze_hint_support_rationale_222"
     },
@@ -1031,7 +1418,7 @@
       "file_type": "rationale",
       "source_file": "scripts/analyze_hint_support.py",
       "source_location": "L302",
-      "community": 2,
+      "community": 4,
       "norm_label": "print statistics to stdout or file.",
       "id": "analyze_hint_support_rationale_302"
     },
@@ -1041,7 +1428,7 @@
       "source_file": "scripts/get_longest_isoform.py",
       "source_location": "L1",
       "id": "scripts_get_longest_isoform_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "get_longest_isoform.py"
     },
     {
@@ -1050,7 +1437,7 @@
       "source_file": "scripts/get_longest_isoform.py",
       "source_location": "L18",
       "id": "get_longest_isoform_main",
-      "community": 5,
+      "community": 6,
       "norm_label": "main()"
     },
     {
@@ -1059,7 +1446,7 @@
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L1",
       "id": "scripts_gene_support_summary_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "gene_support_summary.py"
     },
     {
@@ -1068,7 +1455,7 @@
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L30",
       "id": "gene_support_summary_parse_hints",
-      "community": 5,
+      "community": 6,
       "norm_label": "parse_hints()"
     },
     {
@@ -1077,7 +1464,7 @@
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L83",
       "id": "gene_support_summary_parse_gtf_transcripts",
-      "community": 5,
+      "community": 6,
       "norm_label": "parse_gtf_transcripts()"
     },
     {
@@ -1086,7 +1473,7 @@
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L152",
       "id": "gene_support_summary_check_support",
-      "community": 5,
+      "community": 6,
       "norm_label": "check_support()"
     },
     {
@@ -1095,7 +1482,7 @@
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L193",
       "id": "gene_support_summary_check_exon_support",
-      "community": 5,
+      "community": 6,
       "norm_label": "check_exon_support()"
     },
     {
@@ -1104,7 +1491,7 @@
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L222",
       "id": "gene_support_summary_main",
-      "community": 5,
+      "community": 6,
       "norm_label": "main()"
     },
     {
@@ -1112,7 +1499,7 @@
       "file_type": "rationale",
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L31",
-      "community": 5,
+      "community": 6,
       "norm_label": "parse hints file into interval trees by (chrom, feature_type, source_class).",
       "id": "gene_support_summary_rationale_31"
     },
@@ -1121,7 +1508,7 @@
       "file_type": "rationale",
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L84",
-      "community": 5,
+      "community": 6,
       "norm_label": "parse gtf into per-transcript feature lists.      returns list of (gene_id, tx_i",
       "id": "gene_support_summary_rationale_84"
     },
@@ -1130,7 +1517,7 @@
       "file_type": "rationale",
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L153",
-      "community": 5,
+      "community": 6,
       "norm_label": "check how many intervals are supported by hints.      for introns: exact match (",
       "id": "gene_support_summary_rationale_153"
     },
@@ -1139,7 +1526,7 @@
       "file_type": "rationale",
       "source_file": "scripts/gene_support_summary.py",
       "source_location": "L194",
-      "community": 5,
+      "community": 6,
       "norm_label": "check how many exons have any overlapping exon/cds hints.      uses overlap (not",
       "id": "gene_support_summary_rationale_194"
     },
@@ -1149,7 +1536,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L1",
       "id": "scripts_parsetrfoutput_py",
-      "community": 7,
+      "community": 9,
       "norm_label": "parsetrfoutput.py"
     },
     {
@@ -1158,7 +1545,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L17",
       "id": "parsetrfoutput_state",
-      "community": 7,
+      "community": 9,
       "norm_label": "state"
     },
     {
@@ -1167,7 +1554,7 @@
       "source_file": "",
       "source_location": "",
       "id": "enum",
-      "community": 7,
+      "community": 9,
       "norm_label": "enum"
     },
     {
@@ -1176,7 +1563,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L23",
       "id": "parsetrfoutput_extractfeaturegtf",
-      "community": 7,
+      "community": 9,
       "norm_label": "extractfeaturegtf()"
     },
     {
@@ -1185,7 +1572,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L28",
       "id": "parsetrfoutput_extractfeaturegff",
-      "community": 7,
+      "community": 9,
       "norm_label": "extractfeaturegff()"
     },
     {
@@ -1194,7 +1581,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L33",
       "id": "parsetrfoutput_printstatistics",
-      "community": 7,
+      "community": 9,
       "norm_label": "printstatistics()"
     },
     {
@@ -1203,7 +1590,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L62",
       "id": "parsetrfoutput_addtodict",
-      "community": 7,
+      "community": 9,
       "norm_label": "addtodict()"
     },
     {
@@ -1212,7 +1599,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L69",
       "id": "parsetrfoutput_initcounts",
-      "community": 7,
+      "community": 9,
       "norm_label": "initcounts()"
     },
     {
@@ -1221,7 +1608,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L77",
       "id": "parsetrfoutput_addtogc",
-      "community": 7,
+      "community": 9,
       "norm_label": "addtogc()"
     },
     {
@@ -1230,7 +1617,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L88",
       "id": "parsetrfoutput_parse",
-      "community": 7,
+      "community": 9,
       "norm_label": "parse()"
     },
     {
@@ -1239,7 +1626,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L134",
       "id": "parsetrfoutput_main",
-      "community": 7,
+      "community": 9,
       "norm_label": "main()"
     },
     {
@@ -1248,7 +1635,7 @@
       "source_file": "scripts/parseTrfOutput.py",
       "source_location": "L144",
       "id": "parsetrfoutput_parsecmd",
-      "community": 7,
+      "community": 9,
       "norm_label": "parsecmd()"
     },
     {
@@ -1257,7 +1644,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L1",
       "id": "scripts_normalize_gtf_py",
-      "community": 4,
+      "community": 5,
       "norm_label": "normalize_gtf.py"
     },
     {
@@ -1266,7 +1653,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L24",
       "id": "normalize_gtf_parse_gtf",
-      "community": 4,
+      "community": 5,
       "norm_label": "parse_gtf()"
     },
     {
@@ -1275,7 +1662,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L58",
       "id": "normalize_gtf_parse_attrs",
-      "community": 4,
+      "community": 5,
       "norm_label": "parse_attrs()"
     },
     {
@@ -1284,7 +1671,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L71",
       "id": "normalize_gtf_get_sequence",
-      "community": 4,
+      "community": 5,
       "norm_label": "get_sequence()"
     },
     {
@@ -1293,7 +1680,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L81",
       "id": "normalize_gtf_get_cds_features",
-      "community": 4,
+      "community": 5,
       "norm_label": "get_cds_features()"
     },
     {
@@ -1302,7 +1689,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L88",
       "id": "normalize_gtf_normalize_transcript",
-      "community": 4,
+      "community": 5,
       "norm_label": "normalize_transcript()"
     },
     {
@@ -1311,7 +1698,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L174",
       "id": "normalize_gtf_update_gene_boundaries",
-      "community": 4,
+      "community": 5,
       "norm_label": "update_gene_boundaries()"
     },
     {
@@ -1320,7 +1707,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L196",
       "id": "normalize_gtf_write_gtf",
-      "community": 4,
+      "community": 5,
       "norm_label": "write_gtf()"
     },
     {
@@ -1329,7 +1716,7 @@
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L226",
       "id": "normalize_gtf_main",
-      "community": 4,
+      "community": 5,
       "norm_label": "main()"
     },
     {
@@ -1337,7 +1724,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L25",
-      "community": 4,
+      "community": 5,
       "norm_label": "parse gtf into gene -> transcript -> features structure.",
       "id": "normalize_gtf_rationale_25"
     },
@@ -1346,7 +1733,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L59",
-      "community": 4,
+      "community": 5,
       "norm_label": "parse gtf attribute string into dict.",
       "id": "normalize_gtf_rationale_59"
     },
@@ -1355,7 +1742,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L72",
-      "community": 4,
+      "community": 5,
       "norm_label": "extract sequence from genome (1-based coords).",
       "id": "normalize_gtf_rationale_72"
     },
@@ -1364,7 +1751,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L82",
-      "community": 4,
+      "community": 5,
       "norm_label": "get cds features sorted by genomic position.",
       "id": "normalize_gtf_rationale_82"
     },
@@ -1373,7 +1760,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L89",
-      "community": 4,
+      "community": 5,
       "norm_label": "normalize cds boundaries for a transcript.      returns (normalized_features, is",
       "id": "normalize_gtf_rationale_89"
     },
@@ -1382,7 +1769,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L175",
-      "community": 4,
+      "community": 5,
       "norm_label": "update gene and transcript boundaries to match their features.",
       "id": "normalize_gtf_rationale_175"
     },
@@ -1391,7 +1778,7 @@
       "file_type": "rationale",
       "source_file": "scripts/normalize_gtf.py",
       "source_location": "L197",
-      "community": 4,
+      "community": 5,
       "norm_label": "write normalized gtf, preserving gene/transcript/feature order.",
       "id": "normalize_gtf_rationale_197"
     },
@@ -1401,7 +1788,7 @@
       "source_file": "scripts/generate_galba_hints.py",
       "source_location": "L1",
       "id": "scripts_generate_galba_hints_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "generate_galba_hints.py"
     },
     {
@@ -1410,7 +1797,7 @@
       "source_file": "scripts/generate_galba_hints.py",
       "source_location": "L16",
       "id": "generate_galba_hints_main",
-      "community": 5,
+      "community": 6,
       "norm_label": "main()"
     },
     {
@@ -1419,7 +1806,7 @@
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L1",
       "id": "scripts_gtf_sanity_check_py",
-      "community": 11,
+      "community": 12,
       "norm_label": "gtf_sanity_check.py"
     },
     {
@@ -1428,7 +1815,7 @@
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L16",
       "id": "gtf_sanity_check_read_gtf",
-      "community": 11,
+      "community": 12,
       "norm_label": "read_gtf()"
     },
     {
@@ -1437,7 +1824,7 @@
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L64",
       "id": "gtf_sanity_check_check_gtf",
-      "community": 11,
+      "community": 12,
       "norm_label": "check_gtf()"
     },
     {
@@ -1446,7 +1833,7 @@
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L105",
       "id": "gtf_sanity_check_write_output",
-      "community": 11,
+      "community": 12,
       "norm_label": "write_output()"
     },
     {
@@ -1455,7 +1842,7 @@
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L115",
       "id": "gtf_sanity_check_main",
-      "community": 11,
+      "community": 12,
       "norm_label": "main()"
     },
     {
@@ -1463,7 +1850,7 @@
       "file_type": "rationale",
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L17",
-      "community": 11,
+      "community": 12,
       "norm_label": "reads a gtf file and extracts cds (coding sequence) information for each transcr",
       "id": "gtf_sanity_check_rationale_17"
     },
@@ -1472,7 +1859,7 @@
       "file_type": "rationale",
       "source_file": "scripts/gtf_sanity_check.py",
       "source_location": "L65",
-      "community": 11,
+      "community": 12,
       "norm_label": "checks the consistency and integrity of cds (coding sequence) information within",
       "id": "gtf_sanity_check_rationale_65"
     },
@@ -1590,7 +1977,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L1",
       "id": "scripts_fix_in_frame_stop_codon_genes_py",
-      "community": 6,
+      "community": 7,
       "norm_label": "fix_in_frame_stop_codon_genes.py"
     },
     {
@@ -1599,7 +1986,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L180",
       "id": "fix_in_frame_stop_codon_genes_create_random_string",
-      "community": 6,
+      "community": 7,
       "norm_label": "create_random_string()"
     },
     {
@@ -1608,7 +1995,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L195",
       "id": "fix_in_frame_stop_codon_genes_create_log_file_name",
-      "community": 6,
+      "community": 7,
       "norm_label": "create_log_file_name()"
     },
     {
@@ -1617,7 +2004,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L201",
       "id": "fix_in_frame_stop_codon_genes_create_tmp_dir",
-      "community": 6,
+      "community": 7,
       "norm_label": "create_tmp_dir()"
     },
     {
@@ -1626,7 +2013,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L209",
       "id": "fix_in_frame_stop_codon_genes_find_tool",
-      "community": 6,
+      "community": 7,
       "norm_label": "find_tool()"
     },
     {
@@ -1635,7 +2022,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L222",
       "id": "fix_in_frame_stop_codon_genes_check_tool_in_given_path",
-      "community": 6,
+      "community": 7,
       "norm_label": "check_tool_in_given_path()"
     },
     {
@@ -1644,7 +2031,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L239",
       "id": "fix_in_frame_stop_codon_genes_run_process",
-      "community": 6,
+      "community": 7,
       "norm_label": "run_process()"
     },
     {
@@ -1653,7 +2040,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L331",
       "id": "fix_in_frame_stop_codon_genes_sortfirst",
-      "community": 6,
+      "community": 7,
       "norm_label": "sortfirst()"
     },
     {
@@ -1662,7 +2049,7 @@
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L335",
       "id": "fix_in_frame_stop_codon_genes_sortsecond",
-      "community": 6,
+      "community": 7,
       "norm_label": "sortsecond()"
     },
     {
@@ -1670,7 +2057,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L181",
-      "community": 6,
+      "community": 7,
       "norm_label": "funtion that creates a random string added to the logfile name         and tmp d",
       "id": "fix_in_frame_stop_codon_genes_rationale_181"
     },
@@ -1679,7 +2066,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L196",
-      "community": 6,
+      "community": 7,
       "norm_label": "function that creates a log file with a random name",
       "id": "fix_in_frame_stop_codon_genes_rationale_196"
     },
@@ -1688,7 +2075,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L202",
-      "community": 6,
+      "community": 7,
       "norm_label": "function that creates a directory for temporary files with a random name",
       "id": "fix_in_frame_stop_codon_genes_rationale_202"
     },
@@ -1697,7 +2084,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L210",
-      "community": 6,
+      "community": 7,
       "norm_label": "function that tries to locate a tool with which",
       "id": "fix_in_frame_stop_codon_genes_rationale_210"
     },
@@ -1706,7 +2093,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fix_in_frame_stop_codon_genes.py",
       "source_location": "L223",
-      "community": 6,
+      "community": 7,
       "norm_label": "if tool_path is provided as command line option, check whether the     required",
       "id": "fix_in_frame_stop_codon_genes_rationale_223"
     },
@@ -1725,7 +2112,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L1",
       "id": "scripts_fantasia_summary_py",
-      "community": 9,
+      "community": 10,
       "norm_label": "fantasia_summary.py"
     },
     {
@@ -1734,7 +2121,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L199",
       "id": "fantasia_summary_compile_categories",
-      "community": 9,
+      "community": 10,
       "norm_label": "_compile_categories()"
     },
     {
@@ -1743,7 +2130,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L208",
       "id": "fantasia_summary_classify_proteins",
-      "community": 9,
+      "community": 10,
       "norm_label": "classify_proteins()"
     },
     {
@@ -1752,7 +2139,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L253",
       "id": "fantasia_summary_parse_results",
-      "community": 9,
+      "community": 10,
       "norm_label": "parse_results()"
     },
     {
@@ -1761,7 +2148,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L302",
       "id": "fantasia_summary_write_go_terms_tsv",
-      "community": 9,
+      "community": 10,
       "norm_label": "write_go_terms_tsv()"
     },
     {
@@ -1770,7 +2157,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L312",
       "id": "fantasia_summary_write_summary",
-      "community": 9,
+      "community": 10,
       "norm_label": "write_summary()"
     },
     {
@@ -1779,7 +2166,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L334",
       "id": "fantasia_summary_write_categories_pie",
-      "community": 9,
+      "community": 10,
       "norm_label": "write_categories_pie()"
     },
     {
@@ -1788,7 +2175,7 @@
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L404",
       "id": "fantasia_summary_main",
-      "community": 9,
+      "community": 10,
       "norm_label": "main()"
     },
     {
@@ -1796,7 +2183,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L209",
-      "community": 9,
+      "community": 10,
       "norm_label": "map each protein to all categories its go terms touch.      returns a counter of",
       "id": "fantasia_summary_rationale_209"
     },
@@ -1805,7 +2192,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L254",
-      "community": 9,
+      "community": 10,
       "norm_label": "stream results.csv: collect counters and per-row tuples for the tsv.",
       "id": "fantasia_summary_rationale_254"
     },
@@ -1814,7 +2201,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L303",
-      "community": 9,
+      "community": 10,
       "norm_label": "flat per-(transcript, go term) tsv with human-readable go names.",
       "id": "fantasia_summary_rationale_303"
     },
@@ -1823,7 +2210,7 @@
       "file_type": "rationale",
       "source_file": "scripts/fantasia_summary.py",
       "source_location": "L335",
-      "community": 9,
+      "community": 10,
       "norm_label": "pie chart of broad functional categories.      each protein is counted once per",
       "id": "fantasia_summary_rationale_335"
     },
@@ -2499,7 +2886,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 15,
+      "community": 16,
       "norm_label": "config.ini",
       "id": "config_ini"
     },
@@ -2512,7 +2899,7 @@
       "captured_at": null,
       "author": "Katharina Hoff",
       "contributor": null,
-      "community": 16,
+      "community": 15,
       "norm_label": "cfg/galba.cfg",
       "id": "cfg_galba_cfg"
     },
@@ -2525,7 +2912,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 15,
+      "community": 16,
       "norm_label": "samples.csv",
       "id": "samples_csv"
     },
@@ -2668,7 +3055,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 15,
       "norm_label": "config: galba_cfg_path",
       "id": "config_galba_cfg_path"
     },
@@ -3406,6 +3793,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "scripts/completeness_plot.py",
+      "source_location": "L133",
+      "weight": 1.0,
+      "_src": "completeness_plot_generate_plot",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "completeness_plot_generate_plot",
+      "target": "generate_embeddings_tqdmshim_close"
+    },
+    {
       "relation": "semantically_similar_to",
       "confidence": "INFERRED",
       "confidence_score": 0.75,
@@ -3971,6 +4370,18 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "scripts/generate_report.py",
+      "source_location": "L759",
+      "weight": 1.0,
+      "_src": "generate_report_generate_benchmark_plot",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "generate_report_generate_benchmark_plot",
+      "target": "generate_embeddings_tqdmshim_close"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "scripts/generate_report.py",
       "source_location": "L1199",
@@ -4135,6 +4546,834 @@
       "_tgt": "training_summary_count_loci_in_gb",
       "source": "training_summary_count_loci_in_gb",
       "target": "training_summary_rationale_76",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "scripts/training_summary.py",
+      "source_location": "L321",
+      "weight": 1.0,
+      "_src": "training_summary_main",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "training_summary_main",
+      "target": "generate_embeddings_tqdmshim_close"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_tqdmshim",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_tqdmshim",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_tqdm",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_tqdm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_parse_fasta",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_parse_fasta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L197",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_embeddingfailure",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_embeddingfailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L208",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_embeddingresult",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_embeddingresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L216",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_normalize_sequence_for_embedding",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_normalize_sequence_for_embedding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L228",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_preprocess_sequence",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_preprocess_sequence",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L250",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_pool_hidden_states",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_pool_hidden_states",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L270",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_collect_hidden_state_layers",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_collect_hidden_state_layers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L294",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_resolve_layer_indices",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_resolve_layer_indices",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L313",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_compute_embeddings_batch",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_compute_embeddings_batch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L389",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_compute_embedding",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_compute_embedding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L412",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_classify_embedding_error",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_classify_embedding_error",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L433",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_infer_embedding_dim",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_infer_embedding_dim",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L446",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_iter_embedding_batches",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_iter_embedding_batches",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L479",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_iter_queue_packages",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_iter_queue_packages",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L491",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_load_model_components",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_load_model_components",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L519",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_embed_sequences_for_model",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L667",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_write_failure_report",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_write_failure_report",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L688",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_stack_embeddings_for_model",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_stack_embeddings_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L709",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_stack_layer_embeddings_for_model",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_stack_layer_embeddings_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L730",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_save_embeddings_archive",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_save_embeddings_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L819",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_process_chunk",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L921",
+      "weight": 1.0,
+      "_src": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "_tgt": "generate_embeddings_main",
+      "source": "home_katharina_git_galba2_scripts_generate_embeddings_py",
+      "target": "generate_embeddings_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_src": "generate_embeddings_tqdmshim",
+      "_tgt": "generate_embeddings_tqdmshim_init",
+      "source": "generate_embeddings_tqdmshim",
+      "target": "generate_embeddings_tqdmshim_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L79",
+      "weight": 1.0,
+      "_src": "generate_embeddings_tqdmshim",
+      "_tgt": "generate_embeddings_tqdmshim_iter",
+      "source": "generate_embeddings_tqdmshim",
+      "target": "generate_embeddings_tqdmshim_iter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_src": "generate_embeddings_tqdmshim",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "generate_embeddings_tqdmshim",
+      "target": "generate_embeddings_tqdmshim_close",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_src": "generate_embeddings_tqdm",
+      "_tgt": "generate_embeddings_tqdmshim",
+      "source": "generate_embeddings_tqdmshim",
+      "target": "generate_embeddings_tqdm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L653",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "generate_embeddings_tqdmshim_close",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "scripts/filter_gtf_by_diamond_against_ref.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "filter_gtf_by_diamond_against_ref_run_diamond",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "generate_embeddings_tqdmshim_close",
+      "target": "filter_gtf_by_diamond_against_ref_run_diamond"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "scripts/gene_set_statistics.py",
+      "source_location": "L229",
+      "weight": 1.0,
+      "_src": "gene_set_statistics_generate_plots",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "generate_embeddings_tqdmshim_close",
+      "target": "gene_set_statistics_generate_plots"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "scripts/fantasia_summary.py",
+      "source_location": "L400",
+      "weight": 1.0,
+      "_src": "fantasia_summary_write_categories_pie",
+      "_tgt": "generate_embeddings_tqdmshim_close",
+      "source": "generate_embeddings_tqdmshim_close",
+      "target": "fantasia_summary_write_categories_pie"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L573",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_tqdm",
+      "source": "generate_embeddings_tqdm",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L835",
+      "weight": 1.0,
+      "_src": "generate_embeddings_process_chunk",
+      "_tgt": "generate_embeddings_parse_fasta",
+      "source": "generate_embeddings_parse_fasta",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_120",
+      "_tgt": "generate_embeddings_parse_fasta",
+      "source": "generate_embeddings_parse_fasta",
+      "target": "generate_embeddings_rationale_120",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L655",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_embeddingresult",
+      "source": "generate_embeddings_embeddingresult",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L841",
+      "weight": 1.0,
+      "_src": "generate_embeddings_process_chunk",
+      "_tgt": "generate_embeddings_normalize_sequence_for_embedding",
+      "source": "generate_embeddings_normalize_sequence_for_embedding",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L221",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_221",
+      "_tgt": "generate_embeddings_normalize_sequence_for_embedding",
+      "source": "generate_embeddings_normalize_sequence_for_embedding",
+      "target": "generate_embeddings_rationale_221",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L568",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_preprocess_sequence",
+      "source": "generate_embeddings_preprocess_sequence",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L229",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_229",
+      "_tgt": "generate_embeddings_preprocess_sequence",
+      "source": "generate_embeddings_preprocess_sequence",
+      "target": "generate_embeddings_rationale_229",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L367",
+      "weight": 1.0,
+      "_src": "generate_embeddings_compute_embeddings_batch",
+      "_tgt": "generate_embeddings_pool_hidden_states",
+      "source": "generate_embeddings_pool_hidden_states",
+      "target": "generate_embeddings_compute_embeddings_batch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L256",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_256",
+      "_tgt": "generate_embeddings_pool_hidden_states",
+      "source": "generate_embeddings_pool_hidden_states",
+      "target": "generate_embeddings_rationale_256",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L363",
+      "weight": 1.0,
+      "_src": "generate_embeddings_compute_embeddings_batch",
+      "_tgt": "generate_embeddings_collect_hidden_state_layers",
+      "source": "generate_embeddings_collect_hidden_state_layers",
+      "target": "generate_embeddings_compute_embeddings_batch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L274",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_274",
+      "_tgt": "generate_embeddings_collect_hidden_state_layers",
+      "source": "generate_embeddings_collect_hidden_state_layers",
+      "target": "generate_embeddings_rationale_274",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L370",
+      "weight": 1.0,
+      "_src": "generate_embeddings_compute_embeddings_batch",
+      "_tgt": "generate_embeddings_resolve_layer_indices",
+      "source": "generate_embeddings_resolve_layer_indices",
+      "target": "generate_embeddings_compute_embeddings_batch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L300",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_300",
+      "_tgt": "generate_embeddings_resolve_layer_indices",
+      "source": "generate_embeddings_resolve_layer_indices",
+      "target": "generate_embeddings_rationale_300",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L400",
+      "weight": 1.0,
+      "_src": "generate_embeddings_compute_embedding",
+      "_tgt": "generate_embeddings_compute_embeddings_batch",
+      "source": "generate_embeddings_compute_embeddings_batch",
+      "target": "generate_embeddings_compute_embedding",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L613",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_compute_embeddings_batch",
+      "source": "generate_embeddings_compute_embeddings_batch",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L323",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_323",
+      "_tgt": "generate_embeddings_compute_embeddings_batch",
+      "source": "generate_embeddings_compute_embeddings_batch",
+      "target": "generate_embeddings_rationale_323",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L399",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_399",
+      "_tgt": "generate_embeddings_compute_embedding",
+      "source": "generate_embeddings_compute_embedding",
+      "target": "generate_embeddings_rationale_399",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L413",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_413",
+      "_tgt": "generate_embeddings_classify_embedding_error",
+      "source": "generate_embeddings_classify_embedding_error",
+      "target": "generate_embeddings_rationale_413",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L515",
+      "weight": 1.0,
+      "_src": "generate_embeddings_load_model_components",
+      "_tgt": "generate_embeddings_infer_embedding_dim",
+      "source": "generate_embeddings_infer_embedding_dim",
+      "target": "generate_embeddings_load_model_components",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L434",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_434",
+      "_tgt": "generate_embeddings_infer_embedding_dim",
+      "source": "generate_embeddings_infer_embedding_dim",
+      "target": "generate_embeddings_rationale_434",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L604",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_iter_embedding_batches",
+      "source": "generate_embeddings_iter_embedding_batches",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L452",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_452",
+      "_tgt": "generate_embeddings_iter_embedding_batches",
+      "source": "generate_embeddings_iter_embedding_batches",
+      "target": "generate_embeddings_rationale_452",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L862",
+      "weight": 1.0,
+      "_src": "generate_embeddings_process_chunk",
+      "_tgt": "generate_embeddings_iter_queue_packages",
+      "source": "generate_embeddings_iter_queue_packages",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L484",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_484",
+      "_tgt": "generate_embeddings_iter_queue_packages",
+      "source": "generate_embeddings_iter_queue_packages",
+      "target": "generate_embeddings_rationale_484",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L557",
+      "weight": 1.0,
+      "_src": "generate_embeddings_embed_sequences_for_model",
+      "_tgt": "generate_embeddings_load_model_components",
+      "source": "generate_embeddings_load_model_components",
+      "target": "generate_embeddings_embed_sequences_for_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L1102",
+      "weight": 1.0,
+      "_src": "generate_embeddings_main",
+      "_tgt": "generate_embeddings_load_model_components",
+      "source": "generate_embeddings_load_model_components",
+      "target": "generate_embeddings_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L494",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_494",
+      "_tgt": "generate_embeddings_load_model_components",
+      "source": "generate_embeddings_load_model_components",
+      "target": "generate_embeddings_rationale_494",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L866",
+      "weight": 1.0,
+      "_src": "generate_embeddings_process_chunk",
+      "_tgt": "generate_embeddings_embed_sequences_for_model",
+      "source": "generate_embeddings_embed_sequences_for_model",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L532",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_532",
+      "_tgt": "generate_embeddings_embed_sequences_for_model",
+      "source": "generate_embeddings_embed_sequences_for_model",
+      "target": "generate_embeddings_rationale_532",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L910",
+      "weight": 1.0,
+      "_src": "generate_embeddings_process_chunk",
+      "_tgt": "generate_embeddings_write_failure_report",
+      "source": "generate_embeddings_write_failure_report",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L668",
+      "weight": 1.0,
+      "_src": "generate_embeddings_rationale_668",
+      "_tgt": "generate_embeddings_write_failure_report",
+      "source": "generate_embeddings_write_failure_report",
+      "target": "generate_embeddings_rationale_668",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L749",
+      "weight": 1.0,
+      "_src": "generate_embeddings_save_embeddings_archive",
+      "_tgt": "generate_embeddings_stack_embeddings_for_model",
+      "source": "generate_embeddings_stack_embeddings_for_model",
+      "target": "generate_embeddings_save_embeddings_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L763",
+      "weight": 1.0,
+      "_src": "generate_embeddings_save_embeddings_archive",
+      "_tgt": "generate_embeddings_stack_layer_embeddings_for_model",
+      "source": "generate_embeddings_stack_layer_embeddings_for_model",
+      "target": "generate_embeddings_save_embeddings_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L899",
+      "weight": 1.0,
+      "_src": "generate_embeddings_process_chunk",
+      "_tgt": "generate_embeddings_save_embeddings_archive",
+      "source": "generate_embeddings_save_embeddings_archive",
+      "target": "generate_embeddings_process_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/katharina/git/GALBA2/scripts/generate_embeddings.py",
+      "source_location": "L1107",
+      "weight": 1.0,
+      "_src": "generate_embeddings_main",
+      "_tgt": "generate_embeddings_process_chunk",
+      "source": "generate_embeddings_process_chunk",
+      "target": "generate_embeddings_main",
       "confidence_score": 1.0
     },
     {
@@ -4308,68 +5547,68 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L36",
       "weight": 1.0,
-      "_src": "scripts_compleasm_to_hints_py",
+      "_src": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "_tgt": "compleasm_to_hints_run_simple_process",
-      "source": "scripts_compleasm_to_hints_py",
+      "source": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "target": "compleasm_to_hints_run_simple_process",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L63",
       "weight": 1.0,
-      "_src": "scripts_compleasm_to_hints_py",
+      "_src": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "_tgt": "compleasm_to_hints_extract_tx_ids_from_tsv",
-      "source": "scripts_compleasm_to_hints_py",
+      "source": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "target": "compleasm_to_hints_extract_tx_ids_from_tsv",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L72",
       "weight": 1.0,
-      "_src": "scripts_compleasm_to_hints_py",
+      "_src": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "_tgt": "compleasm_to_hints_read_and_filter_gff",
-      "source": "scripts_compleasm_to_hints_py",
+      "source": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "target": "compleasm_to_hints_read_and_filter_gff",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L86",
       "weight": 1.0,
-      "_src": "scripts_compleasm_to_hints_py",
+      "_src": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "_tgt": "compleasm_to_hints_miniprot_to_hints",
-      "source": "scripts_compleasm_to_hints_py",
+      "source": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "target": "compleasm_to_hints_miniprot_to_hints",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
       "source_location": "L100",
       "weight": 1.0,
-      "_src": "scripts_compleasm_to_hints_py",
+      "_src": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "_tgt": "compleasm_to_hints_main",
-      "source": "scripts_compleasm_to_hints_py",
+      "source": "home_katharina_git_galba2_scripts_compleasm_to_hints_py",
       "target": "compleasm_to_hints_main",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
-      "source_location": "L142",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
+      "source_location": "L139",
       "weight": 1.0,
       "_src": "compleasm_to_hints_main",
       "_tgt": "compleasm_to_hints_run_simple_process",
@@ -4380,8 +5619,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
-      "source_location": "L165",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
+      "source_location": "L162",
       "weight": 1.0,
       "_src": "compleasm_to_hints_main",
       "_tgt": "compleasm_to_hints_extract_tx_ids_from_tsv",
@@ -4392,8 +5631,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
-      "source_location": "L168",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
+      "source_location": "L165",
       "weight": 1.0,
       "_src": "compleasm_to_hints_main",
       "_tgt": "compleasm_to_hints_read_and_filter_gff",
@@ -4404,8 +5643,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/compleasm_to_hints.py",
-      "source_location": "L171",
+      "source_file": "/home/katharina/git/GALBA2/scripts/compleasm_to_hints.py",
+      "source_location": "L168",
       "weight": 1.0,
       "_src": "compleasm_to_hints_main",
       "_tgt": "compleasm_to_hints_miniprot_to_hints",
@@ -4428,44 +5667,44 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/infernal_to_gff3.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
       "source_location": "L16",
       "weight": 1.0,
-      "_src": "scripts_infernal_to_gff3_py",
+      "_src": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "_tgt": "infernal_to_gff3_parse_tblout",
-      "source": "scripts_infernal_to_gff3_py",
+      "source": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "target": "infernal_to_gff3_parse_tblout",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/infernal_to_gff3.py",
-      "source_location": "L76",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
+      "source_location": "L80",
       "weight": 1.0,
-      "_src": "scripts_infernal_to_gff3_py",
+      "_src": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "_tgt": "infernal_to_gff3_write_gff3",
-      "source": "scripts_infernal_to_gff3_py",
+      "source": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "target": "infernal_to_gff3_write_gff3",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/infernal_to_gff3.py",
-      "source_location": "L96",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
+      "source_location": "L100",
       "weight": 1.0,
-      "_src": "scripts_infernal_to_gff3_py",
+      "_src": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "_tgt": "infernal_to_gff3_main",
-      "source": "scripts_infernal_to_gff3_py",
+      "source": "home_katharina_git_galba2_scripts_infernal_to_gff3_py",
       "target": "infernal_to_gff3_main",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/infernal_to_gff3.py",
-      "source_location": "L108",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
+      "source_location": "L112",
       "weight": 1.0,
       "_src": "infernal_to_gff3_main",
       "_tgt": "infernal_to_gff3_parse_tblout",
@@ -4476,7 +5715,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/infernal_to_gff3.py",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
       "source_location": "L17",
       "weight": 1.0,
       "_src": "infernal_to_gff3_rationale_17",
@@ -4488,8 +5727,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts/infernal_to_gff3.py",
-      "source_location": "L109",
+      "source_file": "/home/katharina/git/GALBA2/scripts/infernal_to_gff3.py",
+      "source_location": "L113",
       "weight": 1.0,
       "_src": "infernal_to_gff3_main",
       "_tgt": "infernal_to_gff3_write_gff3",

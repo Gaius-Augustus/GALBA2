@@ -1,12 +1,12 @@
-# Graph Report - /home/katharina/git/GALBA2  (2026-05-10)
+# Graph Report - /home/katharina/git/GALBA2  (2026-09-27)
 
 ## Corpus Check
-- 19 files · ~770,521 words
+- 20 files · ~774,513 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 294 nodes · 328 edges · 76 communities detected
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 12 edges (avg confidence: 0.83)
+- 337 nodes · 399 edges · 76 communities detected
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -91,13 +91,13 @@
 1. `GALBA2` - 43 edges
 2. `GALBA2 pipeline overview diagram` - 15 edges
 3. `main()` - 13 edges
-4. `main()` - 8 edges
-5. `read_file()` - 7 edges
-6. `generate_html()` - 7 edges
-7. `main()` - 7 edges
-8. `read_qc_summary()` - 6 edges
-9. `main()` - 6 edges
-10. `normalize_transcript()` - 6 edges
+4. `embed_sequences_for_model()` - 10 edges
+5. `process_chunk()` - 8 edges
+6. `main()` - 8 edges
+7. `read_file()` - 7 edges
+8. `generate_html()` - 7 edges
+9. `compute_embeddings_batch()` - 7 edges
+10. `main()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `GALBA2` --conceptually_related_to--> `GALBA2 logo: broccoli Roman centurion character`  [INFERRED]
@@ -134,56 +134,56 @@ Cohesion: 0.06
 Nodes (51): Friends image: GALBA2 broccoli + hammer/bird character, GALBA2 logo: broccoli Roman centurion character, Deprecated: --crf/--keepCrf CRF training not ported, Deprecated: galba.pl --prg=gth (GenomeThreader) not ported, galba.pl --genome flag → samples.csv genome column, galba.pl --prot_seq flag → samples.csv protein_fasta column, Migration guide: galba.pl to GALBA2, GALBA2 pipeline overview diagram (+43 more)
 
 ### Community 1 - "Community 1"
+Cohesion: 0.07
+Nodes (39): classify_embedding_error(), _collect_hidden_state_layers(), compute_embedding(), compute_embeddings_batch(), embed_sequences_for_model(), EmbeddingFailure, EmbeddingResult, infer_embedding_dim() (+31 more)
+
+### Community 2 - "Community 2"
 Cohesion: 0.1
 Nodes (31): collect_benchmarks(), deduplicate_bibtex(), deduplicate_citations(), detect_mode(), embed_image(), format_bbc_decisions(), format_compleasm_as_busco(), format_time() (+23 more)
 
-### Community 2 - "Community 2"
+### Community 3 - "Community 3"
+Cohesion: 0.12
+Nodes (19): generate_plot(), main(), parse_busco_summary(), parse_compleasm_summary(), Parse BUSCO summary for genome and proteome scores., Parse compleasm summary.txt., Generate horizontal stacked bar chart., filter_gtf() (+11 more)
+
+### Community 4 - "Community 4"
 Cohesion: 0.16
 Nodes (17): analyze_hint_support(), check_cds_overlap(), check_intron_support(), load_hints(), load_transcripts_and_introns(), main(), parse_gff_line(), parse_gtf_line() (+9 more)
 
-### Community 3 - "Community 3"
-Cohesion: 0.17
-Nodes (14): generate_plot(), main(), parse_busco_summary(), parse_compleasm_summary(), Parse BUSCO summary for genome and proteome scores., Parse compleasm summary.txt., Generate horizontal stacked bar chart., count_loci_in_gb() (+6 more)
-
-### Community 4 - "Community 4"
+### Community 5 - "Community 5"
 Cohesion: 0.19
 Nodes (15): get_cds_features(), get_sequence(), main(), normalize_transcript(), parse_attrs(), parse_gtf(), Update gene and transcript boundaries to match their features., Write normalized GTF, preserving gene/transcript/feature order. (+7 more)
 
-### Community 5 - "Community 5"
+### Community 6 - "Community 6"
 Cohesion: 0.19
 Nodes (11): check_exon_support(), check_support(), main(), parse_gtf_transcripts(), parse_hints(), Check how many intervals are supported by hints.      For introns: exact match (, Check how many exons have any overlapping exon/CDS hints.      Uses overlap (not, Parse hints file into interval trees by (chrom, feature_type, source_class). (+3 more)
 
-### Community 6 - "Community 6"
+### Community 7 - "Community 7"
 Cohesion: 0.14
 Nodes (10): check_tool_in_given_path(), create_log_file_name(), create_random_string(), create_tmp_dir(), find_tool(), Funtion that creates a random string added to the logfile name         and tmp d, Function that creates a log file with a random name, Function that creates a directory for temporary files with a random name (+2 more)
-
-### Community 7 - "Community 7"
-Cohesion: 0.27
-Nodes (9): Enum, addToDict(), addToGc(), initCounts(), main(), parse(), parseCmd(), printStatistics() (+1 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.24
 Nodes (11): compute_statistics(), generate_plots(), main(), parse_gtf(), parse_support_tsv(), Parse gene_support.tsv for evidence support visualization., Generate all publication-quality plots., Parse GTF file into gene/transcript/exon structure.      Returns:         genes: (+3 more)
 
 ### Community 9 - "Community 9"
+Cohesion: 0.27
+Nodes (9): Enum, addToDict(), addToGc(), initCounts(), main(), parse(), parseCmd(), printStatistics() (+1 more)
+
+### Community 10 - "Community 10"
 Cohesion: 0.26
 Nodes (11): classify_proteins(), _compile_categories(), main(), parse_results(), Map each protein to all categories its GO terms touch.      Returns a Counter of, Stream results.csv: collect counters AND per-row tuples for the TSV., Flat per-(transcript, GO term) TSV with human-readable GO names., Pie chart of broad functional categories.      Each protein is counted once per (+3 more)
 
-### Community 10 - "Community 10"
+### Community 11 - "Community 11"
 Cohesion: 0.29
 Nodes (9): _add_ontology_term(), decorate(), load_go_assignments(), _lookup_key(), main(), Two-pass: build transcript->gene map, then rewrite the GFF3.      Both `mRNA` an, Return the FANTASIA lookup key for a transcript-equivalent row.      Prefers `tr, Map transcript_id -> set of GO IDs above the score threshold. (+1 more)
 
-### Community 11 - "Community 11"
+### Community 12 - "Community 12"
 Cohesion: 0.43
 Nodes (6): check_gtf(), main(), Reads a GTF file and extracts CDS (Coding Sequence) information for each transcr, Checks the consistency and integrity of CDS (Coding Sequence) information within, read_gtf(), write_output()
 
-### Community 12 - "Community 12"
+### Community 13 - "Community 13"
 Cohesion: 0.6
 Nodes (5): extract_tx_ids_from_tsv(), main(), miniprot_to_hints(), read_and_filter_gff(), run_simple_process()
-
-### Community 13 - "Community 13"
-Cohesion: 0.47
-Nodes (5): filter_gtf(), main(), Run DIAMOND to search for homologous proteins in the reference protein set, Read DIAMOND output, identify transcript names that have at least one hit,     r, run_diamond()
 
 ### Community 14 - "Community 14"
 Cohesion: 0.6
@@ -191,11 +191,11 @@ Nodes (4): main(), parse_tblout(), Parse Infernal --fmt 2 tblout output.      Fi
 
 ### Community 15 - "Community 15"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (2): cfg/galba.cfg, config: galba_cfg_path
 
 ### Community 16 - "Community 16"
 Cohesion: 1.0
-Nodes (2): cfg/galba.cfg, config: galba_cfg_path
+Nodes (0): 
 
 ### Community 17 - "Community 17"
 Cohesion: 1.0
@@ -434,11 +434,11 @@ Cohesion: 1.0
 Nodes (1): OMArk
 
 ## Knowledge Gaps
-- **131 isolated node(s):** `Parse BUSCO summary for genome and proteome scores.`, `Parse compleasm summary.txt.`, `Generate horizontal stacked bar chart.`, `Read file contents, return empty string if not found.`, `Base64-encode an image for inline HTML embedding.      If download_name is provi` (+126 more)
+- **147 isolated node(s):** `Parse BUSCO summary for genome and proteome scores.`, `Parse compleasm summary.txt.`, `Generate horizontal stacked bar chart.`, `Read file contents, return empty string if not found.`, `Base64-encode an image for inline HTML embedding.      If download_name is provi` (+142 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 15`** (2 nodes): `config.ini`, `samples.csv`
+- **Thin community `Community 15`** (2 nodes): `cfg/galba.cfg`, `config: galba_cfg_path`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 16`** (2 nodes): `cfg/galba.cfg`, `config: galba_cfg_path`
+- **Thin community `Community 16`** (2 nodes): `config.ini`, `samples.csv`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 17`** (1 nodes): `filter_gtf_by_txid.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -562,17 +562,17 @@ Nodes (1): OMArk
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `main()` connect `Community 2` to `Community 5`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `main()` connect `Community 5` to `Community 2`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+- **Why does `generate_benchmark_plot()` connect `Community 2` to `Community 3`?**
+  _High betweenness centrality (0.064) - this node is a cross-community bridge._
+- **Why does `embed_sequences_for_model()` connect `Community 1` to `Community 3`?**
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
+- **Why does `write_categories_pie()` connect `Community 10` to `Community 3`?**
+  _High betweenness centrality (0.043) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `GALBA2` (e.g. with `GALBA2 logo: broccoli Roman centurion character` and `GALBA2 pipeline overview diagram`) actually correct?**
   _`GALBA2` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 3 inferred relationships involving `main()` (e.g. with `main()` and `main()`) actually correct?**
-  _`main()` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Parse BUSCO summary for genome and proteome scores.`, `Parse compleasm summary.txt.`, `Generate horizontal stacked bar chart.` to the rest of the system?**
-  _131 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _147 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07 - nodes in this community are weakly interconnected._

@@ -57,7 +57,7 @@ rule run_compleasm:
         # Log whether a pre-downloaded lineage is already in place.
         # compleasm uses a flat layout at {{library_path}}/{{lineage}}/.
         # If present, compleasm will reuse it instead of contacting busco-data.ezlab.org.
-        COMPLEASM_LINEAGE=$(echo "{params.busco_lineage}" | sed 's/_odb[0-9]*$/_odb12/')
+        COMPLEASM_LINEAGE="{params.busco_lineage}"
         if [ -d "{params.library_path}/$COMPLEASM_LINEAGE" ]; then
             echo "[INFO] Found pre-downloaded compleasm lineage at {params.library_path}/$COMPLEASM_LINEAGE" >> {log}
         else
@@ -101,6 +101,15 @@ rule run_compleasm:
 
         n_hints=$(wc -l < {output.compleasm_hints})
         echo "[INFO] Generated $n_hints BUSCO-based hints" >> {log}
+
+        # Remove compleasm hmmer_output/ and large intermediate files;
+        # keep summary.txt (tracked output) plus detected_genes.gff and full_table.tsv.
+        LINEAGE_DIR=$(find {params.compleasm_outdir} -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
+        if [ -n "$LINEAGE_DIR" ]; then
+            rm -rf  "$LINEAGE_DIR/hmmer_output" 2>/dev/null || true
+            rm -f   "$LINEAGE_DIR/miniprot_output.gff" \
+                    "$LINEAGE_DIR/translated_protein.fasta" 2>/dev/null || true
+        fi
 
         # Record software versions
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv

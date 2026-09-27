@@ -249,12 +249,16 @@ rule assess_completeness:
         mkdir -p {params.compleasm_outdir}
         mkdir -p {params.library_path}
 
-        COMPLEASM_LINEAGE=$(echo "{params.busco_lineage}" | sed 's/_odb[0-9]*$/_odb12/')
+        COMPLEASM_LINEAGE="{params.busco_lineage}"
+        COMPLEASM_NAME="${{COMPLEASM_LINEAGE%%_*}}"
+        COMPLEASM_ODB="${{COMPLEASM_LINEAGE#*_}}"
+        if [ "$COMPLEASM_ODB" = "$COMPLEASM_LINEAGE" ]; then COMPLEASM_ODB="odb12"; fi
         echo "[INFO] Running compleasm in protein mode..." | tee -a {output.compleasm_log}
 
         compleasm.py protein \
             -p {input.galba_aa} \
-            -l $COMPLEASM_LINEAGE \
+            -l $COMPLEASM_NAME \
+            --odb $COMPLEASM_ODB \
             -t {threads} \
             -o {params.compleasm_outdir} \
             -L {params.library_path} \
@@ -271,4 +275,14 @@ rule assess_completeness:
         fi
 
         echo "[INFO] =======================================" | tee -a {output.compleasm_log}
+
+        # Remove compleasm protein-mode hmmsearch output and large intermediate files;
+        # keep summary.txt (tracked output) and protein_hmmsearch.done.
+        # compleasm.py protein writes *hmmsearch_output/ directly in compleasm_outdir
+        # (no lineage subdirectory), so target it directly.
+        find {params.compleasm_outdir} -maxdepth 1 -type d -name '*hmmsearch_output' \
+            -exec find {{}} -type f -delete \; 2>/dev/null || true
+        find {params.compleasm_outdir} -maxdepth 1 -type d -name '*hmmsearch_output' \
+            -empty -delete 2>/dev/null || true
+        rm -f "{params.compleasm_outdir}/full_table.tsv" 2>/dev/null || true
         """

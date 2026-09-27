@@ -291,6 +291,12 @@ rule run_augustus_hints:
             fi
         done
 
+        # Remove genome_split/ and augustus_tmp/ working dirs (disk mode).
+        # In /dev/shm mode the EXIT trap already handles cleanup of $TMP_DIR.
+        if [ "{params.use_dev_shm}" != "True" ]; then
+            rm -rf "$GENOME_SPLIT_TMP" "$AUGUSTUS_TMP" 2>/dev/null || true
+        fi
+
         # Record software versions
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
         AUG_VER=$(augustus --version 2>&1 | head -1 | perl -ne 'print $1 if /\(([\d.]+)\)/' || true)

@@ -108,7 +108,7 @@ rule redundancy_removal:
         # Step 4: Remove redundant sequences using DIAMOND
         # aa2nonred.pl requires --diamond flag and DIAMOND_PATH
         # DIAMOND is located at /opt/ETP/tools/diamond in the BRAKER3 container
-        aa2nonred.pl $PROT_AA $PROT_NR_AA --DIAMOND_PATH=$(dirname $(which diamond)) --diamond --cores={threads}
+        aa2nonred.pl $PROT_AA $PROT_NR_AA --DIAMOND_PATH=$(dirname $(command -v diamond)) --diamond --cores={threads}
         echo "[INFO] Removed redundant sequences: $PROT_NR_AA"
 
         # Step 5: Extract non-redundant gene list

@@ -208,9 +208,9 @@ rule fix_in_frame_stop_codons:
                 -u off \
                 -U off \
                 -a {params.aug_config} \
-                -C $(dirname $(which cdbfasta)) \
-                -A $(dirname $(which augustus)) \
-                -S $(dirname $(which gff2gbSmallDNA.pl)) \
+                -C $(dirname $(command -v cdbfasta)) \
+                -A $(dirname $(command -v augustus)) \
+                -S $(dirname $(command -v gff2gbSmallDNA.pl)) \
                 -H {input.hintsfile} \
                 -e {params.extrinsic_cfg} \
                 -w {params.output_dir} \

@@ -37,7 +37,7 @@ rule run_minisplice:
         echo "[INFO] ===== MINISPLICE: SCORING SPLICE SITES ====="
 
         # Find minisplice binary
-        MINISPLICE=$(which minisplice 2>/dev/null || true)
+        MINISPLICE=$(command -v minisplice 2>/dev/null || true)
         if [ -z "$MINISPLICE" ]; then
             echo "[ERROR] minisplice not found in PATH"
             echo "[ERROR] Install minisplice (https://github.com/lh3/minisplice)"

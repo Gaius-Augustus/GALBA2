@@ -90,7 +90,7 @@ rule sanity_check_augustus:
                 -o {output.galba_gtf} \
                 -a {params.output_dir}/augustus.hints.aa \
                 -t {threads} \
-                -d $(dirname $(which diamond)) \
+                -d $(dirname $(command -v diamond)) \
                 1> {params.output_dir}/diamond_filter.stdout \
                 2> {params.output_dir}/diamond_filter.stderr
 

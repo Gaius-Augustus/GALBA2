@@ -153,7 +153,7 @@ rule miniprot_boundary_scorer:
         echo "[INFO] ===== MINIPROT: BOUNDARY SCORING ====="
 
         # Find miniprot_boundary_scorer binary
-        SCORER=$(which miniprot_boundary_scorer 2>/dev/null || true)
+        SCORER=$(command -v miniprot_boundary_scorer 2>/dev/null || true)
         if [ -z "$SCORER" ]; then
             echo "[ERROR] miniprot_boundary_scorer not found in PATH"
             exit 1
@@ -237,7 +237,7 @@ rule run_miniprothint:
         done
 
         if [ -z "$MINIPROTHINT" ]; then
-            MINIPROTHINT=$(which miniprothint.py 2>/dev/null || true)
+            MINIPROTHINT=$(command -v miniprothint.py 2>/dev/null || true)
         fi
 
         if [ -z "$MINIPROTHINT" ]; then

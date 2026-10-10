@@ -4,13 +4,15 @@ import sys
 import os
 import argparse
 import subprocess
-import re
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from gtf_transcript_filter import filter_transcripts  # noqa: E402
 
 __author__ = "Katharina J. Hoff"
-__copyright__ = "Copyright 2023. All rights reserved."
+__copyright__ = "Copyright 2023-2026. All rights reserved."
 __credits__ = ""
 __license__ = "Artistic License 2.0"
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __email__ = "katharina.hoff@uni-greifswald.de"
 __status__ = "development"
 
@@ -37,7 +39,6 @@ argparser.add_argument('-t', '--threads', type=str, required = False, default = 
 argparser.add_argument('-d', '--diamond_dir', type=str, required = True,
                             help = 'Directory that contains DIAMOND binaries')
 
-args = argparser.parse_args()
 
 def run_diamond(ref_prots, pred_prots, threads, diamond_dir):
     """
@@ -55,58 +56,44 @@ def run_diamond(ref_prots, pred_prots, threads, diamond_dir):
 def filter_gtf(gtf, diamond_out_file, out_gtf):
     """
     Read DIAMOND output, identify transcript names that have at least one hit,
-    read gtf file, discard all genes that do not have a hit,
-    write filtered gtf file
+    read gtf file, discard all transcripts that do not have a hit and all
+    genes left without transcripts, write filtered gtf file.
+
+    Gene lines are re-spanned to the transcripts that remain (BRAKER4 #62:
+    version 1.0.0 kept the gene line of a gene whose widest transcript was
+    discarded, so galba.gtf had genes wider than their transcripts). Gene
+    IDs come from the GTF, so IDs renamed by normalize_gtf.py (g1_2) work.
     """
     # reading DIAMOND output
     try:
         with open(diamond_out_file, "r") as diamond_out:
-            diamond_hits_tx = {}
-            diamond_hits_gene = {}
+            diamond_hits_tx = set()
             for line in diamond_out:
-                line = line.rstrip()
-                fields = line.split("\t")
-                query = fields[0]
-                if query not in diamond_hits_tx:
-                    diamond_hits_tx[query] = 1
-                    match = re.search(r'(g\d+)\.t\d+', query)
-                    diamond_hits_gene[match.group(1)] = 1
+                fields = line.rstrip().split("\t")
+                if len(fields) < 2 or fields[0].startswith("Running DIAMOND"):
+                    continue
+                diamond_hits_tx.add(fields[0])
     except IOError:
         print("ERROR: DIAMOND output file " + diamond_out_file + " could not be opened")
         sys.exit(1)
 
-    # reading gtf file to filter out genes that do not have a hit
+    # reading gtf file to filter out transcripts/genes that do not have a hit
     try:
-        with open(gtf, "r") as gtf_in:
-            try:
-                with open(out_gtf, "w") as gtf_out:
-                    for line in gtf_in:
-                        line = line.rstrip()
-                        fields = line.split("\t")
-                        if fields[2] == "gene":
-                            if fields[8] in diamond_hits_gene:
-                                gtf_out.write(line + "\n")
-                        elif fields[2] == "transcript":
-                            if fields[8] in diamond_hits_tx:
-                                gtf_out.write(line + "\n")
-                        else:
-                            match = re.search('transcript_id "([^"]+)";', fields[8])
-                            txid = match.groups()[0]
-                            if txid in diamond_hits_tx:
-                                gtf_out.write(line + "\n")
-                            else:
-                                print("Discarding " + txid)
-            except IOError:
-                print("ERROR: gtf file " + out_gtf + " could not be opened")
-                sys.exit(1)
-    except IOError:
-        print("ERROR: gtf file " + gtf + " could not be opened")
+        dropped_tx, dropped_genes = filter_transcripts(gtf, out_gtf, keep=diamond_hits_tx)
+    except IOError as e:
+        print("ERROR: gtf file could not be processed: " + str(e))
         sys.exit(1)
-        
+    for txid in dropped_tx:
+        print("Discarding " + txid)
+    print("Discarded " + str(len(dropped_tx)) + " transcripts without DIAMOND hit and "
+          + str(len(dropped_genes)) + " genes left without transcripts")
+
 
 def main():
+    args = argparser.parse_args()
     diamond_out_file = run_diamond(args.ref_prots, args.pred_prots, args.threads, args.diamond_dir)
     filter_gtf(args.gtf, diamond_out_file, args.out_gtf)
     os.remove(diamond_out_file)
 
-main()
+if __name__ == "__main__":
+    main()

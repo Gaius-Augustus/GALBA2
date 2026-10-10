@@ -9,8 +9,9 @@ Fails (exit code 1) when
 - a gene line differs from its transcripts in sequence, strand or span,
 - a gene or transcript line appears more than once.
 
-Runs on galba.gtf before GFF3 conversion, so a broken model stops the
-pipeline instead of reaching galba.gff3.
+Runs on galba.normalized.gtf (rule normalize_cds) and on the final
+galba.gtf (rule sanity_check_augustus), both before GFF3 conversion, so a
+broken model stops the pipeline instead of reaching galba.gff3.
 
 Handles attribute-style column 9 as well as the bare TSEBRA/AUGUSTUS gene
 and transcript lines, where column 9 holds only the ID.

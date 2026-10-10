@@ -8,6 +8,10 @@ rule sanity_check_augustus:
        different strands)
     2. Optional DIAMOND filtering against input proteins
     3. Rename to galba.gtf
+    4. Locus check (check_gtf_loci.py, BRAKER4 #62): both filters above drop
+       transcripts and re-span their gene lines; this check fails the rule
+       if any gene or transcript line in galba.gtf does not match its
+       children, so an inconsistent model never reaches galba.gff3.
 
     Input:
         augustus_gtf: AUGUSTUS predictions in GTF format
@@ -112,6 +116,12 @@ rule sanity_check_augustus:
         fi
 
         rm -f {params.output_dir}/augustus.clean.gtf
+
+        # Every gene and transcript line must span exactly its children
+        # (BRAKER4 #62). normalize_cds already checked galba.normalized.gtf;
+        # this catches anything the two transcript filters above changed.
+        python3 {script_dir}/check_gtf_loci.py {output.galba_gtf} \
+            2> {params.output_dir}/check_gtf_loci.galba.log
 
         GENES=$(grep -c $'\tgene\t' {output.galba_gtf} || echo 0)
         echo "[INFO] Final gene count: $GENES"

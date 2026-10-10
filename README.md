@@ -60,6 +60,7 @@ GALBA2 is a rewrite of the original [GALBA](https://github.com/Gaius-Augustus/GA
 -   **Automatic resume** — re-run the same command after a failure and Snakemake picks up where it left off.
 -   **Modular rules** in separate `.smk` files for easier debugging and extension.
 -   **HPC-ready SLURM executor** — each rule can submit as a separate cluster job.
+-   **Node-local scratch** — AUGUSTUS prediction and optimization, BUSCO, compleasm and FANTASIA-Lite work on the compute node's local disk (`[paths] tmp_dir`) and copy only the kept files back, so slow network file systems do not dominate the runtime.
 -   **Built-in repeat masking** — RepeatModeler2 + RepeatMasker (default) or Red (REpeat Detector; ~10× faster, no library), selectable via `masking_tool` in `config.ini`. Skipped automatically when you provide a pre-masked genome via `genome_masked` in `samples.csv`.
 -   **Integrated QC and postprocessing** — GFF3 conversion (AGAT), DIAMOND filtering against the input proteins, BUSCO/compleasm completeness assessment, optional evaluation against a reference annotation (gffcompare).
 -   **Optional CNN splice-site scoring** with minisplice (`use_minisplice = 1`).
@@ -244,6 +245,37 @@ t are explicitly bound. GALBA2 passes `--singularity-args "-B /home"` by default
 --singularity-args "-B /home -B /scratch -B /data"
 ```
 
+**Node-local scratch (`[paths] tmp_dir`):** Several rules write thousands of small files (AUGUSTUS prediction and optimization, BUSCO, compleasm) or many intermediates (FANTASIA-Lite chunks). On network file systems with slow small-file writes this can dominate the runtime. These rules therefore work in a private directory on the node-local disk, copy only the files GALBA2 keeps to `output/<sample>/`, and remove the scratch directory when the job ends, also on failure.
+
+- The scratch root is `[paths] tmp_dir` in `config.ini` (or the environment variable `GALBA2_TMP_DIR`). Empty (the default) means each job's `$TMPDIR`, else `/tmp`.
+- Before it starts, each job checks the free space under the root (see the table). With less free space, or when the root is not writable, the job works in `output/<sample>/` as GALBA2 did before and writes a line starting with `WARNING: working in` to its log. A job that got scratch logs `scratch directory: <path>`.
+- Singularity binds `/tmp` and `$HOME` by default. Any other `tmp_dir` is added to `SINGULARITY_BIND`/`APPTAINER_BIND` automatically. The path must exist on every compute node.
+- Check the node-local space of a partition with `srun -p <partition> -N1 -n1 df -h /tmp`. Several jobs can share a node, and the free-space check runs when each job starts.
+
+G = genome FASTA, H = hints file. NEED is the free space a job requires, in GB, rounded up, including 5 GB headroom.
+
+| Rule | On scratch | Copied back | NEED |
+|---|---|---|---|
+| `run_augustus_hints` | genome split, per-chunk hints, job scripts and GFFs | job list, joined predictions | 3 x (G + H) + 5 |
+| `optimize_augustus` | `optimize_augustus.pl` buckets | nothing (parameters live in the AUGUSTUS config) | 20 |
+| `busco_genome`, `busco_proteins` | BUSCO run dir | `short_summary*.txt` | 20 / 10 |
+| `run_compleasm` | compleasm work dir | `summary.txt` | 5 x G + 5 |
+| `fantasia_annotate` | FANTASIA-Lite chunk dirs | nothing | 10 |
+
+**`TMPDIR`:** With `[paths] tmp_dir` empty, each job uses its `$TMPDIR` as the scratch root; Snakemake sets it from the `tmpdir` resource. Many SLURM clusters set `TMPDIR=/local/scratch/$USER` (or similar) per allocation. If that path is not writable inside the Singularity container, the jobs still run but work in `output/<sample>/` (look for the `WARNING: working in` line). Either set `[paths] tmp_dir` to a node-local path that exists on every node (GALBA2 binds it into the containers), or set the default `tmpdir` resource in your SLURM profile and add the same path to `--singularity-args`:
+
+```yaml
+# profiles/slurm/config.yaml
+default-resources:
+  tmpdir: "/path/you/can/write"   # e.g. /scratch/$USER/tmp
+```
+
+```
+--singularity-args "-B /home -B /scratch -B /path/you/can/write"
+```
+
+The commented `default-resources` block in [profiles/slurm/config.yaml](profiles/slurm/config.yaml) shows the exact shape.
+
 Running GALBA2
 ===============
 
@@ -294,6 +326,7 @@ This file contains pipeline parameters. Place it in the same directory as your `
 [paths]
 samples_file = samples.csv
 augustus_config_path = augustus_config
+; tmp_dir = /path/on/every/node                        # optional node-local scratch root, see "Node-local scratch" above
 ; busco_download_path = shared_data/busco_downloads      # optional, see "Pre-downloading BUSCO data" below
 ; compleasm_download_path = shared_data/busco_downloads/lineages  # optional, defaults to {busco_download_path}/lineages
 
@@ -312,7 +345,7 @@ allow_hinted_splicesites = gcag,atac # non-canonical splice sites for AUGUSTUS
 augustus_chunksize = 3000000        # genome chunk size (bp) for parallel AUGUSTUS prediction
 augustus_overlap = 500000           # overlap (bp) between adjacent AUGUSTUS chunks
 no_cleanup = 0                     # set to 1 to keep all intermediate files (debugging only)
-use_dev_shm = 0                    # set to 1 to use /dev/shm for temp files (faster I/O)
+use_dev_shm = 0                    # set to 1 to use /dev/shm as scratch for masking and AUGUSTUS
 
 [OMARK]
 # omamer_db = /path/to/LUCA.h5      # OMAmer database for OMArk (used only when run_omark = 1)
@@ -379,7 +412,7 @@ Description of selected configuration options
 | `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container, ProtT5 cache, and V1 lookup bundle). Set `sif`, `hf_cache_dir`, and `lookup_dir` in the `[fantasia]` section of `config.ini`. Download the lookup bundle from [Zenodo record 17720428](https://zenodo.org/records/17720428). |
 | `translation_table` | 1 | NCBI genetic code table. **Currently only table 1 (standard code) is supported** because miniprot does not support alternative genetic codes. Support for additional tables is planned for a future release. |
 | `no_cleanup` | 0 | Keep all intermediate files. Useful for debugging. |
-| `use_dev_shm` | 0 | Use `/dev/shm` for temporary files during AUGUSTUS prediction (faster I/O on nodes with large RAM). |
+| `use_dev_shm` | 0 | Use `/dev/shm` (shared memory) instead of the node-local disk as the scratch root of `run_masking`, `optimize_augustus` and `run_augustus_hints`. All other rules use `[paths] tmp_dir` (see "Node-local scratch" above). If `/dev/shm` has too little free space, `optimize_augustus` and `run_augustus_hints` work in `output/<sample>/` instead. |
 
 ### Downloading shared databases
 

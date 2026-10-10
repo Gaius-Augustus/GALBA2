@@ -15,6 +15,7 @@ __version__ = "0.4.0-beta"
 import pandas as pd
 import configparser
 import os
+import sys
 
 # ============================================================================
 # Configuration
@@ -33,7 +34,7 @@ if not os.path.isfile(config_ini_path):
 config_parser.read(config_ini_path)
 
 # Overlay environment-variable overrides
-for section in ('PARAMS', 'SLURM_ARGS', 'fantasia', 'OMARK'):
+for section in ('paths', 'PARAMS', 'SLURM_ARGS', 'fantasia', 'OMARK'):
     if not config_parser.has_section(section):
         config_parser.add_section(section)
 
@@ -48,6 +49,7 @@ _env_overrides = {
     'GALBA2_MIN_CONTIG':                     ('PARAMS', 'min_contig'),
     'GALBA2_SKIP_OPTIMIZE_AUGUSTUS':          ('PARAMS', 'skip_optimize_augustus'),
     'GALBA2_USE_DEV_SHM':                    ('PARAMS', 'use_dev_shm'),
+    'GALBA2_TMP_DIR':                        ('paths', 'tmp_dir'),
     'GALBA2_SKIP_BUSCO':                     ('PARAMS', 'skip_busco'),
     'GALBA2_RUN_OMARK':                      ('PARAMS', 'run_omark'),
     'GALBA2_OMAMER_DB':                      ('OMARK', 'omamer_db'),
@@ -81,6 +83,21 @@ for _env_name, (_section, _key) in _env_overrides.items():
 
 augustus_config_path = os.path.abspath(config_parser['paths'].get('augustus_config_path', 'augustus_config'))
 
+# Node-local scratch root ([paths] tmp_dir, used through scripts/tmp_dir.sh).
+# Empty: each job's $TMPDIR, else /tmp.
+config['tmp_dir'] = config_parser.get('paths', 'tmp_dir', fallback='').strip()
+TMP_ROOT = config['tmp_dir']
+# Singularity binds /tmp and $HOME by default; any other scratch root must be
+# bound into the containers explicitly. A root that does not exist where
+# Snakemake runs is not bound (Singularity refuses missing bind sources); the
+# jobs then fall back to output/<sample>/ with a WARNING.
+if (TMP_ROOT and os.path.isdir(TMP_ROOT)
+        and not TMP_ROOT.startswith(('/tmp/', '/home/')) and TMP_ROOT not in ('/tmp', '/home')):
+    for _var in ('SINGULARITY_BIND', 'APPTAINER_BIND'):
+        _have = [b for b in os.environ.get(_var, '').split(',') if b]
+        if TMP_ROOT not in _have:
+            os.environ[_var] = ','.join(_have + [TMP_ROOT])
+
 # Pass config to Snakemake config dict
 config['samples_file'] = config_parser['paths'].get('samples_file', 'samples.csv')
 config['min_contig'] = config_parser.getint('PARAMS', 'min_contig', fallback=10000)
@@ -107,14 +124,35 @@ config['galba_image'] = config['galba_tools_image']
 # controls per-rule parallelism. Without this fallback, multithreaded rules
 # would run single-threaded regardless of --cores.
 # Same fix as BRAKER4 issue #10.
+#
+# --cores is optional with --executor slurm, and workflow.cores raises when it
+# is unset, so read it defensively. Snakemake caps every job's threads at
+# --cores, SLURM jobs included: `--cores 1 --executor slurm` submits every
+# rule with one CPU whatever cpus_per_task says.
+try:
+    _cli_cores = workflow.cores
+except Exception:
+    _cli_cores = None
 _skip_mem = config_parser.getboolean('SLURM_ARGS', 'skip_mem_request', fallback=False)
 config['slurm_args'] = {
     'cpus_per_task': config_parser.getint('SLURM_ARGS', 'cpus_per_task',
-                                          fallback=workflow.cores or 1),
+                                          fallback=_cli_cores or 1),
     'mem_of_node': 0 if _skip_mem else config_parser.getint('SLURM_ARGS', 'mem_of_node', fallback=16000),
     'max_runtime': config_parser.getint('SLURM_ARGS', 'max_runtime', fallback=60),
     'skip_mem': _skip_mem,
 }
+# Warn only in the main process; SLURM job steps re-parse this file with the
+# job's own --cores.
+try:
+    _is_job_step = workflow.remote_exec
+except Exception:
+    _is_job_step = False
+if (not _is_job_step and _cli_cores is not None
+        and _cli_cores < config['slurm_args']['cpus_per_task']):
+    print(f"WARNING: --cores {_cli_cores} caps every rule at {_cli_cores} "
+          f"thread(s), SLURM jobs included, although cpus_per_task = "
+          f"{config['slurm_args']['cpus_per_task']}. With --executor slurm, "
+          f"omit --cores or set it to cpus_per_task.", file=sys.stderr)
 
 config['skip_optimize_augustus'] = config_parser.getboolean(
     'PARAMS', 'skip_optimize_augustus', fallback=False

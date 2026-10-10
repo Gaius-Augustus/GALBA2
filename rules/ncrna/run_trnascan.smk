@@ -67,8 +67,8 @@ rule run_trnascan:
         fi
         rm -f {output.gff}.tmp
 
-        n_trna=$(grep -cv '^#' {output.gff} || echo 0)
-        echo "[INFO] tRNAscan-SE predicted $n_trna tRNA features" >> {log}
+        n_trna=$(awk -F'\t' '$3 == "tRNA"' {output.gff} | wc -l)
+        echo "[INFO] tRNAs.gff3 contains $n_trna tRNA genes" >> {log}
 
         # Record software version
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv

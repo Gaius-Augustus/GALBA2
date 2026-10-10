@@ -7,12 +7,18 @@ Runs BUSCO twice:
 
 Then generates a combined summary text and comparison bar plot.
 
-Container: ezlabgva/busco:v6.0.0_cv1
+Container: ezlabgva/busco:v6.1.0_cv2
 """
 
 
 rule busco_genome:
-    """Run BUSCO on the genome assembly."""
+    """Run BUSCO on the genome assembly.
+
+    Scratch: BUSCO runs in a private directory on the node-local disk
+    (scripts/tmp_dir.sh, [paths] tmp_dir); only the short_summary*.txt files
+    are copied back to output/<sample>/busco/genome/. NEED 20 GB; with less
+    free the job works in output/<sample>/busco/ as before.
+    """
     input:
         genome=lambda wildcards: os.path.join(get_output_dir(wildcards), "genome.fa")
     output:
@@ -24,7 +30,8 @@ rule busco_genome:
     params:
         busco_lineage=lambda w: get_busco_lineage(w),
         outdir=lambda w: f"output/{w.sample}/busco",
-        download_path=config['busco_download_path']
+        download_path=config['busco_download_path'],
+        tmp_root=TMP_ROOT
     threads: int(config['slurm_args']['cpus_per_task'])
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']),
@@ -34,6 +41,7 @@ rule busco_genome:
     shell:
         r"""
         set -euo pipefail
+        source {script_dir}/tmp_dir.sh
         OUTDIR_ABS=$(readlink -f {params.outdir})
         # NFS can give "Directory not empty" with plain rm -rf; use find -depth
         # -delete which deletes contents depth-first before removing the parent,
@@ -43,6 +51,10 @@ rule busco_genome:
             find "$OUTDIR_ABS/genome" -depth -delete 2>/dev/null || \
                 rm -rf "$OUTDIR_ABS/genome" 2>/dev/null || true
         fi
+        finalDir=$OUTDIR_ABS
+
+        scratch_dir outDir "busco_genome_{wildcards.sample}" "{params.tmp_root}" 20 "$finalDir" 2>> {log}
+        trap 'rm -rf -- "$SCRATCH"' EXIT
 
         mkdir -p {params.download_path}
         OFFLINE_FLAG=""
@@ -58,13 +70,38 @@ rule busco_genome:
         busco \
             -i {input.genome} \
             -o genome \
-            --out_path "$OUTDIR_ABS" \
+            --out_path "$outDir" \
             -l {params.busco_lineage} \
             -m genome \
             -c {threads} \
             --download_path {params.download_path} \
             $OFFLINE_FLAG \
             >> {log} 2>&1
+
+        # Keep only short_summary*.txt. busco_summary and collect_results
+        # locate the summaries via find -name 'short_summary*.txt'. Nothing
+        # downstream reads full_table.tsv, hmmer_output/, miniprot_output/
+        # or busco_sequences/, which together run to several files per
+        # BUSCO in the lineage. On scratch the trap removes the rest. In the
+        # fallback the tree is deleted here rather than in busco_summary so
+        # it is freed as soon as this mode finishes and a failure further
+        # down the DAG does not leave it behind.
+        mapfile -t _keep < <(cd "$outDir" && find genome -name 'short_summary*.txt')
+        # copy_back without names copies everything: only call it with names
+        if [ ${{#_keep[@]}} -gt 0 ]; then
+            copy_back "$outDir" "$finalDir" "${{_keep[@]}}"
+        fi
+        if ! find "$finalDir/genome" -name 'short_summary*.txt' 2>/dev/null | grep -q .; then
+            echo "ERROR: no BUSCO short_summary*.txt in $finalDir/genome" >> {log}
+            exit 1
+        fi
+        if [ -z "$SCRATCH" ]; then
+            find "$OUTDIR_ABS/genome" -mindepth 1 \( -type f -o -type l \) \
+                ! -name 'short_summary*.txt' ! -name '.done' \
+                -delete 2>/dev/null || true
+            find "$OUTDIR_ABS/genome" -mindepth 1 -type d -empty \
+                -delete 2>/dev/null || true
+        fi
 
         # Record software version
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
@@ -130,7 +167,14 @@ rule get_longest_isoform:
 
 
 rule busco_proteins:
-    """Run BUSCO on the predicted proteome (longest isoforms only)."""
+    """Run BUSCO on the predicted proteome (longest isoforms only).
+
+    Scratch: BUSCO and its filtered input run in a private directory on the
+    node-local disk (scripts/tmp_dir.sh, [paths] tmp_dir); only the
+    short_summary*.txt files and busco_skipped_long_proteins.txt are copied
+    back to output/<sample>/busco/. NEED 10 GB; with less free the job works
+    in output/<sample>/busco/ as before.
+    """
     input:
         proteins="output/{sample}/galba.longest.aa"
     output:
@@ -142,7 +186,8 @@ rule busco_proteins:
     params:
         busco_lineage=lambda w: get_busco_lineage(w),
         outdir=lambda w: f"output/{w.sample}/busco",
-        download_path=config['busco_download_path']
+        download_path=config['busco_download_path'],
+        tmp_root=TMP_ROOT
     threads: int(config['slurm_args']['cpus_per_task'])
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']),
@@ -152,11 +197,16 @@ rule busco_proteins:
     shell:
         r"""
         set -euo pipefail
+        source {script_dir}/tmp_dir.sh
         OUTDIR_ABS=$(readlink -f {params.outdir})
         if [ -d "$OUTDIR_ABS/proteins" ]; then
             find "$OUTDIR_ABS/proteins" -depth -delete 2>/dev/null || \
                 rm -rf "$OUTDIR_ABS/proteins" 2>/dev/null || true
         fi
+        finalDir=$OUTDIR_ABS
+
+        scratch_dir outDir "busco_proteins_{wildcards.sample}" "{params.tmp_root}" 10 "$finalDir" 2>> {log}
+        trap 'rm -rf -- "$SCRATCH"' EXIT
 
         mkdir -p {params.download_path}
         OFFLINE_FLAG=""
@@ -164,16 +214,55 @@ rule busco_proteins:
             OFFLINE_FLAG="--offline"
             echo "[INFO] Found pre-downloaded lineage at {params.download_path}/lineages/{params.busco_lineage}; running BUSCO with --offline" >> {log}
         fi
+
+        # hmmsearch aborts on targets >= 100,000 aa ("over comparison pipeline
+        # limit"), which kills the whole BUSCO run (BRAKER4 issues #91, #92).
+        # No real protein is that long, so hand BUSCO a copy without such
+        # sequences.
+        BUSCO_INPUT="$outDir/busco_input_proteins.faa"
+        awk -v max=100000 -v skipped="$outDir/busco_skipped_long_proteins.txt" '
+            function flush() {{
+                if (hdr == "") return
+                s = seq; sub(/\*$/, "", s)
+                if (length(s) >= max) {{ split(substr(hdr, 2), a, /[ \t]/); print a[1] > skipped; n++ }}
+                else print hdr "\n" seq
+            }}
+            /^>/ {{ flush(); hdr = $0; seq = ""; next }}
+            {{ gsub(/[ \t\r]/, ""); seq = seq $0 }}
+            END {{ flush(); if (n > 0) printf "[WARNING] Skipped %d protein(s) >= %d aa for BUSCO (hmmsearch limit)\n", n, max > "/dev/stderr" }}
+        ' {input.proteins} > "$BUSCO_INPUT" 2>> {log}
+
         busco \
-            -i {input.proteins} \
+            -i "$BUSCO_INPUT" \
             -o proteins \
-            --out_path "$OUTDIR_ABS" \
+            --out_path "$outDir" \
             -l {params.busco_lineage} \
             -m proteins \
             -c {threads} \
             --download_path {params.download_path} \
             $OFFLINE_FLAG \
             >> {log} 2>&1
+        rm -f "$BUSCO_INPUT"
+
+        # Keep only short_summary*.txt (see busco_genome) and the list of
+        # proteins skipped for length.
+        mapfile -t _keep < <(cd "$outDir" && find proteins -name 'short_summary*.txt')
+        _keep+=(busco_skipped_long_proteins.txt)
+        # copy_back without names copies everything: only call it with names
+        if [ ${{#_keep[@]}} -gt 0 ]; then
+            copy_back "$outDir" "$finalDir" "${{_keep[@]}}"
+        fi
+        if ! find "$finalDir/proteins" -name 'short_summary*.txt' 2>/dev/null | grep -q .; then
+            echo "ERROR: no BUSCO short_summary*.txt in $finalDir/proteins" >> {log}
+            exit 1
+        fi
+        if [ -z "$SCRATCH" ]; then
+            find "$OUTDIR_ABS/proteins" -mindepth 1 \( -type f -o -type l \) \
+                ! -name 'short_summary*.txt' ! -name '.done' \
+                -delete 2>/dev/null || true
+            find "$OUTDIR_ABS/proteins" -mindepth 1 -type d -empty \
+                -delete 2>/dev/null || true
+        fi
 
         touch {output.done}
 
@@ -241,10 +330,13 @@ rule busco_summary:
             echo "Results not found" >> {output.summary}
         fi
 
-        # Remove BUSCO working directories; keep only short_summary*.txt per mode
-        # (collect_results locates them via find -name 'short_summary*.txt') and .done.
+        # Backstop only: busco_genome and busco_proteins each clean their own
+        # working tree as soon as they finish. This catches trees left by an
+        # older run whose .done files are still valid, so those rules do not
+        # re-execute. Keep only short_summary*.txt per mode (collect_results
+        # locates them via find -name 'short_summary*.txt') and .done.
         for bmode in genome proteins; do
-            find {params.busco_dir}/$bmode -mindepth 1 -type f \
+            find {params.busco_dir}/$bmode -mindepth 1 \( -type f -o -type l \) \
                 ! -name 'short_summary*.txt' ! -name '.done' \
                 -delete 2>/dev/null || true
             find {params.busco_dir}/$bmode -mindepth 1 -type d -empty \

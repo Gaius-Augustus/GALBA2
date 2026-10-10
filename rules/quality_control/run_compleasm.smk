@@ -11,6 +11,12 @@ rule run_compleasm:
     The --library_path flag points to the shared pre-downloaded lineage
     directory so compleasm doesn't re-download for every scenario.
 
+    Scratch: the compleasm work dir (miniprot output) is a private
+    directory on the node-local disk (scripts/tmp_dir.sh, [paths] tmp_dir);
+    only summary.txt is copied back to output/<sample>/compleasm_genome_out/.
+    NEED 5 x genome + 5 GB; with less free the job works in
+    output/<sample>/compleasm_genome_out/ as before.
+
     Input:
         genome: Genome assembly FASTA file
 
@@ -33,7 +39,8 @@ rule run_compleasm:
         busco_lineage=lambda w: get_busco_lineage(w),
         compleasm_outdir=lambda w: f"output/{w.sample}/compleasm_genome_out",
         library_path=config['compleasm_download_path'],
-        script=os.path.join(script_dir, "compleasm_to_hints.py")
+        script=os.path.join(script_dir, "compleasm_to_hints.py"),
+        tmp_root=TMP_ROOT
     threads: int(config['slurm_args']['cpus_per_task'])
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']),
@@ -68,47 +75,51 @@ rule run_compleasm:
         export PATH=/opt/conda/bin:$PATH
         export PYTHONNOUSERSITE=1
 
+        # compleasm's work dir goes to the node-local disk
+        source {script_dir}/tmp_dir.sh
+        scratch_dir outDir "compleasm_{wildcards.sample}" "{params.tmp_root}" \
+            "$(need_gb 5 {input.genome})" "$PWD/{params.compleasm_outdir}" 2>> {log}
+        trap 'rm -rf -- "$SCRATCH"' EXIT
+
         # Run our compleasm_to_hints.py with --library_path for pre-downloaded data
         python3 {params.script} \
             -g {input.genome} \
             -d {params.busco_lineage} \
             -t {threads} \
             -o {output.compleasm_hints} \
-            -s {params.compleasm_outdir} \
+            -s "$outDir" \
             -L {params.library_path} \
             > {output.compleasm_log} 2>&1 || true
 
         # Ensure summary exists
         # compleasm creates summary.txt inside scratch_dir or a subdirectory
         mkdir -p $(dirname {output.compleasm_summary})
-        if [ ! -f {output.compleasm_summary} ]; then
-            # Search for summary.txt in the scratch dir tree
-            FOUND_SUMMARY=$(find {params.compleasm_outdir} -name "summary.txt" 2>/dev/null | head -1)
-            if [ -n "$FOUND_SUMMARY" ] && [ -f "$FOUND_SUMMARY" ]; then
-                cp "$FOUND_SUMMARY" {output.compleasm_summary}
-            # Fall back to extracting from script stdout (captured in compleasm_log)
-            elif grep -q "The following BUSCOs" {output.compleasm_log} 2>/dev/null; then
-                grep -A20 "The following BUSCOs" {output.compleasm_log} | tail -n +2 > {output.compleasm_summary}
-            elif grep -q "^S:" {output.compleasm_log} 2>/dev/null; then
-                grep "^[SDFMN]:" {output.compleasm_log} > {output.compleasm_summary}
-            else
-                echo "Compleasm did not produce a summary. Check {log} for details." > {output.compleasm_summary}
-            fi
+        # Search for summary.txt in the scratch dir tree, top level first
+        if [ -f "$outDir/summary.txt" ]; then
+            FOUND_SUMMARY=$outDir/summary.txt
+        else
+            FOUND_SUMMARY=$(find "$outDir" -name "summary.txt" 2>/dev/null | head -1)
         fi
+        if [ -n "$FOUND_SUMMARY" ] && [ -f "$FOUND_SUMMARY" ]; then
+            # In the fallback the summary may already be the output file
+            [ "$FOUND_SUMMARY" -ef {output.compleasm_summary} ] || cp "$FOUND_SUMMARY" {output.compleasm_summary}
+        # Fall back to extracting from script stdout (captured in compleasm_log)
+        elif grep -q "The following BUSCOs" {output.compleasm_log} 2>/dev/null; then
+            grep -A20 "The following BUSCOs" {output.compleasm_log} | tail -n +2 > {output.compleasm_summary}
+        elif grep -q "^S:" {output.compleasm_log} 2>/dev/null; then
+            grep "^[SDFMN]:" {output.compleasm_log} > {output.compleasm_summary}
+        else
+            echo "Compleasm did not produce a summary. Check {log} for details." > {output.compleasm_summary}
+        fi
+        [ -s {output.compleasm_summary} ] || {{ echo "[ERROR] {output.compleasm_summary} missing" >> {log}; exit 1; }}
 
         # Ensure hints file exists (may be empty if no BUSCOs found)
         touch {output.compleasm_hints}
 
         n_hints=$(wc -l < {output.compleasm_hints})
         echo "[INFO] Generated $n_hints BUSCO-based hints" >> {log}
-
-        # Remove compleasm hmmer_output/ and large intermediate files;
-        # keep summary.txt (tracked output) plus detected_genes.gff and full_table.tsv.
-        LINEAGE_DIR=$(find {params.compleasm_outdir} -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
-        if [ -n "$LINEAGE_DIR" ]; then
-            rm -rf  "$LINEAGE_DIR/hmmer_output" 2>/dev/null || true
-            rm -f   "$LINEAGE_DIR/miniprot_output.gff" \
-                    "$LINEAGE_DIR/translated_protein.fasta" 2>/dev/null || true
+        if [ "$n_hints" -eq 0 ]; then
+            echo "[WARNING] 0 BUSCO hints produced. Check {output.compleasm_log} for the actual compleasm error output." >> {log}
         fi
 
         # Record software versions
@@ -125,4 +136,14 @@ rule run_compleasm:
         source {script_dir}/report_citations.sh
         cite compleasm "$REPORT_DIR"
         cite miniprot "$REPORT_DIR"
+
+        # Remove compleasm genome internal files (miniprot alignments, working
+        # dirs) in the fallback; on scratch the EXIT trap removes them.
+        # Keep only summary.txt which is the Snakemake-tracked output.
+        if [ -z "$SCRATCH" ]; then
+            find {params.compleasm_outdir} -mindepth 1 -type f ! -name 'summary.txt' \
+                -delete 2>/dev/null || true
+            find {params.compleasm_outdir} -mindepth 1 -type d -empty \
+                -delete 2>/dev/null || true
+        fi
         """

@@ -27,6 +27,7 @@ import re
 import sys
 from collections import OrderedDict
 from datetime import datetime
+from html import escape as html_escape
 
 
 
@@ -200,6 +201,37 @@ def format_bbc_decisions(passes, mode):
         "best_by_compleasm (Brůna, Gabriel & Hoff, 2025) was applied in three passes "
         "using compleasm (Huang & Li, 2023) in protein mode: " + " | ".join(pieces) + "."
     )
+
+
+
+def collect_run_warnings(workdir, outdir):
+    """Collect failures of compleasm and BUSCO that the pipeline tolerated,
+    so the report does not present them as results."""
+    warnings = []
+
+    def _first_found(*paths):
+        for path in paths:
+            if os.path.exists(path):
+                return read_file(path).strip()
+        return None
+
+    qc = os.path.join(outdir, "quality_control")
+    prot = _first_found(os.path.join(qc, "compleasm_summary.txt"),
+                        os.path.join(workdir, "compleasm_proteins", "summary.txt"))
+    if prot and (prot.startswith("COMPLEASM_FAILED") or
+                 prot.startswith("Compleasm assessment failed") or
+                 prot.startswith("No proteins available")):
+        warnings.append("compleasm assessment of the predicted proteome failed. " + prot)
+    genome = _first_found(os.path.join(workdir, "compleasm_genome_out", "summary.txt"),
+                          os.path.join(qc, "compleasm_genome_out", "summary.txt"))
+    if genome and genome.startswith("Compleasm did not produce a summary"):
+        warnings.append("compleasm assessment of the genome failed. " + genome)
+    busco = _first_found(os.path.join(qc, "busco_summary.txt"),
+                         os.path.join(workdir, "busco", "busco_summary.txt"))
+    if busco and "Results not found" in busco:
+        warnings.append("BUSCO produced no result for at least one assessment "
+                        "(see the BUSCO summary below).")
+    return warnings
 
 
 def generate_methods_text(workdir, mode):
@@ -439,7 +471,12 @@ def generate_methods_text(workdir, mode):
     ncrna_parts = []
     trna_gff = os.path.join(d, "ncrna", "tRNAs.gff3")
     if os.path.exists(trna_gff):
-        n_trna = sum(1 for l in open(trna_gff) if not l.startswith("#") and l.strip())
+        n_trna = 0
+        with open(trna_gff) as fh:
+            for l in fh:
+                cols = l.split("\t")
+                if not l.startswith("#") and len(cols) > 2 and cols[2] == "tRNA":
+                    n_trna += 1
         if n_trna > 0:
             ncrna_parts.append(
                 f"**{n_trna:,}** transfer RNA genes were predicted using tRNAscan-SE "
@@ -519,7 +556,7 @@ def generate_methods_text(workdir, mode):
     # --- QC ---
     qc_parts = []
     if os.path.isdir(os.path.join(d, "busco")):
-        qc_parts.append("BUSCO (Manni et al., 2021)")
+        qc_parts.append("BUSCO (Tegenfeldt et al., 2025)")
     if os.path.isdir(os.path.join(d, "compleasm_proteins")) or os.path.isdir(os.path.join(d, "compleasm_genome_out")):
         qc_parts.append("compleasm (Huang & Li, 2023) with miniprot (Li, 2023)")
     if os.path.isdir(os.path.join(d, "omark")):
@@ -800,6 +837,13 @@ h3 { color: #555; }
 .meta dt { font-weight: bold; display: inline; }
 .meta dd { display: inline; margin-left: 5px; }
 .meta dd::after { content: ''; display: block; }
+.warning {
+    background: #fff3e0;
+    border-left: 4px solid #e65100;
+    padding: 12px 16px;
+    margin: 20px 0;
+}
+.warning ul { margin: 5px 0; }
 pre {
     background: #f5f5f5;
     border: 1px solid #ddd;
@@ -851,7 +895,7 @@ footer {
 """
 
 
-def generate_html(sample_name, mode, methods_text, citations, images, qc_data, benchmarks=None, outdir=".", software_versions=None):
+def generate_html(sample_name, mode, methods_text, citations, images, qc_data, benchmarks=None, outdir=".", software_versions=None, warnings=None):
     """Generate the full HTML report."""
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -946,6 +990,14 @@ def generate_html(sample_name, mode, methods_text, citations, images, qc_data, b
             size_str = f"{size_bytes} B"
         result_files_html += f'<tr><td><a href="{display_name}"><code>{display_name}</code></a> ({size_str})</td><td>{description}</td></tr>\n'
 
+    warnings_html = ""
+    if warnings:
+        items = "".join(f"<li>{html_escape(w)}</li>" for w in warnings)
+        warnings_html = (
+            '<div class="warning"><strong>Warning: some steps failed and were '
+            f'skipped; the pipeline continued.</strong><ul>{items}</ul></div>\n'
+        )
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -967,7 +1019,7 @@ def generate_html(sample_name, mode, methods_text, citations, images, qc_data, b
 <dt>Date:</dt><dd>{now}</dd>
 </dl>
 </div>
-
+{warnings_html}
 <h2>Output Files</h2>
 <table>
 <tr><th>File</th><th>Description</th></tr>
@@ -1285,7 +1337,11 @@ def main():
     software_versions = read_software_versions(out, d)
 
     # Generate HTML
-    html = generate_html(sample_name, mode, methods_text, citations, images, qc_data, benchmarks, outdir=out, software_versions=software_versions)
+    warnings = collect_run_warnings(d, out)
+    for w in warnings:
+        print("WARNING: " + w, file=sys.stderr)
+
+    html = generate_html(sample_name, mode, methods_text, citations, images, qc_data, benchmarks, outdir=out, software_versions=software_versions, warnings=warnings)
     html_path = os.path.join(out, "galba_report.html")
     with open(html_path, "w") as f:
         f.write(html)

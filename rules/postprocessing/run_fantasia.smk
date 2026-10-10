@@ -20,7 +20,10 @@ mirror the validated invocation from the EukAssembly-Bin (BOUDICCA) workflow,
 which has gone through extensive debugging on Hoff lab GPUs. Do not change
 those flags casually.
 
-Two rules:
+Three rules:
+    - fantasia_gpu_check: GPU probe at the start of the run (no inputs, so
+                          Snakemake runs it first); a missing GPU stops the
+                          run in minutes, not after hours of gene prediction
     - fantasia_annotate:  GPU embedding + GO lookup, produces results.csv
     - fantasia_summarize: parses results.csv, writes summary.txt + GO bar plot
 """
@@ -33,10 +36,61 @@ FANTASIA_ADD_PARAMS = config['fantasia'].get('additional_params', '') or ''
 FANTASIA_MIN_SCORE  = float(config['fantasia'].get('min_score', 0.5))
 
 
+rule fantasia_gpu_check:
+    """Check for a usable GPU where fantasia_annotate will run, at the start of the run.
+
+    No inputs, so Snakemake schedules it first, on the partition and gres of
+    fantasia_annotate with a minimal reservation. Same checks as
+    fantasia_annotate, which repeats them on its own node: a visible CUDA GPU
+    with at least 15000 MiB free (ProtT5-XL needs about 14 GB). A run with
+    run_fantasia and no usable GPU stops in the first minutes, not after
+    hours of gene prediction.
+    """
+    output:
+        ok="output/.fantasia_gpu_check.ok"
+    log:
+        "logs/fantasia_gpu_check.log"
+    threads: 1
+    resources:
+        mem_mb=0 if config['slurm_args'].get('skip_mem') else 2000,
+        runtime=60,
+        slurm_partition=config['fantasia'].get('partition', ''),
+        gres="gpu:" + str(config['fantasia'].get('gpus', 1)),
+        slurm_extra="'--exclude=" + config['fantasia'].get('exclude_nodes', '') + "'" if config['fantasia'].get('exclude_nodes', '') else "''"
+    shell:
+        r"""
+        set -euo pipefail
+        if ! command -v nvidia-smi >/dev/null 2>&1 || ! nvidia-smi -L >/dev/null 2>&1; then
+            echo "[ERROR] FANTASIA-Lite requires a CUDA GPU but no nvidia-smi / no visible GPU was found on $(hostname)." | tee {log} >&2
+            echo "[ERROR] Either run snakemake with --executor slurm and a GPU partition configured in [fantasia] partition/gpus," | tee -a {log} >&2
+            echo "[ERROR] submit your driver job to a GPU node, or set run_fantasia = 0 / GALBA2_RUN_FANTASIA=0." | tee -a {log} >&2
+            exit 1
+        fi
+        CVD=${{CUDA_VISIBLE_DEVICES:-${{SLURM_JOB_GPUS:-0}}}}
+        GPU_IDX=${{CVD%%,*}}
+        FREE_MIB=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits \
+            -i "$GPU_IDX" 2>/dev/null | tr -d ' ' || echo 0)
+        echo "[$(date)] $(hostname): GPU $GPU_IDX has $FREE_MIB MiB free" > {log}
+        if [ "${{FREE_MIB:-0}}" -lt 15000 ] 2>/dev/null; then
+            echo "[ERROR] GPU $GPU_IDX on $(hostname) has only $FREE_MIB MiB free; ProtT5-XL needs >=15000 MiB." | tee -a {log} >&2
+            exit 1
+        fi
+        touch {output.ok}
+        """
+
+
 rule fantasia_annotate:
-    """Embed proteins with ProtT5 and assign GO terms via FANTASIA-Lite (GPU)."""
+    """Embed proteins with ProtT5 and assign GO terms via FANTASIA-Lite (GPU).
+
+    Scratch: the per-chunk FASTA, embedding, result, config and failure
+    dirs are in a private directory on the node-local disk
+    (scripts/tmp_dir.sh, [paths] tmp_dir), bound into the container;
+    nothing from them is kept. NEED 10 GB; with less free the job uses
+    output/<sample>/fantasia/tmp as before.
+    """
     input:
-        proteins="output/{sample}/galba.aa"
+        proteins="output/{sample}/galba.aa",
+        gpu_ok="output/.fantasia_gpu_check.ok"
     output:
         results="output/{sample}/fantasia/results.csv",
         done="output/{sample}/fantasia/.fantasia_done"
@@ -49,7 +103,8 @@ rule fantasia_annotate:
         hf_cache=FANTASIA_HF_CACHE,
         lookup_dir=FANTASIA_LOOKUP_DIR,
         add_params=FANTASIA_ADD_PARAMS,
-        outdir=lambda wc: f"output/{wc.sample}/fantasia"
+        outdir=lambda wc: f"output/{wc.sample}/fantasia",
+        tmp_root=TMP_ROOT
     threads:
         int(config['fantasia'].get('cpus_per_task', config['slurm_args']['cpus_per_task']))
     resources:
@@ -80,6 +135,11 @@ rule fantasia_annotate:
         mkdir -p {params.outdir}
         OUTDIR=$(readlink -f {params.outdir})
         PROTEINS=$(readlink -f {input.proteins})
+
+        # Chunk working dirs go to the node-local disk
+        source {script_dir}/tmp_dir.sh
+        scratch_dir outDir "fantasia_{wildcards.sample}" "{params.tmp_root}" 10 "$OUTDIR/tmp" 2>> {log}
+        trap 'rm -rf -- "$SCRATCH"' EXIT
 
         # SIGBUS root cause: safetensors mmap's the model file; CUDA async H2D
         # copies from mmap-backed pages fail with SIGBUS when the kernel refuses
@@ -165,6 +225,7 @@ rule fantasia_annotate:
         PATCHED_EMBED="{script_dir}/generate_embeddings.py"
         singularity exec --nv \
             -B "$PWD":"$PWD" \
+            -B "$outDir":"$outDir" \
             -B "{params.hf_cache}":"{params.hf_cache}":ro \
             -B "{params.lookup_dir}":"{params.lookup_dir}" \
             -B "$PATCHED_EMBED":/opt/fantasia-lite/src/generate_embeddings.py:ro \
@@ -186,11 +247,11 @@ rule fantasia_annotate:
                 --results-csv "$OUTDIR/results.csv" \
                 --topgo \
                 --topgo-dir "$OUTDIR/topgo" \
-                --chunk-dir "$OUTDIR/tmp/fasta_chunks" \
-                --chunk-embed-dir "$OUTDIR/tmp/chunk_embeddings" \
-                --chunk-results-dir "$OUTDIR/tmp/chunk_results" \
-                --chunk-config-dir "$OUTDIR/tmp/chunk_configs" \
-                --chunk-failure-dir "$OUTDIR/tmp/failures" \
+                --chunk-dir "$outDir/fasta_chunks" \
+                --chunk-embed-dir "$outDir/chunk_embeddings" \
+                --chunk-results-dir "$outDir/chunk_results" \
+                --chunk-config-dir "$outDir/chunk_configs" \
+                --chunk-failure-dir "$outDir/failures" \
                 --failure-report "$OUTDIR/failed_sequences.csv" \
                 {params.add_params} \
                 "$PROTEINS" \
@@ -205,9 +266,12 @@ rule fantasia_annotate:
         cite fantasia "$REPORT_DIR"
         cite fantasia_methods "$REPORT_DIR"
 
-        # Remove chunk working dirs and the full embedding matrix; results.csv
-        # and topgo/ are kept (copied by collect_results and read by downstream rules).
-        rm -rf "$OUTDIR/tmp" 2>/dev/null || true
+        # Remove chunk working dirs (fallback; on scratch the EXIT trap does)
+        # and the full embedding matrix; results.csv and topgo/ are kept
+        # (copied by collect_results and read by downstream rules).
+        if [ -z "$SCRATCH" ]; then
+            rm -rf "$OUTDIR/tmp" 2>/dev/null || true
+        fi
         rm -f  "$OUTDIR/query_embeddings.npz" 2>/dev/null || true
         """
 
@@ -235,7 +299,7 @@ rule fantasia_decorate_gff3:
     threads: 1
     resources:
         mem_mb=0 if config['slurm_args'].get('skip_mem') else 2000,
-        runtime=10
+        runtime=720
     container:
         GALBA_TOOLS_CONTAINER
     shell:
@@ -271,7 +335,7 @@ rule fantasia_summarize:
     threads: 1
     resources:
         mem_mb=0 if config['slurm_args'].get('skip_mem') else 2000,
-        runtime=10
+        runtime=720
     container:
         GALBA_TOOLS_CONTAINER
     shell:

@@ -16,6 +16,14 @@
 [paths]
 samples_file = samples.csv
 augustus_config_path = augustus_config
+; Node-local scratch root for the rules that write many or large temporary
+; files (AUGUSTUS prediction and optimization, BUSCO, compleasm, FANTASIA).
+; Each job works in a private directory under it and copies only the kept
+; files to output/<sample>/. Empty: each job's $TMPDIR, else /tmp. A job
+; that finds less free space than it needs works in output/<sample>/ instead
+; and says so with a WARNING in its log. A path set here must exist on every
+; compute node.
+; tmp_dir =
 ; busco_download_path = /path/to/busco_downloads
 ; compleasm_download_path = /path/to/busco_downloads/lineages
 ; rfam_path = /path/to/rfam               ; directory with Rfam.cm + Rfam.clanin; required when run_ncrna = 1
@@ -103,8 +111,11 @@ enable = 0
 [OMARK]
 ; OMAmer database path (required when run_omark = 1 in [PARAMS]).
 ; omamer_db = /path/to/LUCA.h5
-; Directory containing taxdump.tar.gz for offline ete3 initialisation.
-; Required on HPC clusters where compute nodes have no internet access.
+; Directory with the NCBI taxonomy for OMArk (ete3): taxa.sqlite, or
+; taxdump.tar.gz (https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz) from
+; which the first OMArk job builds taxa.sqlite there (directory must be
+; writable then; about 6 minutes, 3 GB memory). Required on HPC clusters where
+; compute nodes have no internet access.
 ; Download with: bash scripts/download_data.sh --omark
 ; Auto-detected from shared_data/ete_taxa/ if not set.
 ; ete_taxa_path = /path/to/shared_data/ete_taxa

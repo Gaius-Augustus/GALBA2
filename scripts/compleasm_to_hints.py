@@ -23,6 +23,7 @@ it under the terms of the Artistic License.
 
 
 import argparse
+import sys
 import re
 import shutil
 import os
@@ -50,6 +51,8 @@ def run_simple_process(args_lst):
             print('Error in file ' + frameinfo.filename + ' at line ' +
                   str(frameinfo.lineno) + ': ' + "Return code of subprocess was " +
                   str(result.returncode) + str(result.args))
+            print('STDOUT:', result.stdout.decode('utf-8', errors='replace'))
+            print('STDERR:', result.stderr.decode('utf-8', errors='replace'))
             quit(1)
     except subprocess.CalledProcessError as grepexc:
         frameinfo = getframeinfo(currentframe())
@@ -133,7 +136,10 @@ def main():
     # apply compleasm to genome file with run_subprocess and the database
     if args.scratch_dir is None:
         args.scratch_dir = "compleasm_genome_out"
-    compleasm_cmd = [args.compleasm, 'run', '-l', lineage_name, '--odb', odb, '-a', args.genome, '-t', str(args.threads), '-o', args.scratch_dir]
+    # compleasm_wrapper.py restores compleasm's offline fallback when the
+    # lineage is already in --library_path (issue #105)
+    wrapper = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'compleasm_wrapper.py')
+    compleasm_cmd = [sys.executable, wrapper, args.compleasm, 'run', '-l', lineage_name, '--odb', odb, '-a', args.genome, '-t', str(args.threads), '-o', args.scratch_dir]
     if args.library_path is not None:
         compleasm_cmd.extend(['--library_path', args.library_path])
     run_simple_process(compleasm_cmd)

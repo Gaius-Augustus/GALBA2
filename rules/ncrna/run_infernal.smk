@@ -8,6 +8,12 @@ Split into two rules:
   1. run_cmscan: runs cmscan in Infernal container → tblout
   2. convert_infernal_to_gff3: converts tblout → GFF3 (no container, uses host Python)
 
+Overlapping hits: --clanin plus --oclan make cmscan mark a hit as a lower
+scoring overlap ('=' in the olp field) only when a better hit of a family in
+the same Rfam clan covers the same locus; infernal_to_gff3.py drops those and
+keeps the best hit of every overlapping set. Without --oclan the 3748 of 4228
+families that are in no clan would compete against unrelated families.
+
 The Rfam database (Rfam.cm + Rfam.clanin) must be pre-downloaded and
 cmpress'd. The path is configured via rfam_path in config.ini [paths].
 
@@ -62,6 +68,7 @@ rule run_cmscan:
             --rfam \
             --nohmmonly \
             --clanin $RFAM_CLANIN \
+            --oclan \
             --fmt 2 \
             --cpu {threads} \
             --tblout {output.tblout} \
@@ -95,7 +102,7 @@ rule convert_infernal_to_gff3:
     threads: 1
     resources:
         mem_mb=0 if config['slurm_args'].get('skip_mem') else 4000,
-        runtime=30
+        runtime=int(config['slurm_args']['max_runtime'])
     shell:
         r"""
         set -euo pipefail

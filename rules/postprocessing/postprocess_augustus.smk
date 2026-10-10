@@ -254,35 +254,55 @@ rule assess_completeness:
         COMPLEASM_ODB="${{COMPLEASM_LINEAGE#*_}}"
         if [ "$COMPLEASM_ODB" = "$COMPLEASM_LINEAGE" ]; then COMPLEASM_ODB="odb12"; fi
         echo "[INFO] Running compleasm in protein mode..." | tee -a {output.compleasm_log}
+        echo "[INFO] Library path: {params.library_path}" | tee -a {output.compleasm_log}
+        echo "[INFO] Lineage: $COMPLEASM_NAME --odb $COMPLEASM_ODB" | tee -a {output.compleasm_log}
 
-        compleasm.py protein \
+        # compleasm_wrapper.py skips proteins >= 100,000 aa (hmmsearch limit,
+        # BRAKER4 issues #91/#92) and restores the offline fallback (BRAKER4
+        # issue #105). A compleasm failure does not stop the pipeline, but it
+        # is recorded as "COMPLEASM_FAILED: <reason>" in the summary (and so
+        # in the report).
+        COMPLEASM_RUN_LOG={params.compleasm_outdir}.run.tmp
+        COMPLEASM_RC=0
+        python3 {script_dir}/compleasm_wrapper.py protein \
             -p {input.galba_aa} \
             -l $COMPLEASM_NAME \
             --odb $COMPLEASM_ODB \
             -t {threads} \
             -o {params.compleasm_outdir} \
             -L {params.library_path} \
-            2>&1 | tee -a {output.compleasm_log} || true
+            2>&1 | tee "$COMPLEASM_RUN_LOG" | tee -a {output.compleasm_log} || COMPLEASM_RC=$?
 
+        # Check if summary was created (compleasm may put it in a lineage subdirectory)
         if [ ! -f {output.compleasm_summary} ]; then
             FOUND_SUMMARY=$(find {params.compleasm_outdir} -name "summary.txt" 2>/dev/null | head -1)
             if [ -n "$FOUND_SUMMARY" ] && [ -f "$FOUND_SUMMARY" ]; then
                 cp "$FOUND_SUMMARY" {output.compleasm_summary}
+                echo "[INFO] Copied summary from $FOUND_SUMMARY" | tee -a {output.compleasm_log}
             else
+                REASON=$(grep -iE 'error|exception|abort|fail|killed' "$COMPLEASM_RUN_LOG" | tail -n 1 || true)
+                if [ -z "$REASON" ]; then
+                    REASON=$(grep -v '^[[:space:]]*$' "$COMPLEASM_RUN_LOG" | tail -n 1 || true)
+                fi
+                STATUS="COMPLEASM_FAILED: compleasm exited with code $COMPLEASM_RC and wrote no summary.txt${{REASON:+: $REASON}}"
+                echo "[WARNING] $STATUS" | tee -a {output.compleasm_log} >&2
                 mkdir -p {params.compleasm_outdir}
-                echo "Compleasm assessment failed" > {output.compleasm_summary}
+                echo "$STATUS" > {output.compleasm_summary}
             fi
+        elif [ "$COMPLEASM_RC" -ne 0 ]; then
+            echo "[WARNING] compleasm exited with code $COMPLEASM_RC but wrote a summary; check it" | tee -a {output.compleasm_log} >&2
+            cat {output.compleasm_summary} | tee -a {output.compleasm_log}
+        else
+            echo "[INFO] Compleasm assessment completed" | tee -a {output.compleasm_log}
         fi
 
         echo "[INFO] =======================================" | tee -a {output.compleasm_log}
+        rm -f "$COMPLEASM_RUN_LOG"
 
-        # Remove compleasm protein-mode hmmsearch output and large intermediate files;
-        # keep summary.txt (tracked output) and protein_hmmsearch.done.
-        # compleasm.py protein writes *hmmsearch_output/ directly in compleasm_outdir
-        # (no lineage subdirectory), so target it directly.
-        find {params.compleasm_outdir} -maxdepth 1 -type d -name '*hmmsearch_output' \
-            -exec find {{}} -type f -delete \; 2>/dev/null || true
-        find {params.compleasm_outdir} -maxdepth 1 -type d -name '*hmmsearch_output' \
-            -empty -delete 2>/dev/null || true
-        rm -f "{params.compleasm_outdir}/full_table.tsv" 2>/dev/null || true
+        # Remove compleasm protein internal files (hmmsearch output, tables);
+        # keep only summary.txt, the Snakemake-tracked output.
+        find {params.compleasm_outdir} -mindepth 1 -type f ! -name 'summary.txt' \
+            -delete 2>/dev/null || true
+        find {params.compleasm_outdir} -mindepth 1 -type d -empty \
+            -delete 2>/dev/null || true
         """

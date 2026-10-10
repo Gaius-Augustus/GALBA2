@@ -128,12 +128,17 @@ for g in sorted(genes):
         """
 
 
-_ETE_TAXDUMP = (
-    os.path.join(config['ete_taxa_path'], 'taxdump.tar.gz')
-    if config.get('ete_taxa_path') and
-       os.path.isfile(os.path.join(config.get('ete_taxa_path', ''), 'taxdump.tar.gz'))
-    else []
-)
+# The NCBI taxonomy for ete3 as taxa.sqlite in [OMARK] ete_taxa_path: the
+# database, or the taxdump.tar.gz it is built from on first use. Not a rule
+# input: the first build adds taxa.sqlite, which must not trigger a rerun.
+if config.get('ete_taxa_path'):
+    if not any(os.path.isfile(os.path.join(config['ete_taxa_path'], f))
+               for f in ('taxa.sqlite', 'taxdump.tar.gz')):
+        raise FileNotFoundError(
+            f"[OMARK] ete_taxa_path = {config['ete_taxa_path']} holds neither "
+            "taxa.sqlite nor taxdump.tar.gz "
+            "(https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz)"
+        )
 
 
 rule run_omark:
@@ -141,8 +146,7 @@ rule run_omark:
     input:
         omamer="output/{sample}/omark/proteome.omamer",
         splice="output/{sample}/omark/isoforms.splice",
-        db=OMAMER_DB,
-        taxdump=_ETE_TAXDUMP
+        db=OMAMER_DB
     output:
         summary="output/{sample}/omark/omark_summary.txt",
         done="output/{sample}/omark/.done"
@@ -154,6 +158,8 @@ rule run_omark:
     resources:
         mem_mb=int(config['slurm_args']['mem_of_node']),
         runtime=int(config['slurm_args']['max_runtime'])
+    params:
+        ete_taxa_path=config.get('ete_taxa_path', '')
     container:
         OMARK_CONTAINER
     shell:
@@ -161,31 +167,54 @@ rule run_omark:
         set -euo pipefail
         OUTDIR=$(readlink -f output/{wildcards.sample}/omark)
 
-        # OMArk uses ete3, which initialises ~/.etetoolkit/taxa.sqlite on first
-        # run by downloading taxdump from NCBI. On HPC nodes without internet
-        # access that download fails. If a pre-downloaded taxdump.tar.gz was
-        # staged via download_data.sh --omark it is available as {input.taxdump}.
-        # Copy it into ~/.etetoolkit/ so ete3 converts it locally instead of
-        # attempting a network fetch.
-        #
-        # Serialise via flock on ~/.etetoolkit/taxa.sqlite.lock so that
-        # concurrent samples (or concurrent pipeline runs) do not collide when
-        # building the db for the first time.
-        mkdir -p "$HOME/.etetoolkit"
-        TAXDUMP_SRC="{input.taxdump}"
-        if [ -n "$TAXDUMP_SRC" ] && [ ! -f "$HOME/.etetoolkit/taxa.sqlite" ] && \
-           [ ! -f "$HOME/.etetoolkit/taxdump.tar.gz" ]; then
-            cp "$TAXDUMP_SRC" "$HOME/.etetoolkit/"
+        # OMArk reads the NCBI taxonomy through ete3. ete3 (3.1.3) never reads
+        # a taxdump.tar.gz from ~/.etetoolkit: without a database it fetches
+        # the md5 and the tarball from NCBI, which fails on nodes without
+        # internet. With [OMARK] ete_taxa_path, taxa.sqlite is built there
+        # once from taxdump.tar.gz (flock: one build at a time; a job that
+        # waited finds the database) and OMArk gets it with -e. Without
+        # ete_taxa_path ete3 downloads into ~/.etetoolkit as before.
+        : > {log}
+        TAXA_DIR="{params.ete_taxa_path}"
+        if [ -n "$TAXA_DIR" ]; then
+            TAXA_DB="$TAXA_DIR/taxa.sqlite"
+            if [ ! -s "$TAXA_DB" ]; then
+                ( flock -x 9
+                  if [ ! -s "$TAXA_DB" ]; then
+                      echo "[INFO] Building $TAXA_DB from $TAXA_DIR/taxdump.tar.gz" >> {log}
+                      # ete3 writes temporary tables into the working
+                      # directory; built under a temporary name so that a
+                      # killed build leaves no taxa.sqlite behind
+                      BUILD_DIR=$(mktemp -d "$OUTDIR/ete_build.XXXXXX")
+                      rm -f "$TAXA_DB.part" "$TAXA_DB.part.traverse.pkl"
+                      ( cd "$BUILD_DIR" && python -c "from ete3 import NCBITaxa; NCBITaxa(dbfile='$TAXA_DB.part', taxdump_file='$TAXA_DIR/taxdump.tar.gz')" ) >> {log} 2>&1
+                      rm -r -- "$BUILD_DIR"
+                      [ -s "$TAXA_DB.part" ] || {{ echo "[ERROR] ete3 built no $TAXA_DB" >> {log}; exit 1; }}
+                      mv "$TAXA_DB.part.traverse.pkl" "$TAXA_DB.traverse.pkl"
+                      mv "$TAXA_DB.part" "$TAXA_DB"
+                  fi
+                ) 9>"$TAXA_DIR/.taxa.sqlite.lock"
+            fi
+            omark \
+                -f {input.omamer} \
+                -d {input.db} \
+                -i {input.splice} \
+                -o "$OUTDIR" \
+                -e "$TAXA_DB" \
+                >> {log} 2>&1
+        else
+            # Serialise via flock on ~/.etetoolkit/taxa.sqlite.lock so that
+            # concurrent samples do not collide when ete3 builds the db.
+            mkdir -p "$HOME/.etetoolkit"
+            ( flock -x 9
+              omark \
+                  -f {input.omamer} \
+                  -d {input.db} \
+                  -i {input.splice} \
+                  -o "$OUTDIR" \
+                  >> {log} 2>&1
+            ) 9>"$HOME/.etetoolkit/taxa.sqlite.lock"
         fi
-
-        ( flock -x 9
-          omark \
-              -f {input.omamer} \
-              -d {input.db} \
-              -i {input.splice} \
-              -o "$OUTDIR" \
-              > {log} 2>&1
-        ) 9>"$HOME/.etetoolkit/taxa.sqlite.lock"
 
         # Copy the detailed summary to a predictable location
         DETAILED=$(find "$OUTDIR" -name "*_detailed_summary.txt" | head -1)
@@ -216,4 +245,19 @@ rule run_omark:
         source {script_dir}/report_citations.sh
         cite omark "$REPORT_DIR"
         cite omamer "$REPORT_DIR"
+
+        # Remove large inputs and OMArk internal files now that the rule is done.
+        # Keep: omark_summary.txt, .done, *_detailed_summary.txt, *.sum, *.tax
+        # (all needed by collect_results). Delete proteome.omamer (large), isoforms.splice,
+        # and any working subdirectories OMArk created.
+        rm -f "$OUTDIR/proteome.omamer" \
+              "$OUTDIR/isoforms.splice" 2>/dev/null || true
+        find "$OUTDIR" -mindepth 1 -type f \
+            ! -name 'omark_summary.txt' \
+            ! -name '.done' \
+            ! -name '*_detailed_summary.txt' \
+            ! -name '*.sum' \
+            ! -name '*.tax' \
+            -delete 2>/dev/null || true
+        find "$OUTDIR" -mindepth 1 -type d -empty -delete 2>/dev/null || true
         """

@@ -6,11 +6,11 @@ Protein-only gene prediction pipeline using:
 - AUGUSTUS for gene prediction with protein-derived hints
 
 Authors: Katharina J. Hoff
-Version: 0.1.0-beta
+Version: 0.6.0-beta
 """
 
 __author__ = "Katharina J. Hoff"
-__version__ = "0.4.0-beta"
+__version__ = "0.6.0-beta"
 
 import pandas as pd
 import configparser

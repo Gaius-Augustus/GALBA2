@@ -17,6 +17,16 @@ Run compleasm.py with two workarounds for compleasm 0.2.8.
    without such sequences. No real protein comes close (titin is ~35,000 aa),
    so no BUSCO is lost.
 
+3. Placement files (compleasm 0.2.7). Downloader.__init__ downloads the
+   "placement files" of --autolineage unconditionally, and its parser crashes
+   on the file_versions.tsv the BUSCO server has served since mid-2026
+   ("ValueError: too many values to unpack" in download_placement), leaving a
+   placement_files.tmp behind that makes every later run stop with "another
+   process is downloading". compleasm skips the download when
+   <library_path>/placement_files.done exists, so the wrapper creates that
+   marker when a lineage is given (no --autolineage) and --library_path is
+   set. An --autolineage run removes the marker itself and downloads again.
+
 Usage:
     compleasm_wrapper.py [/path/to/compleasm.py] <compleasm arguments>
 
@@ -84,6 +94,29 @@ def patch_urlretrieve():
     urllib.request.urlretrieve = urlretrieve
 
 
+def ensure_placement_marker(cargs):
+    """Create <library_path>/placement_files.done unless --autolineage is given.
+
+    Returns the marker path when it was created or already present, else None.
+    """
+    if "--autolineage" in cargs:
+        return None
+    lib = None
+    for flag in ("-L", "--library_path"):
+        if flag in cargs:
+            i = cargs.index(flag) + 1
+            if i < len(cargs):
+                lib = cargs[i]
+            break
+    if not lib:
+        return None
+    marker = os.path.join(lib, "placement_files.done")
+    os.makedirs(os.path.join(lib, "placement_files"), exist_ok=True)
+    if not os.path.exists(marker):
+        open(marker, "w").close()
+    return marker
+
+
 def find_compleasm():
     for cand in (shutil.which("compleasm.py"), shutil.which("compleasm"),
                  "/opt/compleasm_kit/compleasm.py"):
@@ -121,6 +154,7 @@ def main():
                         tmp_fasta = None
                 break
 
+    ensure_placement_marker(cargs)
     patch_urlretrieve()
     # compleasm imports _version from its own directory and locates miniprot
     # and hmmsearch relative to __file__, which run_path sets correctly.

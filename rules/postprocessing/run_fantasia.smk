@@ -35,6 +35,12 @@ FANTASIA_LOOKUP_DIR = config['fantasia']['lookup_dir']
 FANTASIA_ADD_PARAMS = config['fantasia'].get('additional_params', '') or ''
 FANTASIA_MIN_SCORE  = float(config['fantasia'].get('min_score', 0.5))
 
+# --exclude only when there are nodes to exclude. An empty slurm_extra ("''")
+# reaches sbatch as an empty argument, which it takes for a script file name:
+# "sbatch: error: Unable to open file" (seen with snakemake 9.23.1 on brain).
+_fantasia_exclude = config['fantasia'].get('exclude_nodes', '')
+_fantasia_slurm_extra = {'slurm_extra': f"'--exclude={_fantasia_exclude}'"} if _fantasia_exclude else {}
+
 
 rule fantasia_gpu_check:
     """Check for a usable GPU where fantasia_annotate will run, at the start of the run.
@@ -56,7 +62,7 @@ rule fantasia_gpu_check:
         runtime=60,
         slurm_partition=config['fantasia'].get('partition', ''),
         gres="gpu:" + str(config['fantasia'].get('gpus', 1)),
-        slurm_extra="'--exclude=" + config['fantasia'].get('exclude_nodes', '') + "'" if config['fantasia'].get('exclude_nodes', '') else "''"
+        **_fantasia_slurm_extra
     shell:
         r"""
         set -euo pipefail
@@ -115,7 +121,7 @@ rule fantasia_annotate:
         runtime=int(config['fantasia'].get('max_runtime', config['slurm_args']['max_runtime'])),
         slurm_partition=config['fantasia'].get('partition', ''),
         gres="gpu:" + str(config['fantasia'].get('gpus', 1)),
-        slurm_extra="'--exclude=" + config['fantasia'].get('exclude_nodes', '') + "'" if config['fantasia'].get('exclude_nodes', '') else "''"
+        **_fantasia_slurm_extra
     shell:
         r"""
         set -euo pipefail

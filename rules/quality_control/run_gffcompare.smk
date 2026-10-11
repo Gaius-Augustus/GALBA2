@@ -16,7 +16,7 @@ Output:
     - gffcompare stats file with sensitivity/specificity metrics
     - gffcompare detailed output files
 
-Container: quay.io/biocontainers/gffcompare:0.12.6
+Container: quay.io/biocontainers/gffcompare:0.12.10--h9948957_0
 """
 
 
@@ -36,8 +36,13 @@ rule extract_cds_reference:
         r"""
         set -euo pipefail
         mkdir -p $(dirname {output.cds_gtf})
-        # gzip -cdf: a gzipped reference is decompressed, a plain one passed through
-        gzip -cdf {input.ref_gtf} | awk '$3 == "CDS"' > {output.cds_gtf}
+        # A gzipped reference is decompressed, a plain one read as is. Chosen by
+        # suffix: BusyBox gzip (biocontainers) has no pass-through for plain
+        # files with -cdf, it stops with "invalid magic".
+        case "{input.ref_gtf}" in
+            *.gz) gzip -cd {input.ref_gtf} ;;
+            *)    cat {input.ref_gtf} ;;
+        esac | awk '$3 == "CDS"' > {output.cds_gtf}
         echo "Extracted $(wc -l < {output.cds_gtf}) CDS features from reference"
         """
 

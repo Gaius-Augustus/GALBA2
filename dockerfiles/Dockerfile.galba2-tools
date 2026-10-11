@@ -1,5 +1,5 @@
 # GALBA2 tools container
-# Contains: miniprot 0.13, miniprot_boundary_scorer, miniprothint, compleasm 0.2.7
+# Contains: miniprot 0.14, minisplice, miniprot_boundary_scorer, miniprothint, compleasm 0.2.10
 #
 # Build:
 #   docker build -f dockerfiles/Dockerfile.galba2-tools -t katharinahoff/galba2-tools:latest .
@@ -35,8 +35,11 @@ RUN git clone --depth=1 https://github.com/tomasbruna/miniprothint /build/minipr
 RUN git clone --depth=1 https://github.com/lh3/minisplice /build/minisplice \
     && cd /build/minisplice && make -j$(nproc)
 
-# compleasm 0.2.7 (self-contained: includes its own miniprot + hmmsearch)
-RUN wget -q https://github.com/huangnengCSU/compleasm/releases/download/v0.2.7/compleasm-0.2.7_x64-linux.tar.bz2 \
+# compleasm 0.2.10 (self-contained: includes its own miniprot + hmmsearch).
+# 0.2.7 crashed in Downloader.download_placement on the file_versions.tsv the
+# BUSCO server serves since the odb12.2 release (ValueError: too many values
+# to unpack; compleasm issue #61, fixed upstream 2026-06-12).
+RUN wget -q https://github.com/huangnengCSU/compleasm/releases/download/v0.2.10/compleasm-0.2.10_x64-linux.tar.bz2 \
         -O /tmp/compleasm.tar.bz2 \
     && mkdir /build/compleasm && cd /build/compleasm \
     && tar xjf /tmp/compleasm.tar.bz2 && rm /tmp/compleasm.tar.bz2

@@ -7,7 +7,8 @@
 # tags live in rules/common.smk and are documented in the README
 # container table.
 #
-# Install with:
+# pixi.toml / pixi.lock are the primary definition (pixi install); this
+# file carries the same runtime pins for pip users:
 #   pip install -r requirements.txt
 
 snakemake==8.18.2

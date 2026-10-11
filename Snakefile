@@ -104,7 +104,7 @@ config['min_contig'] = config_parser.getint('PARAMS', 'min_contig', fallback=100
 _container_defaults = {
     'galba_tools_image': 'docker://katharinahoff/galba-notebook:latest',
     'augustus_image':    'docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9',
-    'gffcompare_image':  'docker://quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1',
+    'gffcompare_image':  'docker://quay.io/biocontainers/gffcompare:0.12.10--h9948957_0',
     'red_image':         'docker://quay.io/biocontainers/red:2018.09.10--h9948957_3',
     'barrnap_image':     'docker://quay.io/biocontainers/barrnap:0.9--hdfd78af_4',
     'agat_image':        'docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0',

@@ -191,21 +191,33 @@ GALBA2 requires two things on your system: Snakemake and Singularity. All bioinf
 Snakemake
 ---------
 
-We recommend installing Snakemake with `pip` into a virtual environment:
+We recommend [pixi](https://pixi.sh). The repository ships a `pixi.toml` and a `pixi.lock`, so everyone gets the same versions of Snakemake, the SLURM executor plugin, and pandas. pixi is a single binary and needs no root access, so it also works on HPC login nodes.
+
+```
+curl -fsSL https://pixi.sh/install.sh | bash   # once; or: conda install -c conda-forge pixi
+cd /path/to/GALBA2
+pixi install
+pixi shell                                     # activates the environment
+```
+
+`pixi shell` puts `snakemake` on your `PATH`. Alternatively, prefix single commands with `pixi run --manifest-path /path/to/GALBA2/pixi.toml`.
+
+If you prefer pip, `requirements.txt` carries the same pins:
 
 ```
 python3 -m venv snakemake_env
 source snakemake_env/bin/activate
-pip install snakemake
-pip install pandas
+pip install -r requirements.txt
 ```
 
-GALBA2 supports SLURM as its HPC executor. Other schedulers (SGE, PBS, LSF) are not supported — if your cluster uses a different scheduler, run without `--executor slurm` and submit the Snakemake process itself as a single job, letting it execute rules locally within that allocation.
+GALBA2 supports SLURM as its HPC executor. The Snakemake SLURM executor plugin (`snakemake-executor-plugin-slurm==2.6.0`) is part of both the pixi environment and `requirements.txt`. Other schedulers (SGE, PBS, LSF) are not supported — if your cluster uses a different scheduler, run without `--executor slurm` and submit the Snakemake process itself as a single job, letting it execute rules locally within that allocation.
 
-If you intend to run GALBA2 on an HPC cluster with SLURM, you also need the Snakemake SLURM executor plugin:
+### Unit tests
+
+The unit tests in `tests/` need pytest, biopython, and matplotlib on the host. The pixi `test` environment has them:
 
 ```
-pip install snakemake-executor-plugin-slurm
+pixi run test
 ```
 
 Singularity
@@ -233,7 +245,7 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 | tRNAscan-SE | `quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0` | 32 MB | tRNA prediction (only when `run_ncrna = 1`) |
 | Infernal | `quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2` | 28 MB | Rfam scan for snoRNA/snRNA/miRNA (only when `run_ncrna = 1`) |
 | OMArk | `quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0` | 455 MB | OMArk proteome quality assessment (optional, only when `run_omark = 1`) |
-| gffcompare | `quay.io/biocontainers/gffcompare:0.12.6--h9f5acd7_1` | 11 MB | Evaluation against a reference annotation (optional) |
+| gffcompare | `quay.io/biocontainers/gffcompare:0.12.10--h9948957_0` | 11 MB | Evaluation against a reference annotation (optional) |
 | FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v1.0.0` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional, **GPU-only**) |
 
 A standard GALBA2 run (no masking, no BUSCO) pulls only the GALBA2 tools + AUGUSTUS + AGAT containers: **~730 MB** total.

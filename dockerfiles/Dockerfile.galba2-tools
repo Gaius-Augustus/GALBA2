@@ -1,10 +1,11 @@
 # GALBA2 tools container
 # Contains: miniprot 0.14, minisplice, miniprot_boundary_scorer, miniprothint, compleasm 0.2.10
 #
-# Build:
-#   docker build -f dockerfiles/Dockerfile.galba2-tools -t katharinahoff/galba2-tools:latest .
+# Build, check and push (version tag + latest):
+#   sudo bash dockerfiles/build_push_galba2-tools.sh
 #
-# Push:
+# By hand:
+#   docker build -f dockerfiles/Dockerfile.galba2-tools -t katharinahoff/galba2-tools:latest .
 #   docker push katharinahoff/galba2-tools:latest
 
 # ---------- build stage ----------

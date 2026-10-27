@@ -142,7 +142,7 @@ rule miniprot_boundary_scorer:
         "benchmarks/{sample}/miniprot_boundary_scorer/miniprot_boundary_scorer.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         GALBA_TOOLS_CONTAINER
@@ -217,7 +217,7 @@ rule run_miniprothint:
         workdir = "output/{sample}/miniprot"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         GALBA_TOOLS_CONTAINER

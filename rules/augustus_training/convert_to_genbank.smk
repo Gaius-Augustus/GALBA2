@@ -27,7 +27,7 @@ rule convert_to_genbank:
         "benchmarks/{sample}/convert_to_genbank/convert_to_genbank.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         AUGUSTUS_CONTAINER

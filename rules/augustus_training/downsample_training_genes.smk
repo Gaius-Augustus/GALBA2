@@ -46,7 +46,7 @@ rule downsample_training_genes:
         "benchmarks/{sample}/downsample_training_genes/downsample_training_genes.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     params:
         output_dir = lambda w: get_output_dir(w)

@@ -30,7 +30,7 @@ rule extract_cds_reference:
         "benchmarks/{sample}/extract_cds_reference/extract_cds_reference.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     shell:
         r"""
@@ -57,7 +57,7 @@ rule extract_cds_prediction:
         "benchmarks/{sample}/extract_cds_prediction/extract_cds_prediction.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     shell:
         r"""
@@ -83,7 +83,7 @@ rule run_gffcompare:
         outprefix=lambda wildcards: f"output/{wildcards.sample}/gffcompare/gffcompare"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         GFFCOMPARE_CONTAINER

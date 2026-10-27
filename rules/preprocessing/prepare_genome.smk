@@ -19,7 +19,7 @@ rule prepare_genome:
         "benchmarks/{sample}/prepare_genome/prepare_genome.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     params:
         pipeline_version=config['pipeline_version']
@@ -73,7 +73,7 @@ rule prepare_masked_genome:
         "benchmarks/{sample}/prepare_masked_genome/prepare_masked_genome.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     shell:
         r"""
@@ -91,7 +91,7 @@ rule create_empty_hints:
         "benchmarks/{sample}/create_empty_hints/create_empty_hints.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     shell:
         "touch {output}"

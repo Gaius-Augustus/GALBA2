@@ -28,7 +28,7 @@ rule gene_support_summary:
         script=os.path.join(script_dir, "gene_support_summary.py")
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         AUGUSTUS_CONTAINER

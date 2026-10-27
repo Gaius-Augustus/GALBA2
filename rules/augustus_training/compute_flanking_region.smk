@@ -30,7 +30,7 @@ rule compute_flanking_region:
         AUGUSTUS_CONTAINER
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     shell:
         r"""

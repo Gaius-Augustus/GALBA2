@@ -64,7 +64,7 @@ GALBA2 is a rewrite of the original [GALBA](https://github.com/Gaius-Augustus/GA
 -   **Built-in repeat masking** — RepeatModeler2 + RepeatMasker (default) or Red (REpeat Detector; ~10× faster, no library), selectable via `masking_tool` in `config.ini`. Skipped automatically when you provide a pre-masked genome via `genome_masked` in `samples.csv`.
 -   **Integrated QC and postprocessing** — GFF3 conversion (AGAT), DIAMOND filtering against the input proteins, BUSCO/compleasm completeness assessment, optional evaluation against a reference annotation (gffcompare).
 -   **Optional CNN splice-site scoring** with minisplice (`use_minisplice = 1`).
--   **Optional non-coding RNA annotation** with barrnap (rRNA), tRNAscan-SE (tRNA), and Infernal against Rfam (snoRNA/snRNA/miRNA/ribozymes), merged into `galba_with_ncRNA.gff3` when `run_ncrna = 1`.
+-   **Optional non-coding RNA annotation** with pybarrnap (rRNA), tRNAscan-SE (tRNA), and Infernal against Rfam (snoRNA/snRNA/miRNA/ribozymes), merged into `galba_with_ncRNA.gff3` when `run_ncrna = 1`.
 -   **Optional functional GO annotation** with FANTASIA-Lite (`run_fantasia = 1`, GPU-only).
 -   **Optional OMArk proteome QC** (`run_omark = 1`).
 -   **Auto-generated HTML report** with embedded plots, run-specific methods text, and a BibTeX file containing only the tools that were actually used.
@@ -241,7 +241,7 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 | TE Tools | `dfam/tetools:latest` | 727 MB | RepeatModeler2 + RepeatMasker (only when `masking_tool = repeatmasker`) |
 | Red | `quay.io/biocontainers/red:2018.09.10` | 13 MB | Fast repeat detection (only when `masking_tool = red`) |
 | BUSCO | `ezlabgva/busco:v6.0.0_cv1` | 801 MB | BUSCO completeness assessment (optional) |
-| barrnap | `quay.io/biocontainers/barrnap:0.9--hdfd78af_4` | 68 MB | rRNA prediction (only when `run_ncrna = 1`) |
+| pybarrnap | `quay.io/biocontainers/pybarrnap:0.5.1--pyhdfd78af_0` | 115 MB | rRNA prediction (only when `run_ncrna = 1`) |
 | tRNAscan-SE | `quay.io/biocontainers/trnascan-se:2.0.12--pl5321h031d066_0` | 32 MB | tRNA prediction (only when `run_ncrna = 1`) |
 | Infernal | `quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2` | 28 MB | Rfam scan for snoRNA/snRNA/miRNA (only when `run_ncrna = 1`) |
 | OMArk | `quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0` | 455 MB | OMArk proteome quality assessment (optional, only when `run_omark = 1`) |
@@ -420,7 +420,7 @@ Description of selected configuration options
 | `run_omark` | 0 | Run OMArk proteome quality assessment. Requires the LUCA.h5 OMAmer database (~8.8 GB). Download with `bash scripts/download_data.sh --omark`. Set the database path via `[OMARK] omamer_db = /path/to/LUCA.h5` in `config.ini` (or the `GALBA2_OMAMER_DB` environment variable). If unset, GALBA2 auto-discovers LUCA.h5 in `shared_data/` or sibling BRAKER4/BRAKER-as-snakemake repos. |
 | `masking_tool` | repeatmasker | Repeat masking tool: `repeatmasker` (RepeatModeler2 + RepeatMasker, thorough but slow) or `red` (Red repeat detector, much faster). Only used when `genome_masked` column is empty. |
 | `use_minisplice` | 0 | Use minisplice CNN splice site scores to improve miniprot alignment. Requires miniprot >= 0.14 and a pre-trained minisplice model (see [minisplice](https://github.com/lh3/minisplice)). Experimental. |
-| `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (barrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |
+| `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (pybarrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |
 | `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container, ProtT5 cache, and V1 lookup bundle). Set `sif`, `hf_cache_dir`, and `lookup_dir` in the `[fantasia]` section of `config.ini`. Download the lookup bundle from [Zenodo record 17720428](https://zenodo.org/records/17720428). |
 | `translation_table` | 1 | NCBI genetic code table. **Currently only table 1 (standard code) is supported** because miniprot does not support alternative genetic codes. Support for additional tables is planned for a future release. |
 | `no_cleanup` | 0 | Keep all intermediate files. Useful for debugging. |

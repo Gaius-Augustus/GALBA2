@@ -44,7 +44,7 @@ rule filter_genes_etraining:
         "benchmarks/{sample}/filter_genes_etraining/filter_genes_etraining.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     params:
         species_name = lambda w: get_species_name(w),

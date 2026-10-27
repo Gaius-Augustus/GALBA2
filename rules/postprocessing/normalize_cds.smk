@@ -37,7 +37,7 @@ rule normalize_cds:
         check=os.path.join(script_dir, "check_gtf_loci.py")
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         AUGUSTUS_CONTAINER

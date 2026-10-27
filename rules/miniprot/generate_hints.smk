@@ -25,7 +25,7 @@ rule generate_galba_hints:
         "benchmarks/{sample}/generate_galba_hints/generate_galba_hints.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     container:
         GALBA_TOOLS_CONTAINER

@@ -99,7 +99,8 @@ rule collect_results:
         fi
 
         # --- Core gene predictions (copy first, gzip AFTER report generation) ---
-        for f in galba.gtf galba.gff3 galba.aa galba.codingseq; do
+        for f in galba.gtf galba.gff3 galba.aa galba.codingseq \
+                 galba.longest.gtf galba.longest.aa; do
             if [ -f "$OUTDIR/$f" ]; then
                 cp "$OUTDIR/$f" "$RESULTS/"
             fi
@@ -237,6 +238,7 @@ rule collect_results:
                  "$RESULTS"/galba_with_ncRNA.gff3 \
                  "$RESULTS"/galba.go.gff3 "$RESULTS"/fantasia_go_terms.tsv \
                  "$RESULTS"/galba.aa "$RESULTS"/galba.codingseq \
+                 "$RESULTS"/galba.longest.gtf "$RESULTS"/galba.longest.aa \
                  "$RESULTS"/hintsfile.gff "$RESULTS"/genome.fa "$RESULTS"/genome_masked.fa \
                  "$RESULTS"/quality_control/fantasia/results.csv; do
             if [ -f "$f" ]; then

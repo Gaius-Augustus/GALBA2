@@ -1,18 +1,23 @@
 """
-barrnap rRNA gene prediction and merging with GALBA annotations.
+rRNA gene prediction (via pybarrnap) and merging with GALBA annotations.
 
-Runs barrnap on the genome to predict ribosomal RNA genes (18S, 28S, 5.8S, 5S),
-then merges the rRNA features (along with tRNA, Infernal, and lncRNA results
-when also enabled) into the final GFF3 annotation.
+Runs pybarrnap on the genome to predict ribosomal RNA genes (18S, 28S,
+5.8S, 5S), then merges the rRNA features (along with tRNA and Infernal
+results when also enabled) into the final GFF3 annotation.
+
+pybarrnap (https://github.com/moshi4/pybarrnap) is a Python re-implementation
+of Seemann's barrnap. It uses Rfam 14.10 HMM profiles via pyhmmer (no
+external nhmmer dependency) and resolves the eukaryotic 5.8S/28S overlap
+that barrnap v0.9 produces (tseemann/barrnap#47).
 
 Only included when run_ncrna = 1 in config.ini.
 
-Container: quay.io/biocontainers/barrnap:0.9--hdfd78af_4
+Container: quay.io/biocontainers/pybarrnap:0.5.1--pyhdfd78af_0
 """
 
 
 rule run_barrnap:
-    """Run barrnap to predict rRNA genes on the genome."""
+    """Run pybarrnap to predict rRNA genes on the genome."""
     input:
         genome=lambda wildcards: get_masked_genome(wildcards.sample)
     output:
@@ -32,7 +37,7 @@ rule run_barrnap:
         set -euo pipefail
         mkdir -p $(dirname {output.gff})
 
-        barrnap --kingdom euk --threads {threads} \
+        pybarrnap --kingdom euk --threads {threads} \
             {input.genome} > {output.gff}.tmp 2> {log} || true
 
         # Prefix rRNA gene IDs with sample name and add unique counter
@@ -66,23 +71,22 @@ rule run_barrnap:
         rm -f {output.gff}.tmp
 
         n_rrna=$(grep -cv '^#' {output.gff} || echo 0)
-        echo "barrnap predicted $n_rrna rRNA features" >> {log}
+        echo "pybarrnap predicted $n_rrna rRNA features" >> {log}
 
         # Record software version (LC_ALL=C avoids locale warnings in biocontainer)
         VERSIONS_FILE=output/{wildcards.sample}/software_versions.tsv
-        # BusyBox grep in this container has no -P; use sed for portable extraction
-        BARRNAP_VER=$(LC_ALL=C barrnap --version 2>&1 | sed -n 's/.*\([0-9][0-9]*\.[0-9][0-9]*[^ ]*\).*/\1/p' | head -1 || true)
-        ( flock 9; printf "barrnap\t%s\n" "$BARRNAP_VER" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
+        PYBARRNAP_VER=$(LC_ALL=C pybarrnap --version 2>&1 | sed -n 's/.*\([0-9][0-9]*\.[0-9][0-9]*[^ ]*\).*/\1/p' | head -1 || true)
+        ( flock 9; printf "pybarrnap\t%s\n" "$PYBARRNAP_VER" >> "$VERSIONS_FILE" ) 9>"$VERSIONS_FILE.lock"
 
         # Report
         REPORT_DIR=output/{wildcards.sample}
         source {script_dir}/report_citations.sh
-        cite barrnap "$REPORT_DIR" || true
+        cite pybarrnap "$REPORT_DIR" || true
         """
 
 
 def _get_merge_ncrna_inputs(wildcards):
-    """Get inputs for merging rRNA, tRNA, Infernal, and lncRNA into GFF3."""
+    """Get inputs for merging rRNA, tRNA, and Infernal into GFF3."""
     sample = wildcards.sample
     inputs = {
         "gff3": f"output/{sample}/galba.gff3",
@@ -95,7 +99,7 @@ def _get_merge_ncrna_inputs(wildcards):
 
 
 rule merge_rrna_into_gff3:
-    """Merge barrnap rRNA, tRNA, Infernal, and lncRNA into the final GFF3."""
+    """Merge pybarrnap rRNA, tRNA, and Infernal into the final GFF3."""
     input:
         unpack(_get_merge_ncrna_inputs)
     output:
@@ -106,7 +110,7 @@ rule merge_rrna_into_gff3:
         "benchmarks/{sample}/merge_rrna_into_gff3/merge_rrna_into_gff3.txt"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     params:
         # highest priority first; lncRNA only when the sample has one

@@ -34,7 +34,7 @@ rule cleanup_tmp_opt:
         tmp_opt_dir = lambda w: f"augustus_config/species/{get_species_name(w)}/tmp_opt_{get_species_name(w)}"
     threads: 1
     resources:
-        mem_mb=int(config['slurm_args']['mem_of_node']) // int(config['slurm_args']['cpus_per_task']),
+        mem_mb=mem_single_thread,
         runtime=int(config['slurm_args']['max_runtime'])
     shell:
         r"""

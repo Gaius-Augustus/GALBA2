@@ -106,7 +106,7 @@ _container_defaults = {
     'augustus_image':    'docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9',
     'gffcompare_image':  'docker://quay.io/biocontainers/gffcompare:0.12.10--h9948957_0',
     'red_image':         'docker://quay.io/biocontainers/red:2018.09.10--h9948957_3',
-    'barrnap_image':     'docker://quay.io/biocontainers/barrnap:0.9--hdfd78af_4',
+    'pybarrnap_image':   'docker://quay.io/biocontainers/pybarrnap:0.5.1--pyhdfd78af_0',
     'agat_image':        'docker://quay.io/biocontainers/agat:1.4.1--pl5321hdfd78af_0',
     'busco_image':       'docker://ezlabgva/busco:v6.1.0_cv2',
     'omark_image':       'docker://quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0',
@@ -141,6 +141,21 @@ config['slurm_args'] = {
     'max_runtime': config_parser.getint('SLURM_ARGS', 'max_runtime', fallback=60),
     'skip_mem': _skip_mem,
 }
+
+# Memory of single-threaded rules. The per-CPU share of the node is too small
+# on nodes with many cores (206200 MB // 256 = 805 MB): the cgroup also holds
+# the Snakemake process that the job step starts and the Singularity runtime,
+# and in BRAKER4 downsample_training_genes and convert_to_genbank were
+# OOM-killed before their shell ran. Use at least 8 GB (never more than the
+# node has) and grow with each --restart-times attempt.
+SINGLE_THREAD_MIN_MEM_MB = 8000
+def mem_single_thread(wildcards, attempt):
+    if config['slurm_args']['skip_mem']:
+        return 0
+    node = config['slurm_args']['mem_of_node']
+    base = max(node // config['slurm_args']['cpus_per_task'], SINGLE_THREAD_MIN_MEM_MB)
+    return min(base * attempt, node)
+
 # Warn only in the main process; SLURM job steps re-parse this file with the
 # job's own --cores.
 try:
@@ -404,7 +419,7 @@ print("  ✓ AUGUSTUS prediction with protein hints")
 if not config.get('disable_diamond_filter', False):
     print("  ✓ DIAMOND filtering of predictions against input proteins")
 if config.get('run_ncrna', False):
-    print("  ✓ ncRNA annotation (barrnap, tRNAscan-SE, Infernal/Rfam)")
+    print("  ✓ ncRNA annotation (pybarrnap, tRNAscan-SE, Infernal/Rfam)")
 if config.get('run_fantasia', False):
     print("  ✓ FANTASIA-Lite functional annotation (GPU)")
 if GLOBAL_DATA_TYPES['has_reference_gtf']:

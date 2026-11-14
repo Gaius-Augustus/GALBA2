@@ -102,7 +102,7 @@ if (TMP_ROOT and os.path.isdir(TMP_ROOT)
 config['samples_file'] = config_parser['paths'].get('samples_file', 'samples.csv')
 config['min_contig'] = config_parser.getint('PARAMS', 'min_contig', fallback=10000)
 _container_defaults = {
-    'galba_tools_image': 'docker://katharinahoff/galba-notebook:latest',
+    'galba_tools_image': 'docker://katharinahoff/galba2-tools:v0.5.0',
     'augustus_image':    'docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9',
     'gffcompare_image':  'docker://quay.io/biocontainers/gffcompare:0.12.10--h9948957_0',
     'red_image':         'docker://quay.io/biocontainers/red:2018.09.10--h9948957_3',

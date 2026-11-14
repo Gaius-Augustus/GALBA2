@@ -32,7 +32,7 @@ augustus_config_path = augustus_config
 ; Replace any docker:// URI with an absolute path to a local .sif file to
 ; avoid pulling the image at runtime. All keys are optional (defaults shown).
 ; miniprot, miniprothint, compleasm (~50 MB)
-galba_tools_image = docker://katharinahoff/galba2-tools:latest
+galba_tools_image = docker://katharinahoff/galba2-tools:v0.5.0
 ; AUGUSTUS, DIAMOND, all Perl helper scripts (249 MB)
 augustus_image = docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9
 gffcompare_image = docker://quay.io/biocontainers/gffcompare:0.12.10--h9948957_0

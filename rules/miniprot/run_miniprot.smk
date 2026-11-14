@@ -30,6 +30,12 @@ rule miniprot_index:
 
         mkdir -p $(dirname {output.index})
 
+        if [ ! -x /usr/local/bin/miniprot ]; then
+            echo "[ERROR] /usr/local/bin/miniprot not found in the container." >&2
+            echo "[ERROR] galba_tools_image must be a galba2-tools image, e.g. docker://katharinahoff/galba2-tools:v0.5.0 (see [containers] in config.ini)." >&2
+            exit 1
+        fi
+
         /usr/local/bin/miniprot -t{threads} -d {output.index} {input.genome} \
             > output/{wildcards.sample}/miniprot/miniprot_index.log \
             2> output/{wildcards.sample}/miniprot/miniprot_index.err

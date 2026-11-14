@@ -164,12 +164,12 @@ def get_species_name(wildcards):
 # Main containers:
 # - GALBA_TOOLS: miniprot, boundary_scorer, miniprothint, compleasm (small, ~50 MB)
 # - AUGUSTUS_CONTAINER: augustus, etraining, diamond, all Perl/Python scripts (249 MB)
-# Until the galba2-tools container is built and pushed, the galba-notebook
-# container can be used as a fallback for all rules.
-GALBA_TOOLS_CONTAINER = config.get("galba_tools_image", "docker://katharinahoff/galba-notebook:latest")
+# The fallbacks below only apply if the Snakefile did not set the key; keep
+# them identical to _container_defaults in the Snakefile.
+GALBA_TOOLS_CONTAINER = config.get("galba_tools_image", "docker://katharinahoff/galba2-tools:v0.5.0")
 AUGUSTUS_CONTAINER = config.get("augustus_image", "docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9")
 # Alias for rules that haven't been migrated yet
-GALBA_CONTAINER = config.get("galba_image", "docker://katharinahoff/galba-notebook:latest")
+GALBA_CONTAINER = config.get("galba_image", GALBA_TOOLS_CONTAINER)
 GFFCOMPARE_CONTAINER = config.get("gffcompare_image", "docker://quay.io/biocontainers/gffcompare:0.12.10--h9948957_0")
 RED_CONTAINER = config.get("red_image", "docker://quay.io/biocontainers/red:2018.09.10--h9948957_3")
 BARRNAP_CONTAINER = config.get("pybarrnap_image", "docker://quay.io/biocontainers/pybarrnap:0.5.1--pyhdfd78af_0")

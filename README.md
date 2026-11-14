@@ -343,7 +343,7 @@ augustus_config_path = augustus_config
 ; compleasm_download_path = shared_data/busco_downloads/lineages  # optional, defaults to {busco_download_path}/lineages
 
 [containers]
-galba_tools_image = docker://katharinahoff/galba2-tools:latest    # miniprot, miniprothint, compleasm
+galba_tools_image = docker://katharinahoff/galba2-tools:v0.5.0    # miniprot, miniprothint, compleasm
 augustus_image = docker://quay.io/biocontainers/augustus:3.5.0--pl5321h9716f88_9  # AUGUSTUS, DIAMOND
 
 [PARAMS]

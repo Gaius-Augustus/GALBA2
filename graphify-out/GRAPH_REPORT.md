@@ -1,7 +1,7 @@
 # Graph Report - /home/katharina/git/GALBA2  (2026-11-18)
 
 ## Corpus Check
-- 35 files · ~859,715 words
+- 35 files · ~860,430 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -186,16 +186,16 @@
 10. `_run()` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `run()` --calls--> `test_scratch_dir_redirects_unwritable_tmpdir()`  [INFERRED]
-  /home/katharina/git/GALBA2/tests/test_gff3_to_ena.py → /home/katharina/git/GALBA2/tests/test_tmp_dir.py
+- `test_scratch_dir_redirects_unwritable_tmpdir()` --calls--> `run()`  [INFERRED]
+  /home/katharina/git/GALBA2/tests/test_tmp_dir.py → /home/katharina/git/GALBA2/tests/test_gff3_to_ena.py
 - `SLURM executor profile (profiles/slurm/config.yaml)` --conceptually_related_to--> `snakemake==8.18.2 pin`  [INFERRED]
   README.md → requirements.txt
 - `SLURM executor profile (profiles/slurm/config.yaml)` --conceptually_related_to--> `snakemake-executor-plugin-slurm==2.6.0 pin`  [INFERRED]
   README.md → requirements.txt
-- `Tests for scripts/merge_ncrna_gff3.py and the Rfam type mapping in scripts/infer` --uses--> `IntervalIndex`  [INFERRED]
-  /home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py → /home/katharina/git/GALBA2/scripts/merge_ncrna_gff3.py
-- `One cmscan --fmt 2 tblout line, the 29 fields of Infernal 1.1.5.` --uses--> `IntervalIndex`  [INFERRED]
-  /home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py → /home/katharina/git/GALBA2/scripts/merge_ncrna_gff3.py
+- `IntervalIndex` --uses--> `Tests for scripts/merge_ncrna_gff3.py and the Rfam type mapping in scripts/infer`  [INFERRED]
+  /home/katharina/git/GALBA2/scripts/merge_ncrna_gff3.py → /home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py
+- `IntervalIndex` --uses--> `One cmscan --fmt 2 tblout line, the 29 fields of Infernal 1.1.5.`  [INFERRED]
+  /home/katharina/git/GALBA2/scripts/merge_ncrna_gff3.py → /home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py
 
 ## Communities
 

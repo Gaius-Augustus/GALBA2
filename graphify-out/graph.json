@@ -5334,11 +5334,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "test_merge_ncrna_gff3_rationale_1",
-      "_tgt": "merge_ncrna_gff3_intervalindex",
+      "_src": "merge_ncrna_gff3_intervalindex",
+      "_tgt": "test_merge_ncrna_gff3_rationale_1",
+      "confidence_score": 0.5,
       "source": "merge_ncrna_gff3_intervalindex",
-      "target": "test_merge_ncrna_gff3_rationale_1",
-      "confidence_score": 0.5
+      "target": "test_merge_ncrna_gff3_rationale_1"
     },
     {
       "relation": "uses",
@@ -5346,11 +5346,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "test_merge_ncrna_gff3_rationale_159",
-      "_tgt": "merge_ncrna_gff3_intervalindex",
+      "_src": "merge_ncrna_gff3_intervalindex",
+      "_tgt": "test_merge_ncrna_gff3_rationale_159",
+      "confidence_score": 0.5,
       "source": "merge_ncrna_gff3_intervalindex",
-      "target": "test_merge_ncrna_gff3_rationale_159",
-      "confidence_score": 0.5
+      "target": "test_merge_ncrna_gff3_rationale_159"
     },
     {
       "relation": "uses",
@@ -5358,11 +5358,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "test_merge_ncrna_gff3_rationale_168",
-      "_tgt": "merge_ncrna_gff3_intervalindex",
+      "_src": "merge_ncrna_gff3_intervalindex",
+      "_tgt": "test_merge_ncrna_gff3_rationale_168",
+      "confidence_score": 0.5,
       "source": "merge_ncrna_gff3_intervalindex",
-      "target": "test_merge_ncrna_gff3_rationale_168",
-      "confidence_score": 0.5
+      "target": "test_merge_ncrna_gff3_rationale_168"
     },
     {
       "relation": "uses",
@@ -5370,11 +5370,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "test_merge_ncrna_gff3_rationale_198",
-      "_tgt": "merge_ncrna_gff3_intervalindex",
+      "_src": "merge_ncrna_gff3_intervalindex",
+      "_tgt": "test_merge_ncrna_gff3_rationale_198",
+      "confidence_score": 0.5,
       "source": "merge_ncrna_gff3_intervalindex",
-      "target": "test_merge_ncrna_gff3_rationale_198",
-      "confidence_score": 0.5
+      "target": "test_merge_ncrna_gff3_rationale_198"
     },
     {
       "relation": "calls",
@@ -5407,8 +5407,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/gff3_to_ena.py",
       "source_location": "L736",
       "weight": 1.0,
-      "_src": "gff3_to_ena_convert",
-      "_tgt": "merge_ncrna_gff3_intervalindex_add",
+      "_src": "merge_ncrna_gff3_intervalindex_add",
+      "_tgt": "gff3_to_ena_convert",
       "source": "merge_ncrna_gff3_intervalindex_add",
       "target": "gff3_to_ena_convert"
     },
@@ -5419,8 +5419,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/generate_report.py",
       "source_location": "L298",
       "weight": 1.0,
-      "_src": "generate_report_generate_methods_text",
-      "_tgt": "merge_ncrna_gff3_intervalindex_add",
+      "_src": "merge_ncrna_gff3_intervalindex_add",
+      "_tgt": "generate_report_generate_methods_text",
       "source": "merge_ncrna_gff3_intervalindex_add",
       "target": "generate_report_generate_methods_text"
     },
@@ -5431,8 +5431,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/generate_report.py",
       "source_location": "L581",
       "weight": 1.0,
-      "_src": "generate_report_deduplicate_citations",
-      "_tgt": "merge_ncrna_gff3_intervalindex_add",
+      "_src": "merge_ncrna_gff3_intervalindex_add",
+      "_tgt": "generate_report_deduplicate_citations",
       "source": "merge_ncrna_gff3_intervalindex_add",
       "target": "generate_report_deduplicate_citations"
     },
@@ -5443,8 +5443,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L134",
       "weight": 1.0,
-      "_src": "filter_gtf_by_diamond_against_ref_filter_gtf",
-      "_tgt": "merge_ncrna_gff3_intervalindex_add",
+      "_src": "merge_ncrna_gff3_intervalindex_add",
+      "_tgt": "filter_gtf_by_diamond_against_ref_filter_gtf",
       "source": "merge_ncrna_gff3_intervalindex_add",
       "target": "filter_gtf_by_diamond_against_ref_filter_gtf"
     },
@@ -5455,8 +5455,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L161",
       "weight": 1.0,
-      "_src": "filter_gtf_by_diamond_against_ref_count_transcripts",
-      "_tgt": "merge_ncrna_gff3_intervalindex_add",
+      "_src": "merge_ncrna_gff3_intervalindex_add",
+      "_tgt": "filter_gtf_by_diamond_against_ref_count_transcripts",
       "source": "merge_ncrna_gff3_intervalindex_add",
       "target": "filter_gtf_by_diamond_against_ref_count_transcripts"
     },
@@ -6187,8 +6187,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/generate_report.py",
       "source_location": "L55",
       "weight": 1.0,
-      "_src": "generate_report_embed_image",
-      "_tgt": "gff3_to_ena_decode",
+      "_src": "gff3_to_ena_decode",
+      "_tgt": "generate_report_embed_image",
       "source": "gff3_to_ena_decode",
       "target": "generate_report_embed_image"
     },
@@ -6390,11 +6390,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_genome",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_genome",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_genome",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_genome"
     },
     {
       "relation": "uses",
@@ -6402,11 +6402,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_1",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_1",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_1",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_1"
     },
     {
       "relation": "uses",
@@ -6414,11 +6414,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_40",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_40",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_40",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_40"
     },
     {
       "relation": "uses",
@@ -6426,11 +6426,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_87",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_87",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_87",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_87"
     },
     {
       "relation": "uses",
@@ -6438,11 +6438,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_140",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_140",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_140",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_140"
     },
     {
       "relation": "uses",
@@ -6450,11 +6450,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_236",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_236",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_236",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_236"
     },
     {
       "relation": "uses",
@@ -6462,11 +6462,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_277",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_277",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_277",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_277"
     },
     {
       "relation": "uses",
@@ -6474,11 +6474,11 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_gff3_to_ena.py",
       "source_location": "L23",
       "weight": 0.8,
-      "_src": "test_gff3_to_ena_rationale_425",
-      "_tgt": "gff3_to_ena_code",
+      "_src": "gff3_to_ena_code",
+      "_tgt": "test_gff3_to_ena_rationale_425",
+      "confidence_score": 0.5,
       "source": "gff3_to_ena_code",
-      "target": "test_gff3_to_ena_rationale_425",
-      "confidence_score": 0.5
+      "target": "test_gff3_to_ena_rationale_425"
     },
     {
       "relation": "calls",
@@ -6859,8 +6859,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/generate_report.py",
       "source_location": "L117",
       "weight": 1.0,
-      "_src": "generate_report_parse_bbc_log",
-      "_tgt": "gff3_to_ena_start",
+      "_src": "gff3_to_ena_start",
+      "_tgt": "generate_report_parse_bbc_log",
       "source": "gff3_to_ena_start",
       "target": "generate_report_parse_bbc_log"
     },
@@ -6883,8 +6883,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/generate_report.py",
       "source_location": "L116",
       "weight": 1.0,
-      "_src": "generate_report_parse_bbc_log",
-      "_tgt": "gff3_to_ena_end",
+      "_src": "gff3_to_ena_end",
+      "_tgt": "generate_report_parse_bbc_log",
       "source": "gff3_to_ena_end",
       "target": "generate_report_parse_bbc_log"
     },
@@ -8035,8 +8035,8 @@
       "source_file": "/home/katharina/git/GALBA2/scripts/filter_gtf_by_diamond_against_ref.py",
       "source_location": "L141",
       "weight": 1.0,
-      "_src": "filter_gtf_by_diamond_against_ref_filter_gtf",
-      "_tgt": "gtf_transcript_filter_filter_transcripts",
+      "_src": "gtf_transcript_filter_filter_transcripts",
+      "_tgt": "filter_gtf_by_diamond_against_ref_filter_gtf",
       "source": "gtf_transcript_filter_filter_transcripts",
       "target": "filter_gtf_by_diamond_against_ref_filter_gtf"
     },
@@ -9667,8 +9667,8 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_tmp_dir.py",
       "source_location": "L27",
       "weight": 1.0,
-      "_src": "test_gff3_to_ena_run",
-      "_tgt": "test_tmp_dir_run_make_tmp",
+      "_src": "test_tmp_dir_run_make_tmp",
+      "_tgt": "test_gff3_to_ena_run",
       "source": "test_tmp_dir_run_make_tmp",
       "target": "test_gff3_to_ena_run"
     },
@@ -9835,8 +9835,8 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_tmp_dir.py",
       "source_location": "L103",
       "weight": 1.0,
-      "_src": "test_gff3_to_ena_run",
-      "_tgt": "test_tmp_dir_bash",
+      "_src": "test_tmp_dir_bash",
+      "_tgt": "test_gff3_to_ena_run",
       "source": "test_tmp_dir_bash",
       "target": "test_gff3_to_ena_run"
     },
@@ -9847,8 +9847,8 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_tmp_dir.py",
       "source_location": "L153",
       "weight": 1.0,
-      "_src": "test_gff3_to_ena_run",
-      "_tgt": "test_tmp_dir_test_scratch_dir_redirects_unwritable_tmpdir",
+      "_src": "test_tmp_dir_test_scratch_dir_redirects_unwritable_tmpdir",
+      "_tgt": "test_gff3_to_ena_run",
       "source": "test_tmp_dir_test_scratch_dir_redirects_unwritable_tmpdir",
       "target": "test_gff3_to_ena_run"
     },
@@ -10111,8 +10111,8 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_merge_ncrna_gff3.py",
       "source_location": "L73",
       "weight": 1.0,
-      "_src": "test_gff3_to_ena_run",
-      "_tgt": "test_merge_ncrna_gff3_merge",
+      "_src": "test_merge_ncrna_gff3_merge",
+      "_tgt": "test_gff3_to_ena_run",
       "source": "test_merge_ncrna_gff3_merge",
       "target": "test_gff3_to_ena_run"
     },
@@ -10963,8 +10963,8 @@
       "source_file": "/home/katharina/git/GALBA2/tests/test_normalize_gtf.py",
       "source_location": "L42",
       "weight": 1.0,
-      "_src": "test_gff3_to_ena_run",
-      "_tgt": "test_normalize_gtf_run",
+      "_src": "test_normalize_gtf_run",
+      "_tgt": "test_gff3_to_ena_run",
       "source": "test_normalize_gtf_run",
       "target": "test_gff3_to_ena_run"
     },

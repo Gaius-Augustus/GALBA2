@@ -65,7 +65,8 @@ GALBA2 is a rewrite of the original [GALBA](https://github.com/Gaius-Augustus/GA
 -   **Integrated QC and postprocessing** — GFF3 conversion (AGAT), DIAMOND filtering against the input proteins, BUSCO/compleasm completeness assessment, optional evaluation against a reference annotation (gffcompare).
 -   **Optional CNN splice-site scoring** with minisplice (`use_minisplice = 1`).
 -   **Optional non-coding RNA annotation** with pybarrnap (rRNA), tRNAscan-SE (tRNA), and Infernal against Rfam (snoRNA/snRNA/miRNA/ribozymes), merged into `galba_with_ncRNA.gff3` when `run_ncrna = 1`.
--   **Optional functional GO annotation** with FANTASIA-Lite (`run_fantasia = 1`, GPU-only).
+-   **Optional functional GO annotation** with FANTASIA-Lite (`run_fantasia = 1`; on a GPU, or on CPU cores with `device = cpu`).
+-   **Optional GFF3 for ENA submission** — set `ena_locus_tag_prefix` in `samples.csv` to get a GFF3 for ENA decoupled annotation submission (see [ENA GFF3 export](#ena-gff3-export-for-decoupled-annotation-submission)).
 -   **Optional OMArk proteome QC** (`run_omark = 1`).
 -   **Auto-generated HTML report** with embedded plots, run-specific methods text, and a BibTeX file containing only the tools that were actually used.
 
@@ -144,7 +145,7 @@ Keys to successful gene prediction
 
 -   Use a high quality genome assembly. If you have a huge number of very short scaffolds, those will increase runtime but not prediction accuracy.
 
--   Use simple scaffold names in the genome file (e.g. `>contig1`). Complex headers can cause parsing issues.
+-   Use simple scaffold names in the genome file (e.g. `>contig1`). Complex headers can cause parsing issues. GALBA2 cuts each header at the first space and stops if a sequence name then occurs more than once. Lines starting with `;` before the first sequence (FASTA comments, e.g. a FAIR-bioHeaders metadata block) are dropped.
 
 -   The genome should be soft-masked for repeats. Soft-masking (lowercase letters for repeats) leads to better results than hard-masking (replacing with `N`). If you leave the `genome_masked` column in `samples.csv` empty, GALBA2 will mask the genome itself — by default using RepeatModeler2 + RepeatMasker, or using Red (REpeat Detector; Girgis, 2015) when you set `masking_tool = red` in `config.ini`. Red is ~10x faster and ~50x smaller as a container (~13 MB vs ~727 MB) at the cost of no repeat-family classification; it is a good default when you do not need the classified repeat library.
 
@@ -181,10 +182,12 @@ protein_fasta
 rice_proteins.fa:maize_proteins.fa:sorghum_proteins.fa
 ```
 
+Decompressing is optional: gzipped files (`close_relatives.fa.gz`) also work, GALBA2 decompresses them before miniprot and the DIAMOND filter.
+
 Installation
 ============
 
-**Platform requirement:** GALBA2 requires **Linux**. It relies on GNU coreutils (`readlink -f`), GNU grep (`grep -P`), and Singularity/Apptainer. If you are on macOS or Windows, run GALBA2 inside a Linux virtual machine or WSL2.
+**Platform requirement:** GALBA2 requires **Linux on x86_64 (amd64)**. It relies on GNU coreutils (`readlink -f`), GNU grep (`grep -P`), and Singularity/Apptainer, and the containers it pulls are built for linux/amd64. On Windows, use WSL2 on an x86_64 machine. Apple Silicon Macs (M1 to M4) cannot run GALBA2, also not in a Linux VM, because such a VM runs arm64 Linux; use an x86_64 Linux server, cluster or cloud instance.
 
 GALBA2 requires two things on your system: Snakemake and Singularity. All bioinformatics tools (miniprot, miniprothint, AUGUSTUS, DIAMOND, etc.) run inside the container. You do not need to install them.
 
@@ -246,12 +249,11 @@ GALBA2 will automatically pull the container image and convert it to a Singulari
 | Infernal | `quay.io/biocontainers/infernal:1.1.5--pl5321h031d066_2` | 28 MB | Rfam scan for snoRNA/snRNA/miRNA (only when `run_ncrna = 1`) |
 | OMArk | `quay.io/biocontainers/omark:0.4.1--pyh7e72e81_0` | 455 MB | OMArk proteome quality assessment (optional, only when `run_omark = 1`) |
 | gffcompare | `quay.io/biocontainers/gffcompare:0.12.10--h9948957_0` | 11 MB | Evaluation against a reference annotation (optional) |
-| FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v1.0.0` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional, **GPU-only**) |
+| FANTASIA-Lite | `katharinahoff/fantasia_for_brain:lite.v1.0.0` | ~6 GB | Functional GO annotation via ProtT5 embeddings (optional; GPU, or CPU with `device = cpu`) |
 
 A standard GALBA2 run (no masking, no BUSCO) pulls only the GALBA2 tools + AUGUSTUS + AGAT containers: **~730 MB** total.
 
-**Singularity bind paths:** Singularity containers can only see directories tha
-t are explicitly bound. GALBA2 passes `--singularity-args "-B /home"` by default. If your data resides outside `/home` (e.g. in `/scratch`, `/data`, or `/gpfs`), you must add those paths:
+**Singularity bind paths:** Singularity containers can only see directories that are explicitly bound. GALBA2 passes `--singularity-args "-B /home"` by default. If your data resides outside `/home` (e.g. in `/scratch`, `/data`, or `/gpfs`), you must add those paths:
 
 ```
 --singularity-args "-B /home -B /scratch -B /data"
@@ -274,7 +276,7 @@ G = genome FASTA, H = hints file. NEED is the free space a job requires, in GB, 
 | `run_compleasm` | compleasm work dir | `summary.txt` | 5 x G + 5 |
 | `fantasia_annotate` | FANTASIA-Lite chunk dirs | nothing | 10 |
 
-**`TMPDIR`:** With `[paths] tmp_dir` empty, each job uses its `$TMPDIR` as the scratch root; Snakemake sets it from the `tmpdir` resource. Many SLURM clusters set `TMPDIR=/local/scratch/$USER` (or similar) per allocation. If that path is not writable inside the Singularity container, the jobs still run but work in `output/<sample>/` (look for the `WARNING: working in` line). Either set `[paths] tmp_dir` to a node-local path that exists on every node (GALBA2 binds it into the containers), or set the default `tmpdir` resource in your SLURM profile and add the same path to `--singularity-args`:
+**`TMPDIR`:** With `[paths] tmp_dir` empty, each job uses its `$TMPDIR` as the scratch root; Snakemake sets it from the `tmpdir` resource. Many SLURM clusters set `TMPDIR=/local/scratch/$USER` (or similar) per allocation. If that path is not writable inside the Singularity container, the jobs still run but work in `output/<sample>/` (look for the `WARNING: working in` line), and `TMPDIR` is pointed to that directory for tools that write their own temporary files, such as GNU `sort` (`WARNING: TMPDIR=... is not writable`). Either set `[paths] tmp_dir` to a node-local path that exists on every node (GALBA2 binds it into the containers), or set the default `tmpdir` resource in your SLURM profile and add the same path to `--singularity-args`:
 
 ```yaml
 # profiles/slurm/config.yaml
@@ -311,9 +313,14 @@ sample_name,genome,genome_masked,protein_fasta,busco_lineage,reference_gtf
 | `sample_name` | yes | Unique identifier. Output goes to `output/{sample_name}/`. |
 | `genome` | yes | Path to genome FASTA file. |
 | `genome_masked` | no | Path to soft-masked genome. If empty, the unmasked genome is used directly. |
-| `protein_fasta` | **yes** | Protein sequences in FASTA format. Multiple files can be colon-separated. We recommend OrthoDB. |
+| `protein_fasta` | **yes** | Protein sequences in FASTA format, plain or gzipped (`.gz`). Multiple files can be colon-separated. We recommend OrthoDB. |
 | `busco_lineage` | **yes** | BUSCO lineage for QC (e.g. `eukaryota_odb12`, `arthropoda_odb12`). |
 | `reference_gtf` | no | Reference annotation for gffcompare evaluation. Optional. |
+| `ena_locus_tag_prefix` | no | Turns on the ENA GFF3 export (see [ENA GFF3 export](#ena-gff3-export-for-decoupled-annotation-submission)). The locus_tag prefix registered with ENA: 3-12 upper-case letters or digits, starting with a letter. |
+| `ena_taxid` | no | NCBI taxonomy ID of the species, written as `##species` in the ENA GFF3. |
+| `ena_seqid_map` | no | Tab-separated file without header: GALBA2 sequence name, tab, ENA sequence name or accession. Needed when the assembly was submitted to ENA under other names, or when a sequence name contains a `.` that is not a version suffix. GALBA2 sequence names are the first word of the FASTA headers. |
+
+The three `ena_*` columns are optional and can be appended after `reference_gtf` in the header.
 
 **Example: annotating two genomes in one run**
 
@@ -409,6 +416,28 @@ snakemake \
 
 We recommend running the Snakemake master process in a `screen` or `tmux` session, or submitting it as a long-running SLURM job.
 
+**Clusters where this does not work (single-allocation mode):** `--executor slurm` needs a place from which Snakemake can call `sbatch` for days. Some clusters forbid long-running processes on the login node, and on some of them compute nodes cannot submit jobs either (`sbatch` fails inside a job, for example with `sbatch: error: fetch_config: DNS SRV lookup failed`, or no job ever appears in the queue). In that case, run the whole pipeline inside one SLURM job, without `--executor slurm`. Snakemake then runs every rule on the cores of that one node:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=galba2
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=48
+#SBATCH --mem=120G
+#SBATCH --time=3-00:00:00
+
+cd /path/to/your/run_directory        # contains config.ini and samples.csv
+snakemake \
+    --snakefile /path/to/GALBA2/Snakefile \
+    --cores "$SLURM_CPUS_PER_TASK" \
+    --use-singularity \
+    --singularity-prefix .singularity_cache \
+    --singularity-args "-B /home -B /scratch" \
+    --rerun-incomplete
+```
+
+Set `[SLURM_ARGS] cpus_per_task` and `mem_of_node` in `config.ini` to the values of the allocation. If Singularity/Apptainer exists only on the compute nodes, this is also the mode to use. A job that hits the time limit can be resubmitted with the same script; finished rules are not repeated. With several samples, all of them share the one node, so submit one such job per sample (separate run directories) if you want them to run side by side.
+
 Description of selected configuration options
 ----------------------------------------------
 
@@ -421,10 +450,10 @@ Description of selected configuration options
 | `masking_tool` | repeatmasker | Repeat masking tool: `repeatmasker` (RepeatModeler2 + RepeatMasker, thorough but slow) or `red` (Red repeat detector, much faster). Only used when `genome_masked` column is empty. |
 | `use_minisplice` | 0 | Use minisplice CNN splice site scores to improve miniprot alignment. Requires miniprot >= 0.14 and a pre-trained minisplice model (see [minisplice](https://github.com/lh3/minisplice)). Experimental. |
 | `run_ncrna` | 0 | Annotate non-coding RNAs: rRNA (pybarrnap), tRNA (tRNAscan-SE), snoRNA/snRNA/miRNA (Infernal + Rfam). Requires Rfam database (~315 MB, downloaded by `scripts/download_data.sh`). |
-| `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. **GPU-only** (requires NVIDIA GPU + pre-staged container, ProtT5 cache, and V1 lookup bundle). Set `sif`, `hf_cache_dir`, and `lookup_dir` in the `[fantasia]` section of `config.ini`. Download the lookup bundle from [Zenodo record 17720428](https://zenodo.org/records/17720428). |
+| `run_fantasia` | 0 | Run FANTASIA-Lite functional GO annotation. Requires a pre-staged container, ProtT5 cache, and V1 lookup bundle, and by default an NVIDIA GPU (`device = gpu`, validated on an A100). Without a GPU, set `device = cpu` in `[fantasia]` (or `GALBA2_FANTASIA_DEVICE=cpu`): `fantasia_annotate` then runs `fantasia_pipeline.py --device cpu` without `--nv`, on the `[fantasia]` partition with `cpus_per_task` threads and no GPU request, and `fantasia_gpu_check` does not run; this is much slower, so point `partition` at a CPU partition and allow a longer `max_runtime`. Set `sif`, `hf_cache_dir`, and `lookup_dir` in the `[fantasia]` section of `config.ini`. Download the lookup bundle from [Zenodo record 17720428](https://zenodo.org/records/17720428). |
 | `translation_table` | 1 | NCBI genetic code table. **Currently only table 1 (standard code) is supported** because miniprot does not support alternative genetic codes. Support for additional tables is planned for a future release. |
 | `no_cleanup` | 0 | Keep all intermediate files. Useful for debugging. |
-| `use_dev_shm` | 0 | Use `/dev/shm` (shared memory) instead of the node-local disk as the scratch root of `run_masking`, `optimize_augustus` and `run_augustus_hints`. All other rules use `[paths] tmp_dir` (see "Node-local scratch" above). If `/dev/shm` has too little free space, `optimize_augustus` and `run_augustus_hints` work in `output/<sample>/` instead. |
+| `use_dev_shm` | 0 | Use `/dev/shm` (shared memory) instead of the node-local disk as the scratch root of `run_masking`, `optimize_augustus` and `run_augustus_hints`. With `use_dev_shm = 0`, `run_masking` and `run_red_masking` work in `[paths] tmp_dir` when it is set and in `/tmp` otherwise; RepeatModeler2 can need tens of GB there for a large genome, and the free space is written to `logs/<sample>/masking/masking.log`. All other rules use `[paths] tmp_dir` (see "Node-local scratch" above). If `/dev/shm` has too little free space, `optimize_augustus` and `run_augustus_hints` work in `output/<sample>/` instead. |
 
 ### Downloading shared databases
 
@@ -524,7 +553,29 @@ GALBA2 collects all important output files in `output/{sample}/results/`:
 | `galba_report.html` | Pipeline report with statistics |
 | `galba_citations.bib` | BibTeX citations for tools used |
 | `software_versions.tsv` | Versions of all tools used |
+| `ena/` | ENA GFF3 export (only if `ena_locus_tag_prefix` is set): `galba.ena.gff3` for the Webin-CLI manifest (uncompressed), `galba.ena.ids.tsv` (GALBA2 gene/transcript ID to locus_tag), `galba.ena.report.txt` (counts, and every feature left out or changed, with the reason) |
 | `quality_control/` | BUSCO/compleasm completeness, gene set statistics, training summary |
+
+### ENA GFF3 export for decoupled annotation submission
+
+If `ena_locus_tag_prefix` is set for a sample in `samples.csv`, the `export_ena_gff3` rule converts the final GFF3 (`galba_with_ncRNA.gff3` when `run_ncrna = 1`, else `galba.gff3`) into a GFF3 for ENA decoupled annotation submission (`scripts/gff3_to_ena.py`, run with the host Python, no container). Output is in `results/ena/` (see above).
+
+The export:
+
+-   keeps only INSDC qualifiers (`locus_tag`, `product`, `transl_table`, `inference`, `codon_start`, `partial`, `pseudo`, `note`, `Dbxref`); every protein has the product `hypothetical protein` and an `inference` of `ab initio prediction:AUGUSTUS:<version>`;
+-   assigns locus tags `PREFIX_000010`, `PREFIX_000020`, ... in genome order, on each gene and all its parts;
+-   drops `start_codon`, `stop_codon` and `intron` rows, and includes the stop codon in the CDS;
+-   marks models without a start or stop codon in the genome as `partial`;
+-   names tRNAs `tRNA-Xxx` and leaves out features ENA rejects: tRNAs outside 50-150 bp, tRNAs inside a CDS, and rRNAs overlapping a CDS or another rRNA on the same strand. They are listed in `galba.ena.report.txt`.
+
+Submission is done by you:
+
+1. Register the locus_tag prefix with ENA.
+2. Submit the assembly first (Webin-CLI `-context genome`); the annotation refers to its sequences.
+3. Write a manifest with `ANALYSIS_TYPE DECOUPLED_ANNOTATION`, `PRIMARY_ID` set to the assembly's GCA accession, and `GFF3` set to `galba.ena.gff3`.
+4. Run `webin-cli -context annotation` with `-validate` first, then with `-submit`.
+
+Format details: https://ena-docs.readthedocs.io/en/latest/submit/gff3.html
 
 Example data
 =============

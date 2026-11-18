@@ -12,6 +12,7 @@ provide a genome and a protein FASTA file.
 
 import pandas as pd
 import os
+import re
 from pathlib import Path
 
 # ==============================================================================
@@ -56,6 +57,27 @@ def detect_data_types(sample):
 # Input Validation
 # ==============================================================================
 
+def get_ena_settings(sample):
+    """ENA export columns of a sample (optional): locus_tag prefix, taxid,
+    seqid map. Empty strings when not set. pandas reads a taxid column with
+    gaps as float, so 3702.0 is turned back into '3702'."""
+    row = samples_df[samples_df["sample_name"] == sample].iloc[0]
+
+    def cell(name):
+        value = row.get(name)
+        if value is None or (isinstance(value, float) and pd.isna(value)):
+            return ""
+        if isinstance(value, float) and value.is_integer():
+            value = int(value)
+        return str(value).strip()
+
+    return {
+        "locus_tag_prefix": cell("ena_locus_tag_prefix"),
+        "taxid": cell("ena_taxid"),
+        "seqid_map": cell("ena_seqid_map"),
+    }
+
+
 def validate_samples():
     """Validate sample configurations before workflow execution."""
     for idx, row in samples_df.iterrows():
@@ -75,6 +97,24 @@ def validate_samples():
         # Rule 3: busco_lineage is required
         if pd.isna(row.get("busco_lineage")) or not str(row.get("busco_lineage")).strip():
             raise ValueError(f"{sample}: busco_lineage column is required in samples.csv")
+
+        # Rule 4: ENA export settings (optional columns)
+        ena = get_ena_settings(sample)
+        if ena["locus_tag_prefix"]:
+            # same rule as gff3tools LocusTagExistsValidation
+            if not re.match(r"^[A-Z][A-Z0-9]{2,11}$", ena["locus_tag_prefix"]):
+                raise ValueError(
+                    f"{sample}: ena_locus_tag_prefix '{ena['locus_tag_prefix']}' is invalid. "
+                    f"ENA needs the registered prefix: 3-12 upper-case letters or digits, "
+                    f"starting with a letter.")
+            if ena["taxid"] and not ena["taxid"].isdigit():
+                raise ValueError(f"{sample}: ena_taxid must be an NCBI taxonomy ID (a number), "
+                                 f"got '{ena['taxid']}'")
+            if ena["seqid_map"] and not os.path.isfile(ena["seqid_map"]):
+                raise ValueError(f"{sample}: ena_seqid_map file not found: {ena['seqid_map']}")
+        elif ena["taxid"] or ena["seqid_map"]:
+            print(f"  WARNING: {sample} has ena_taxid/ena_seqid_map but no ena_locus_tag_prefix; "
+                  f"no ENA GFF3 is written")
 
 # Run validation at workflow start
 validate_samples()
@@ -120,11 +160,13 @@ def get_protein_fasta_files(sample):
 def get_protein_fasta(sample):
     """Get the protein FASTA path for pipeline consumption.
 
-    If multiple files are specified (colon-separated), returns the path
-    to the merged output. If single file, returns it directly.
+    If multiple files are specified (colon-separated), or any file is
+    gzipped (.gz, as OrthoDB partitions are downloaded), returns the path
+    to the merged and decompressed output of merge_proteins. A single
+    uncompressed file is returned directly.
     """
     files = get_protein_fasta_files(sample)
-    if len(files) > 1:
+    if len(files) > 1 or any(f.endswith(".gz") for f in files):
         return f"output/{sample}/preprocessing/proteins_merged.fa"
     elif len(files) == 1:
         return files[0]

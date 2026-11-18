@@ -64,8 +64,9 @@ _env_overrides = {
     'GALBA2_USE_MINISPLICE':                 ('PARAMS', 'use_minisplice'),
     'GALBA2_MINISPLICE_MODEL':               ('PARAMS', 'minisplice_model'),
     'GALBA2_RUN_NCRNA':                      ('PARAMS', 'run_ncrna'),
-    # FANTASIA-Lite (optional, GPU-only functional annotation)
+    # FANTASIA-Lite (optional functional annotation, GPU or CPU)
     'GALBA2_RUN_FANTASIA':                   ('fantasia', 'enable'),
+    'GALBA2_FANTASIA_DEVICE':                ('fantasia', 'device'),
     'GALBA2_FANTASIA_SIF':                   ('fantasia', 'sif'),
     'GALBA2_FANTASIA_HF_CACHE':              ('fantasia', 'hf_cache_dir'),
     'GALBA2_FANTASIA_LOOKUP_DIR':            ('fantasia', 'lookup_dir'),
@@ -227,11 +228,14 @@ config['run_ncrna'] = config_parser.getboolean(
     'PARAMS', 'run_ncrna', fallback=False
 )
 
-# FANTASIA-Lite functional annotation (optional, GPU-only).
+# FANTASIA-Lite functional annotation (optional).
+# Off by default. device = gpu (default) has been validated on an A100 in the
+# Hoff lab; device = cpu runs ProtT5 on CPU cores (much slower, no GPU queue).
 config['run_fantasia'] = config_parser.getboolean(
     'fantasia', 'enable', fallback=False
 )
 config['fantasia'] = {
+    'device':           config_parser.get('fantasia', 'device', fallback='gpu').strip().lower() or 'gpu',
     'sif':              config_parser.get('fantasia', 'sif', fallback=''),
     'hf_cache_dir':     config_parser.get('fantasia', 'hf_cache_dir', fallback=''),
     'lookup_dir':       config_parser.get('fantasia', 'lookup_dir', fallback=''),
@@ -247,6 +251,10 @@ config['fantasia'] = {
                                           fallback=str(config['slurm_args']['max_runtime'])),
     'exclude_nodes':    config_parser.get('fantasia', 'exclude_nodes', fallback=''),
 }
+if config['fantasia']['device'] not in ('gpu', 'cpu'):
+    raise ValueError(
+        f"fantasia.device must be 'gpu' or 'cpu', got {config['fantasia']['device']!r}"
+    )
 if config['run_fantasia']:
     if not config['fantasia']['sif']:
         raise ValueError(
@@ -421,7 +429,7 @@ if not config.get('disable_diamond_filter', False):
 if config.get('run_ncrna', False):
     print("  ✓ ncRNA annotation (pybarrnap, tRNAscan-SE, Infernal/Rfam)")
 if config.get('run_fantasia', False):
-    print("  ✓ FANTASIA-Lite functional annotation (GPU)")
+    print(f"  ✓ FANTASIA-Lite functional annotation ({config['fantasia']['device'].upper()})")
 if GLOBAL_DATA_TYPES['has_reference_gtf']:
     print("  ✓ gffcompare evaluation against reference annotation")
 print()
@@ -468,6 +476,8 @@ include: "rules/postprocessing/filter_stop_codons.smk"
 include: "rules/postprocessing/normalize_cds.smk"
 include: "rules/postprocessing/postprocess_augustus.smk"
 include: "rules/postprocessing/convert_to_gff3.smk"
+# GFF3 for ENA submission (only samples with ena_locus_tag_prefix)
+include: "rules/postprocessing/export_ena_gff3.smk"
 
 # Quality control
 include: "rules/quality_control/run_compleasm.smk"
@@ -486,7 +496,7 @@ if RUN_NCRNA:
     include: "rules/ncrna/run_trnascan.smk"
     include: "rules/ncrna/run_infernal.smk"
 
-# FANTASIA-Lite functional annotation (optional, GPU-only)
+# FANTASIA-Lite functional annotation (optional, GPU or CPU)
 if config.get('run_fantasia', False):
     include: "rules/postprocessing/run_fantasia.smk"
 

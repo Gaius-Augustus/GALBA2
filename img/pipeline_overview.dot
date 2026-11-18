@@ -136,10 +136,10 @@ digraph GALBA2 {
     ];
 
     /* =====================================================
-     *  FUNCTIONAL ANNOTATION  (optional, GPU-only)
+     *  FUNCTIONAL ANNOTATION  (optional, GPU or CPU)
      * ===================================================== */
     fantasia [
-        label    = "Functional annotation  (optional)\n\nFANTASIA-Lite\nProtT5 embeddings → GO terms\n(GPU only)",
+        label    = "Functional annotation  (optional)\n\nFANTASIA-Lite\nProtT5 embeddings → GO terms\n(GPU or CPU)",
         fillcolor = "#a2c4c9",
         style     = "filled,rounded,dashed",
         penwidth  = 1.4

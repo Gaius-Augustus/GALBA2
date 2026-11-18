@@ -3,6 +3,7 @@ Collect final results into a clean directory and remove intermediate files.
 
 The results directory contains everything a user needs:
 - Gene predictions (GTF, GFF3, protein and CDS sequences)
+- GFF3 for ENA submission (ena/, samples with ena_locus_tag_prefix)
 - Quality control reports (BUSCO, compleasm, OMArk, gffcompare)
 - Evidence support summary
 """
@@ -45,6 +46,9 @@ def _get_collect_inputs(wildcards):
         inputs["fantasia_plot"] = f"output/{sample}/fantasia/fantasia_go_categories.png"
         inputs["fantasia_go_terms"] = f"output/{sample}/fantasia/fantasia_go_terms.tsv"
         inputs["fantasia_go_gff3"] = f"output/{sample}/fantasia/galba.go.gff3"
+
+    if get_ena_settings(sample)["locus_tag_prefix"]:
+        inputs["ena_gff3"] = f"output/{sample}/galba.ena.gff3"
 
     return inputs
 
@@ -168,6 +172,16 @@ rule collect_results:
         fi
         if [ -f "$OUTDIR/galba_with_ncRNA.gff3" ]; then
             cp "$OUTDIR/galba_with_ncRNA.gff3" "$RESULTS/"
+        fi
+
+        # GFF3 for ENA decoupled annotation (if ena_locus_tag_prefix is set).
+        # Left uncompressed: it is the file named in the Webin-CLI manifest.
+        if [ -f "$OUTDIR/galba.ena.gff3" ]; then
+            mkdir -p "$RESULTS/ena"
+            for f in galba.ena.gff3 galba.ena.ids.tsv galba.ena.report.txt; do
+                cp "$OUTDIR/$f" "$RESULTS/ena/"
+            done
+            echo "[INFO] Collected ENA GFF3"
         fi
 
         # FANTASIA-Lite functional annotation

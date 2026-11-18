@@ -4,8 +4,8 @@
 # compleasm, BUSCO, RepeatMasker, Red, OMArk, AGAT, gffcompare, barrnap,
 # tRNAscan-SE, Infernal, FANTASIA-Lite, minisplice, etc.) run inside
 # Singularity containers and are NOT tracked here. Their pinned image
-# tags live in rules/common.smk and are documented in the README
-# container table.
+# tags live in the Snakefile (_container_defaults) and rules/common.smk
+# and are documented in the README container table.
 #
 # pixi.toml / pixi.lock are the primary definition (pixi install); this
 # file carries the same runtime pins for pip users:

@@ -7,6 +7,15 @@ rule prepare_genome:
     sequence name in GTF output, which must match the FASTA key for
     all downstream tools (getAnnoFastaFromJoingenes.py, AUGUSTUS, etc.).
 
+    Lines starting with ';' (and blank lines) before the first '>' record
+    are dropped. These are Pearson FASTA comments, used e.g. by the
+    FAIR-bioHeaders metadata block (FHR, ';~' YAML lines,
+    https://doi.org/10.1093/bib/bbae122). samtools faidx and splitMfasta.pl
+    reject or mis-parse them (Gaius-Augustus/BRAKER#982). Only the leading
+    block is removed, so sequences, headers and coordinates are unchanged.
+
+    The rule stops if a sequence name occurs more than once.
+
     If headers were modified, a marker file is created so the cleaned
     genome can be included in the final results.
     """
@@ -28,8 +37,23 @@ rule prepare_genome:
         set -euo pipefail
         mkdir -p output/{wildcards.sample}/preprocessing
 
-        # Clean FASTA headers: keep only first word (accession)
-        sed 's/^\(>[^ ]*\) .*/\1/' {input.genome} > {output.genome}
+        # Drop leading ';' comment lines (FHR metadata, BRAKER#982) and
+        # clean FASTA headers: keep only first word (accession)
+        N_COMMENT=$(awk '/^>/ {{exit}} /^[[:space:]]*;/ {{n++}} END {{print n+0}}' {input.genome})
+        if [ "$N_COMMENT" -gt 0 ]; then
+            echo "[INFO] Dropped $N_COMMENT leading ';' comment line(s) from genome FASTA (e.g. FAIR-bioHeaders metadata)"
+        fi
+        awk '!seen && /^[[:space:]]*(;|$)/ {{next}} {{seen=1; if (/^>/) sub(/ .*/, ""); print}}' \
+            {input.genome} > {output.genome}
+        # Duplicated sequence names fail hours later (randomSplit.pl: "LOCUS
+        # names in genbank file are not unique", Gaius-Augustus/BRAKER#977).
+        # Stop here instead.
+        DUPS=$(awk '/^>/ {{ n = substr($1, 2); if (c[n]++ == 1 && k++ < 5) printf "%s ", n }}' {output.genome})
+        if [ -n "$DUPS" ]; then
+            echo "ERROR: sequence names occur more than once in the genome FASTA (after cutting headers at the first space), e.g.: $DUPS" >&2
+            echo "  Rename or remove the duplicated sequences and start again." >&2
+            exit 1
+        fi
 
         # Check if headers were actually modified
         if diff -q <(grep '^>' {input.genome}) <(grep '^>' {output.genome}) > /dev/null 2>&1; then
@@ -63,7 +87,8 @@ rule prepare_masked_genome:
     Copy pre-masked genome to output directory and clean FASTA headers.
 
     Only runs when user provides a genome_masked column in samples.csv.
-    Headers are cleaned identically to prepare_genome.
+    Leading ';' comment lines are dropped and headers are cleaned
+    identically to prepare_genome.
     """
     input:
         genome_masked = lambda wildcards: samples_df[samples_df["sample_name"] == wildcards.sample].iloc[0]["genome_masked"]
@@ -78,8 +103,17 @@ rule prepare_masked_genome:
     shell:
         r"""
         set -euo pipefail
-        # Clean FASTA headers: keep only first word (accession)
-        sed 's/^\(>[^ ]*\) .*/\1/' {input.genome_masked} > {output.genome_masked}
+        # Drop leading ';' comment lines and clean FASTA headers
+        # (same as prepare_genome, BRAKER#982)
+        awk '!seen && /^[[:space:]]*(;|$)/ {{next}} {{seen=1; if (/^>/) sub(/ .*/, ""); print}}' \
+            {input.genome_masked} > {output.genome_masked}
+        # Duplicated sequence names: see prepare_genome (BRAKER#977)
+        DUPS=$(awk '/^>/ {{ n = substr($1, 2); if (c[n]++ == 1 && k++ < 5) printf "%s ", n }}' {output.genome_masked})
+        if [ -n "$DUPS" ]; then
+            echo "ERROR: sequence names occur more than once in the masked genome FASTA (after cutting headers at the first space), e.g.: $DUPS" >&2
+            echo "  Rename or remove the duplicated sequences and start again." >&2
+            exit 1
+        fi
         """
 
 

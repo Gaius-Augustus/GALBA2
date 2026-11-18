@@ -275,3 +275,114 @@ def test_diamond_filter_gtf_missing_hits_file_exits(tmp_path):
     gtf.write_text(G2_BARE)
     with pytest.raises(SystemExit):
         mod.filter_gtf(str(gtf), str(tmp_path / "nope.tsv"), str(tmp_path / "o.gtf"))
+
+
+# --- DIAMOND run: protein files with blank lines, failing DIAMOND ----------
+# A fake "diamond" executable stands in for DIAMOND. Like DIAMOND 2.x it
+# rejects a database FASTA whose first line is not a header; otherwise it
+# reports a hit for every query whose ID is listed in HITS (or all queries
+# when HITS is unset).
+
+FAKE_DIAMOND = r'''#!/usr/bin/env python3
+import os, sys
+a = sys.argv
+db, q, out = a[a.index("-d") + 1], a[a.index("-q") + 1], a[a.index("-o") + 1]
+with open(db) as f:
+    if not f.readline().startswith(">"):
+        sys.stderr.write("Error: First line must begin with '>'\n")
+        sys.exit(1)
+hits = os.environ.get("HITS")
+with open(q) as f, open(out, "w") as o:
+    for line in f:
+        if line.startswith(">"):
+            qid = line[1:].split()[0]
+            if hits is None or qid in hits.split(","):
+                o.write(qid + "\tref1\t90\t100\t5\t0\t1\t100\t1\t100\t1e-30\t200\n")
+'''
+
+DIAMOND_CLI = os.path.join(SCRIPTS, "filter_gtf_by_diamond_against_ref.py")
+
+
+def _fake_diamond(tmp_path):
+    d = tmp_path / "bin"
+    d.mkdir()
+    exe = d / "diamond"
+    exe.write_text(FAKE_DIAMOND)
+    exe.chmod(0o755)
+    return d
+
+
+def _run_diamond_cli(tmp_path, ref_text, hits=None):
+    gtf = tmp_path / "in.gtf"
+    gtf.write_text(G1_BARE + G2_BARE)
+    pred = tmp_path / "pred.aa"
+    pred.write_text(">g1.t1\nMKV\n>g1.t2\nMKV\n>g2.t1\nMLL\n")
+    ref = tmp_path / "ref.fa"
+    ref.write_text(ref_text)
+    outdir = tmp_path / "out"
+    outdir.mkdir()
+    out = outdir / "galba.gtf"
+    env = dict(os.environ)
+    env.pop("HITS", None)
+    if hits is not None:
+        env["HITS"] = hits
+    res = subprocess.run([sys.executable, DIAMOND_CLI, "-r", str(ref), "-g", str(gtf),
+                          "-a", str(pred), "-o", str(out), "-t", "1",
+                          "-d", str(_fake_diamond(tmp_path))],
+                         capture_output=True, text=True, cwd=tmp_path, env=env)
+    return res, out, outdir
+
+
+def test_clean_fasta_drops_blank_lines(tmp_path):
+    mod = _load("filter_gtf_by_diamond_against_ref")
+    src = tmp_path / "in.fa"
+    src.write_text("\n  \n>a desc\r\nMKV\r\n\nLL\n>b\nMAA")
+    dst = tmp_path / "out.fa"
+    assert mod.clean_fasta(str(src), str(dst)) == 2
+    assert dst.read_text() == ">a desc\nMKV\nLL\n>b\nMAA\n"
+
+
+@pytest.mark.parametrize("text", ["", "\n\n", "MKV\n>a\nMKV\n"])
+def test_clean_fasta_rejects_files_without_leading_header(tmp_path, text):
+    mod = _load("filter_gtf_by_diamond_against_ref")
+    src = tmp_path / "in.fa"
+    src.write_text(text)
+    with pytest.raises(SystemExit):
+        mod.clean_fasta(str(src), str(tmp_path / "out.fa"))
+
+
+def test_diamond_cli_ref_with_leading_blank_line(tmp_path):
+    # OrthoDB *_train.fa partitions start with an empty line; before 1.2.0
+    # DIAMOND failed on them, the error was ignored and every gene discarded
+    res, out, outdir = _run_diamond_cli(tmp_path, "\n>ref1\nMKV\n\n>ref2\nMLL\n",
+                                        hits="g1.t2")
+    assert res.returncode == 0, res.stderr
+    txs = {f[8] for f in _rows(out, "transcript")}
+    assert txs == {"g1.t2"}
+    # temporary DIAMOND files are written next to the output and removed
+    assert os.listdir(outdir) == ["galba.gtf"]
+    assert not (tmp_path / "diamond_out.tsv").exists()
+
+
+def test_diamond_cli_fails_when_diamond_fails(tmp_path):
+    bindir = _fake_diamond(tmp_path)
+    (bindir / "diamond").write_text("#!/bin/sh\necho boom >&2\nexit 3\n")
+    gtf = tmp_path / "in.gtf"
+    gtf.write_text(G1_BARE)
+    pred = tmp_path / "pred.aa"
+    pred.write_text(">g1.t1\nMKV\n")
+    ref = tmp_path / "ref.fa"
+    ref.write_text(">ref1\nMKV\n")
+    res = subprocess.run([sys.executable, DIAMOND_CLI, "-r", str(ref), "-g", str(gtf),
+                          "-a", str(pred), "-o", str(tmp_path / "o.gtf"), "-t", "1",
+                          "-d", str(bindir)],
+                         capture_output=True, text=True, cwd=tmp_path)
+    assert res.returncode != 0
+    assert "boom" in res.stderr
+    assert "DIAMOND failed with exit code 3" in res.stderr
+
+
+def test_diamond_cli_fails_when_no_transcript_has_a_hit(tmp_path):
+    res, _, _ = _run_diamond_cli(tmp_path, ">ref1\nMKV\n", hits="nothing")
+    assert res.returncode != 0
+    assert "none of the 3 predicted transcripts" in res.stderr

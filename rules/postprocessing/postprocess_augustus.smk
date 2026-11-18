@@ -12,6 +12,9 @@ rule sanity_check_augustus:
        transcripts and re-span their gene lines; this check fails the rule
        if any gene or transcript line in galba.gtf does not match its
        children, so an inconsistent model never reaches galba.gff3.
+    5. The rule fails if the DIAMOND filter fails (e.g. DIAMOND rejects the
+       protein file) or galba.gtf ends up without genes, instead of passing
+       an empty gene set to the downstream rules.
 
     Input:
         augustus_gtf: AUGUSTUS predictions in GTF format
@@ -96,14 +99,17 @@ rule sanity_check_augustus:
                 -t {threads} \
                 -d $(dirname $(command -v diamond)) \
                 1> {params.output_dir}/diamond_filter.stdout \
-                2> {params.output_dir}/diamond_filter.stderr
+                2> {params.output_dir}/diamond_filter.stderr \
+                || {{ echo "[ERROR] DIAMOND filter failed:" >&2; \
+                      tail -n 20 {params.output_dir}/diamond_filter.stderr >&2; \
+                      exit 1; }}
 
             # Cleanup temporary files
             rm -f {params.output_dir}/augustus.hints.aa \
                   {params.output_dir}/augustus.hints.codingseq
 
-            BEFORE=$(grep -c $'\tgene\t' {params.output_dir}/augustus.clean.gtf || echo 0)
-            AFTER=$(grep -c $'\tgene\t' {output.galba_gtf} || echo 0)
+            BEFORE=$(grep -c $'\tgene\t' {params.output_dir}/augustus.clean.gtf || true)
+            AFTER=$(grep -c $'\tgene\t' {output.galba_gtf} || true)
             echo "[INFO] DIAMOND filter: $BEFORE genes -> $AFTER genes"
 
             # Report
@@ -123,8 +129,14 @@ rule sanity_check_augustus:
         python3 {script_dir}/check_gtf_loci.py {output.galba_gtf} \
             2> {params.output_dir}/check_gtf_loci.galba.log
 
-        GENES=$(grep -c $'\tgene\t' {output.galba_gtf} || echo 0)
+        # grep -c prints 0 and exits 1 when nothing matches; "|| echo 0"
+        # would give "0 0", so use "|| true"
+        GENES=$(grep -c $'\tgene\t' {output.galba_gtf} || true)
         echo "[INFO] Final gene count: $GENES"
+        if [ "$GENES" -eq 0 ]; then
+            echo "[ERROR] {output.galba_gtf} contains no genes; see {params.output_dir}/diamond_filter.stderr and {input.augustus_gtf}" >&2
+            exit 1
+        fi
         echo "[INFO] Output: {output.galba_gtf}"
         echo "[INFO] ======================================="
         """
